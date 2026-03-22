@@ -635,10 +635,6 @@ function HeroPhotoStack() {
           </motion.figure>
         </AnimatePresence>
 
-        {/* Subtle "tap to skip" hint — fades out after first interaction */}
-        <div className="pointer-events-none absolute -bottom-6 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap text-[10px] tracking-widest text-[rgba(93,52,38,0.4)] uppercase">
-          tap to skip
-        </div>
       </div>
     </div>
   );
