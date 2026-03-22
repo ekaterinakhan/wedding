@@ -608,7 +608,7 @@ function HeroPhotoStack() {
                   top: "50%", left: "50%",
                   marginTop: -170, marginLeft: -130,
                   zIndex: STACK - slot,
-                  borderRadius: 3,
+                  borderRadius: 16,
                   boxShadow: "0 4px 6px rgba(0,0,0,0.07), 0 12px 40px rgba(72,40,23,0.18)",
                 }}
                 initial={{ opacity: 0, scale: 0.88, rotate: SLOT[STACK - 1].rotate, x: SLOT[STACK - 1].x, y: SLOT[STACK - 1].y + 24 }}
@@ -617,7 +617,7 @@ function HeroPhotoStack() {
                 transition={{ type: "spring", damping: 26, stiffness: 220 }}
               >
                 {/* Photo */}
-                <div style={{ margin: 10, marginBottom: 0, height: 272, overflow: "hidden" }}>
+                <div style={{ margin: 10, marginBottom: 0, height: 272, overflow: "hidden", borderRadius: 10 }}>
                   <img src={photo.src} alt={photo.alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 </div>
                 {/* Polaroid caption strip */}
