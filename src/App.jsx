@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Cursors } from "./components/Cursors";
 
 const RSVP_ENDPOINT = import.meta.env.VITE_RSVP_ENDPOINT || "/api/rsvps";
 
@@ -579,7 +580,7 @@ function App() {
   }
 
   return (
-    <div className="mx-auto my-4 w-[min(calc(100%-20px),1180px)] pb-12 sm:w-[min(calc(100%-32px),1180px)]">
+    <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1180px)] pb-12 sm:w-[min(calc(100%-32px),1180px)]">
       <header className="relative overflow-hidden rounded-[28px] border border-white/70 bg-[rgba(255,250,243,0.78)] p-5 shadow-[0_24px_80px_rgba(72,40,23,0.12)] backdrop-blur-xl">
         <div className="absolute -right-[10%] -bottom-[20%] h-[340px] w-[340px] rounded-full bg-radial from-[rgba(200,158,91,0.45)] to-transparent" />
         <div className="relative z-10 flex items-center justify-between gap-4">
@@ -886,6 +887,7 @@ function App() {
           </div>
         </SectionCard>
       </main>
+      <Cursors />
     </div>
   );
 }

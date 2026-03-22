@@ -81,6 +81,15 @@ app.post("/api/rsvps", (req, res) => {
   res.status(201).json({ ok: true, id: result.lastInsertRowid });
 });
 
+app.get("/api/country", (req, res) => {
+  // In production this is handled by the Cloudflare Pages Function (functions/api/country.js)
+  // which reads the CF-IPCountry header. For local dev we fall back to Accept-Language.
+  const lang = req.headers["accept-language"] || "";
+  const match = lang.match(/[a-z]{2}-([A-Z]{2})/);
+  const country = match ? match[1] : "XX";
+  res.json({ country });
+});
+
 app.get("/api/rsvps", (_req, res) => {
   res.json(selectRsvps.all());
 });
