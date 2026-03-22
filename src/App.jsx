@@ -548,90 +548,70 @@ const content = {
   }
 };
 
-// Add your own photos here — Unsplash fills the rest indefinitely
+// Add your own photos here — picsum fills the rest indefinitely
 const OWN_PHOTOS = [
   { src: "/us.jpeg",     alt: "Ekaterina and Lucas together" },
   { src: "/us2.jpeg",    alt: "A portrait of the couple" },
   { src: "/bistro.jpeg", alt: "The bistro terrace at Roncemay" },
 ];
 
-const UNSPLASH_QUERIES = [
-  "wedding+couple", "romantic+couple", "wedding+flowers",
-  "engagement+ring", "wedding+celebration", "bride+groom",
-  "wedding+nature", "love+couple", "wedding+dinner",
-  "chateau+wedding", "couple+portrait", "wedding+burgundy",
-];
+// Deterministic, reliable placeholder photos (replace with your own over time)
+const PICSUM_SEEDS = [10, 22, 39, 55, 67, 84, 91, 103, 118, 130, 147, 162, 179, 195, 210];
 
 function getPhoto(absoluteIdx) {
   if (absoluteIdx < OWN_PHOTOS.length) return OWN_PHOTOS[absoluteIdx];
   const i = absoluteIdx - OWN_PHOTOS.length;
-  const query = UNSPLASH_QUERIES[i % UNSPLASH_QUERIES.length];
-  return {
-    src: `https://source.unsplash.com/600x800/?${query}&sig=${absoluteIdx}`,
-    alt: "Wedding inspiration",
-  };
-}
-
-function preload(absoluteIdx) {
-  const { src } = getPhoto(absoluteIdx);
-  if (src.startsWith("/")) return; // local files already cached
-  const img = new window.Image();
-  img.src = src;
+  const seed = PICSUM_SEEDS[i % PICSUM_SEEDS.length];
+  return { src: `https://picsum.photos/seed/${seed}/600/800`, alt: "Wedding inspiration" };
 }
 
 function HeroPhotoStack() {
-  // Absolute index — never wraps, always incrementing
   const [idx, setIdx] = useState(0);
 
-  // Auto-advance
   useEffect(() => {
-    const t = setInterval(() => setIdx(i => i + 1), 4000);
+    const t = setInterval(() => setIdx(i => i + 1), 4500);
     return () => clearInterval(t);
   }, []);
 
-  // Pre-load next 3 images whenever idx changes
+  // Pre-load upcoming images
   useEffect(() => {
-    preload(idx + 1);
-    preload(idx + 2);
-    preload(idx + 3);
+    [1, 2, 3].forEach(offset => {
+      const { src } = getPhoto(idx + offset);
+      const img = new window.Image();
+      img.src = src;
+    });
   }, [idx]);
-
-  const current = getPhoto(idx);
-  const next    = getPhoto(idx + 1);
-  const after   = getPhoto(idx + 2);
 
   return (
     <div className="flex justify-center lg:justify-end">
       <div className="relative" style={{ width: 300, height: 400 }}>
 
-        {/* Back card — 2 ahead */}
+        {/* Decorative stack frames — purely visual depth, no images */}
         <div
-          className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/50 bg-[rgba(255,250,243,0.55)] p-3 shadow-[0_8px_24px_rgba(72,40,23,0.10)]"
-          style={{ zIndex: 1, transform: "rotate(-4.5deg) translateX(-20px) translateY(18px) scale(0.90)" }}
-        >
-          <img src={after.src} alt={after.alt} className="h-full w-full rounded-[20px] object-cover opacity-60" />
-        </div>
-
-        {/* Middle card — 1 ahead */}
+          className="absolute inset-0 rounded-[28px] border border-white/40 bg-[rgba(255,250,243,0.45)] shadow-[0_6px_20px_rgba(72,40,23,0.08)]"
+          style={{ zIndex: 1, transform: "rotate(-4deg) translateX(-16px) translateY(16px) scale(0.90)" }}
+        />
         <div
-          className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/65 bg-[rgba(255,250,243,0.70)] p-3 shadow-[0_14px_40px_rgba(72,40,23,0.14)]"
-          style={{ zIndex: 2, transform: "rotate(3deg) translateX(14px) translateY(9px) scale(0.95)" }}
-        >
-          <img src={next.src} alt={next.alt} className="h-full w-full rounded-[20px] object-cover opacity-80" />
-        </div>
+          className="absolute inset-0 rounded-[28px] border border-white/60 bg-[rgba(255,250,243,0.62)] shadow-[0_12px_36px_rgba(72,40,23,0.12)]"
+          style={{ zIndex: 2, transform: "rotate(2.5deg) translateX(12px) translateY(8px) scale(0.95)" }}
+        />
 
-        {/* Top card — current, animated */}
-        <AnimatePresence mode="wait">
+        {/* Main photo — smooth crossfade */}
+        <AnimatePresence mode="sync">
           <motion.figure
             key={idx}
-            initial={{ opacity: 0, scale: 0.93, rotate: -4, y: 28 }}
-            animate={{ opacity: 1, scale: 1, rotate: 1.5, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, rotate: 9, x: 80, y: -28 }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            onClick={() => setIdx(i => i + 1)}
-            className="absolute inset-0 z-10 cursor-pointer overflow-hidden rounded-[28px] border border-white/80 bg-[rgba(255,250,243,0.92)] p-3 shadow-[0_28px_64px_rgba(72,40,23,0.22)]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/80 bg-[rgba(255,250,243,0.92)] p-3 shadow-[0_28px_64px_rgba(72,40,23,0.22)]"
+            style={{ zIndex: 10, rotate: "1.5deg" }}
           >
-            <img src={current.src} alt={current.alt} className="h-full w-full rounded-[20px] object-cover" />
+            <img
+              src={getPhoto(idx).src}
+              alt={getPhoto(idx).alt}
+              className="h-full w-full rounded-[20px] object-cover"
+            />
           </motion.figure>
         </AnimatePresence>
 
