@@ -550,71 +550,86 @@ const content = {
 
 // Add your own photos here — picsum fills the rest indefinitely
 const OWN_PHOTOS = [
-  { src: "/us.jpeg",     alt: "Ekaterina and Lucas together" },
+  { src: "/us.jpeg",     alt: "Ekaterina and Lucas" },
   { src: "/us2.jpeg",    alt: "A portrait of the couple" },
-  { src: "/bistro.jpeg", alt: "The bistro terrace at Roncemay" },
+  { src: "/bistro.jpeg", alt: "Roncemay bistro" },
 ];
 
-// Deterministic, reliable placeholder photos (replace with your own over time)
 const PICSUM_SEEDS = [10, 22, 39, 55, 67, 84, 91, 103, 118, 130, 147, 162, 179, 195, 210];
 
-function getPhoto(absoluteIdx) {
-  if (absoluteIdx < OWN_PHOTOS.length) return OWN_PHOTOS[absoluteIdx];
-  const i = absoluteIdx - OWN_PHOTOS.length;
-  const seed = PICSUM_SEEDS[i % PICSUM_SEEDS.length];
+function getPhoto(i) {
+  if (i < OWN_PHOTOS.length) return OWN_PHOTOS[i];
+  const seed = PICSUM_SEEDS[(i - OWN_PHOTOS.length) % PICSUM_SEEDS.length];
   return { src: `https://picsum.photos/seed/${seed}/600/800`, alt: "Wedding inspiration" };
 }
 
-function HeroPhotoStack() {
-  const [idx, setIdx] = useState(0);
+// Per-slot rotation & offset so the pile looks natural
+const SLOT = [
+  { rotate:  2.5, x:   0, y:  0 },   // top
+  { rotate: -3.5, x:  -6, y:  9 },   // middle
+  { rotate:  4.5, x:   8, y: 16 },   // back
+];
+const STACK = SLOT.length;
 
+function HeroPhotoStack() {
+  const [top, setTop] = useState(0); // absolute index of the card on top
+
+  // Auto-advance
   useEffect(() => {
-    const t = setInterval(() => setIdx(i => i + 1), 4500);
+    const t = setInterval(() => setTop(i => i + 1), 4500);
     return () => clearInterval(t);
   }, []);
 
-  // Pre-load upcoming images
+  // Pre-load upcoming
   useEffect(() => {
-    [1, 2, 3].forEach(offset => {
-      const { src } = getPhoto(idx + offset);
-      const img = new window.Image();
-      img.src = src;
+    [1, 2, 3].forEach(off => {
+      const { src } = getPhoto(top + off);
+      if (!src.startsWith("/")) { const img = new window.Image(); img.src = src; }
     });
-  }, [idx]);
+  }, [top]);
+
+  // top → slot 0, top+1 → slot 1, top+2 → slot 2
+  const cards = Array.from({ length: STACK }, (_, slot) => ({ photoIdx: top + slot, slot }));
 
   return (
-    <div className="flex justify-center lg:justify-end">
-      <div className="relative" style={{ width: 300, height: 400 }}>
-
-        {/* Decorative stack frames — purely visual depth, no images */}
-        <div
-          className="absolute inset-0 rounded-[28px] border border-white/40 bg-[rgba(255,250,243,0.45)] shadow-[0_6px_20px_rgba(72,40,23,0.08)]"
-          style={{ zIndex: 1, transform: "rotate(-4deg) translateX(-16px) translateY(16px) scale(0.90)" }}
-        />
-        <div
-          className="absolute inset-0 rounded-[28px] border border-white/60 bg-[rgba(255,250,243,0.62)] shadow-[0_12px_36px_rgba(72,40,23,0.12)]"
-          style={{ zIndex: 2, transform: "rotate(2.5deg) translateX(12px) translateY(8px) scale(0.95)" }}
-        />
-
-        {/* Main photo — smooth crossfade */}
-        <AnimatePresence mode="sync">
-          <motion.figure
-            key={idx}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/80 bg-[rgba(255,250,243,0.92)] p-3 shadow-[0_28px_64px_rgba(72,40,23,0.22)]"
-            style={{ zIndex: 10, rotate: "1.5deg" }}
-          >
-            <img
-              src={getPhoto(idx).src}
-              alt={getPhoto(idx).alt}
-              className="h-full w-full rounded-[20px] object-cover"
-            />
-          </motion.figure>
+    <div className="flex items-center justify-center lg:justify-end">
+      {/* Container is bigger than the card to absorb rotations */}
+      <div className="relative" style={{ width: 320, height: 440 }}>
+        <AnimatePresence>
+          {cards.map(({ photoIdx, slot }) => {
+            const photo = getPhoto(photoIdx);
+            const { rotate, x, y } = SLOT[slot];
+            return (
+              <motion.figure
+                key={photoIdx}
+                className="absolute bg-white"
+                style={{
+                  width: 260, height: 340,
+                  top: "50%", left: "50%",
+                  marginTop: -170, marginLeft: -130,
+                  zIndex: STACK - slot,
+                  borderRadius: 3,
+                  boxShadow: "0 4px 6px rgba(0,0,0,0.07), 0 12px 40px rgba(72,40,23,0.18)",
+                }}
+                initial={{ opacity: 0, scale: 0.88, rotate: SLOT[STACK - 1].rotate, x: SLOT[STACK - 1].x, y: SLOT[STACK - 1].y + 24 }}
+                animate={{ opacity: 1, scale: 1 - slot * 0.025, rotate, x, y }}
+                exit={{ opacity: 0, rotate: rotate + 20, x: 380, y: -80, scale: 0.8, zIndex: STACK + 1 }}
+                transition={{ type: "spring", damping: 26, stiffness: 220 }}
+              >
+                {/* Photo */}
+                <div style={{ margin: 10, marginBottom: 0, height: 272, overflow: "hidden" }}>
+                  <img src={photo.src} alt={photo.alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
+                {/* Polaroid caption strip */}
+                <div style={{ height: 58, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontFamily: "Georgia, serif", fontSize: 11, color: "#8a5a44", opacity: 0.55, letterSpacing: "0.08em" }}>
+                    Roncemay · May 2026
+                  </span>
+                </div>
+              </motion.figure>
+            );
+          })}
         </AnimatePresence>
-
       </div>
     </div>
   );
