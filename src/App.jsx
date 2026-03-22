@@ -548,6 +548,77 @@ const content = {
   }
 };
 
+const HERO_IMAGES = [
+  { src: "/us.jpeg",      alt: "Ekaterina and Lucas together" },
+  { src: "/us2.jpeg",     alt: "A portrait of the couple" },
+  { src: "/bistro.jpeg",  alt: "The bistro terrace at Roncemay" },
+];
+
+function HeroPhotoStack({ images = HERO_IMAGES }) {
+  const [idx, setIdx] = useState(0);
+  const n = images.length;
+
+  useEffect(() => {
+    const t = setInterval(() => setIdx(i => (i + 1) % n), 4000);
+    return () => clearInterval(t);
+  }, [n]);
+
+  const at = (offset) => images[(idx + offset + n) % n];
+
+  return (
+    <div className="flex justify-center lg:justify-end">
+      <div className="relative" style={{ width: 300, height: 400 }}>
+
+        {/* Back card */}
+        <motion.div
+          animate={{ rotate: -4, x: -18, y: 16, scale: 0.91 }}
+          transition={{ type: "spring", damping: 30, stiffness: 260 }}
+          className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/60 bg-[rgba(255,250,243,0.6)] p-3 shadow-[0_12px_32px_rgba(72,40,23,0.12)]"
+          style={{ zIndex: 1 }}
+        >
+          <img src={at(-1).src} alt={at(-1).alt} className="h-full w-full rounded-[20px] object-cover opacity-70" />
+        </motion.div>
+
+        {/* Middle card */}
+        <motion.div
+          animate={{ rotate: 3, x: 14, y: 8, scale: 0.95 }}
+          transition={{ type: "spring", damping: 30, stiffness: 260 }}
+          className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/70 bg-[rgba(255,250,243,0.75)] p-3 shadow-[0_18px_48px_rgba(72,40,23,0.15)]"
+          style={{ zIndex: 2 }}
+        >
+          <img src={at(1).src} alt={at(1).alt} className="h-full w-full rounded-[20px] object-cover opacity-85" />
+        </motion.div>
+
+        {/* Top card */}
+        <AnimatePresence mode="wait">
+          <motion.figure
+            key={idx}
+            initial={{ opacity: 0, scale: 0.93, rotate: -3, y: 24 }}
+            animate={{ opacity: 1, scale: 1, rotate: 1.2, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, rotate: 7, x: 70, y: -24 }}
+            transition={{ duration: 0.52, ease: [0.22, 1, 0.36, 1] }}
+            onClick={() => setIdx(i => (i + 1) % n)}
+            className="absolute inset-0 z-10 cursor-pointer overflow-hidden rounded-[28px] border border-white/80 bg-[rgba(255,250,243,0.9)] p-3 shadow-[0_28px_64px_rgba(72,40,23,0.22)]"
+          >
+            <img src={images[idx].src} alt={images[idx].alt} className="h-full w-full rounded-[20px] object-cover" />
+          </motion.figure>
+        </AnimatePresence>
+
+        {/* Dots */}
+        <div className="absolute -bottom-7 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setIdx(i)}
+              className={`h-1 rounded-full transition-all duration-300 ${i === idx ? "w-5 bg-[#8a5a44]" : "w-1.5 bg-[rgba(138,90,68,0.3)]"}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function getEventIcon(title) {
   const t = title.toLowerCase();
   if (t.includes("ceremony") || t.includes("civil") || t.includes("ceremonie")) return <LuHeart size={13} />;
@@ -718,24 +789,8 @@ function App() {
               </a>
             </div>
           </div>
-          <div className="flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[500px] pb-8 pl-6 pr-2 pt-6 sm:pl-10 sm:pr-6">
-              <div className="pointer-events-none absolute top-6 left-0 h-[120px] w-[120px] rounded-full bg-radial from-[rgba(200,158,91,0.28)] to-transparent" />
-              <figure className="relative z-10 ml-auto w-[78%] rounded-[30px] border border-white/80 bg-[rgba(255,250,243,0.72)] p-3.5 shadow-[0_32px_72px_rgba(72,40,23,0.18)]">
-                <img
-                  src="/us.jpeg"
-                  alt="The couple smiling together with their corgi."
-                  className="block h-auto w-full rounded-[22px] object-contain"
-                />
-              </figure>
-              <figure className="absolute bottom-0 left-0 z-20 w-[46%] rounded-[28px] border border-white/80 bg-[rgba(255,250,243,0.82)] p-3 shadow-[0_28px_60px_rgba(72,40,23,0.2)]">
-                <img
-                  src="/us2.jpeg"
-                  alt="A second portrait of the couple together."
-                  className="block aspect-[3/4] w-full rounded-[20px] object-cover object-center"
-                />
-              </figure>
-            </div>
+          <div className="flex items-center justify-center pb-10 lg:justify-end lg:pb-0">
+            <HeroPhotoStack />
           </div>
         </div>
       </header>
