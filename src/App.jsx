@@ -678,7 +678,7 @@ function App() {
   }, [lang, t]);
 
   return (
-    <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1440px)] pb-12 sm:w-[min(calc(100%-48px),1440px)]">
+    <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1100px)] pb-12 sm:w-[min(calc(100%-48px),1100px)]">
       <header className="relative overflow-hidden rounded-[28px] border border-white/70 bg-[rgba(255,250,243,0.78)] p-5 shadow-[0_24px_80px_rgba(72,40,23,0.12)] backdrop-blur-xl">
         <div className="absolute -right-[10%] -bottom-[20%] h-[340px] w-[340px] rounded-full bg-radial from-[rgba(200,158,91,0.45)] to-transparent" />
         <div className="relative z-10 flex items-center justify-between gap-4">
