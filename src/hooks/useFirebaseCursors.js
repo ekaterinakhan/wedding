@@ -118,7 +118,7 @@ export function useFirebaseCursors() {
       set(cursorDbRef.current, {
         x: e.pageX,
         y: e.pageY,
-        flag: countryToFlag(countryCodeRef.current),
+        flag: flagRef.current,
         t: now,
       });
     };

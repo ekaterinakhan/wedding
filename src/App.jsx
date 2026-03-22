@@ -1,6 +1,11 @@
 import { useMemo, useState, useEffect, useCallback, memo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Cursors } from "./components/Cursors";
+import {
+  LuMapPin, LuArrowUpRight, LuChevronDown,
+  LuHeart, LuCar, LuWine, LuUtensils, LuFlag,
+  LuMail, LuMap, LuCalendarDays, LuSunrise,
+} from "react-icons/lu";
 
 const RSVP_ENDPOINT = import.meta.env.VITE_RSVP_ENDPOINT || "/api/rsvps";
 
@@ -229,6 +234,15 @@ const content = {
               ["Hotel Le Maxime", "https://www.ot-auxerre.fr/offres/hotel-le-maxime-bw-signature-collection-auxerre-fr-2563381/"],
               ["Hotel Normandie", "https://www.ot-auxerre.fr/offres/the-originals-hotel-normandie-auxerre-auxerre-fr-2563385/"],
               ["2026 tourism guide", "https://www.ot-auxerre.fr/app/uploads/auxerrois/2026/03/OT_Guide-Touristique-2026-web.pdf"]
+            ]
+          },
+          {
+            title: "Where to stay near Roncemay",
+            text: "The Domaine itself is fully booked. The closest alternatives are Domaine de l'Ocrerie in Pourrain (~3 km, a charming award-winning B&B right next to the golf course, table d'hôte available) and Chambres de la Fontaine in Gy-l'Évêque (~5 km, from €60/night including breakfast). In Joigny (~15 km), La Côte Saint-Jacques & Spa is a prestigious 5-star Relais & Châteaux with pool and spa.",
+            links: [
+              ["Domaine de l'Ocrerie", "https://www.domainedelocrerie.com/en"],
+              ["Chambres de la Fontaine", "http://www.chambresdegy.com/"],
+              ["La Côte Saint-Jacques & Spa", "https://www.cotesaintjacques.com/en/pagex/5-star-hotel-at-joigny.1922.html"]
             ]
           }
         ]
@@ -489,6 +503,15 @@ const content = {
               ["Hotel Normandie", "https://www.ot-auxerre.fr/offres/the-originals-hotel-normandie-auxerre-auxerre-fr-2563385/"],
               ["Guide touristique 2026", "https://www.ot-auxerre.fr/app/uploads/auxerrois/2026/03/OT_Guide-Touristique-2026-web.pdf"]
             ]
+          },
+          {
+            title: "Ou loger pres du Roncemay",
+            text: "Le Domaine est complet. Les alternatives les plus proches sont le Domaine de l'Ocrerie a Pourrain (~3 km, chambre d'hotes de charme primee juste a cote du golf, table d'hotes disponible) et les Chambres de la Fontaine a Gy-l'Eveque (~5 km, a partir de 60 €/nuit petit-dejeuner inclus). A Joigny (~15 km), La Cote Saint-Jacques & Spa est une option 5 etoiles Relais & Chateaux avec piscine et spa.",
+            links: [
+              ["Domaine de l'Ocrerie", "https://www.domainedelocrerie.com/fr"],
+              ["Chambres de la Fontaine", "http://www.chambresdegy.com/"],
+              ["La Cote Saint-Jacques & Spa", "https://www.cotesaintjacques.com/fr/pagex/hotel-5-etoiles-joigny.1922.html"]
+            ]
           }
         ]
       },
@@ -525,6 +548,82 @@ const content = {
   }
 };
 
+function getEventIcon(title) {
+  const t = title.toLowerCase();
+  if (t.includes("ceremony") || t.includes("civil") || t.includes("ceremonie")) return <LuHeart size={13} />;
+  if (t.includes("transfer") || t.includes("transfert")) return <LuCar size={13} />;
+  if (t.includes("toast") || t.includes("apero") || t.includes("cremant") || t.includes("coupe")) return <LuWine size={13} />;
+  if (t.includes("dinner") || t.includes("brunch") || t.includes("tea") || t.includes("gouter") || t.includes("diner") || t.includes("lunch")) return <LuUtensils size={13} />;
+  if (t.includes("golf")) return <LuFlag size={13} />;
+  return null;
+}
+
+function ScheduleSection({ t }) {
+  const [activeDay, setActiveDay] = useState("day1");
+
+  const tabs = [
+    { id: "day1", icon: <LuCalendarDays size={13} />, label: "9 May", note: t.schedule.note, items: t.scheduleItems },
+    { id: "day2", icon: <LuSunrise size={13} />, label: "10 May", note: t.nextDay.note, items: t.nextDayItems },
+  ];
+
+  const active = tabs.find((tab) => tab.id === activeDay);
+
+  return (
+    <SectionCard>
+      <div className="mb-6 inline-flex rounded-full border border-[rgba(71,46,31,0.12)] bg-[rgba(248,242,233,0.6)] p-1">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveDay(tab.id)}
+            className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition ${
+              activeDay === tab.id
+                ? "bg-[#5d3426] text-white shadow-sm"
+                : "text-[#6a5a51] hover:text-[#3d2e26]"
+            }`}
+          >
+            {tab.icon}{tab.label}
+          </button>
+        ))}
+      </div>
+      {active.note && (
+        <p className="mb-6 text-[0.8125rem] leading-relaxed text-[#3d2e26]">{active.note}</p>
+      )}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeDay}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.2 }}
+          className="divide-y divide-[rgba(71,46,31,0.08)]"
+        >
+          {active.items.map((item) => {
+            const icon = getEventIcon(item.title);
+            return (
+              <div
+                key={`${item.time}-${item.title}`}
+                className="grid grid-cols-[72px_1fr] gap-x-4 py-4 first:pt-1 last:pb-0 md:grid-cols-[80px_minmax(180px,220px)_1fr_auto] md:items-center md:gap-x-6"
+              >
+                <div className="text-sm font-semibold tabular-nums text-[#8a5a44]">{item.time}</div>
+                <h3 className="inline-flex items-center gap-2 font-serif text-[1.05rem] leading-snug text-[#2a211c]">
+                  {icon && <span className="shrink-0 text-[#c89e5b]">{icon}</span>}
+                  {item.title}
+                </h3>
+                <p className="col-start-2 mt-0.5 text-sm leading-6 text-[#3d2e26] md:col-start-auto md:mt-0">{item.description}</p>
+                <a href={item.url} target="_blank" rel="noreferrer"
+                  className="col-start-2 mt-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-[rgba(93,52,38,0.14)] bg-white/60 px-3 py-1 text-[11px] font-medium text-[#8a5a44] transition hover:border-[rgba(93,52,38,0.3)] hover:bg-white md:col-start-auto md:mt-0">
+                  <LuMapPin size={11} /> {item.location}
+                </a>
+              </div>
+            );
+          })}
+        </motion.div>
+      </AnimatePresence>
+    </SectionCard>
+  );
+}
+
 const fieldClass =
   "w-full rounded-2xl border border-[rgba(93,52,38,0.16)] bg-[#fffdf9] px-4 py-3 text-sm text-[#2a211c] outline-none transition focus:border-[rgba(93,52,38,0.3)] focus:ring-2 focus:ring-[rgba(200,158,91,0.45)]";
 
@@ -534,18 +633,10 @@ function App() {
   const [submitting, setSubmitting] = useState(false);
   const [attendance, setAttendance] = useState("");
   const [selectedMain, setSelectedMain] = useState("");
+  const [events, setEvents] = useState("");
+  const [transfer, setTransfer] = useState("");
 
   const t = content[lang];
-  const menuRequired = attendance !== "no";
-
-  const menuSelectOptions = useMemo(
-    () =>
-      t.menuOptions.map(([value, label]) => [
-        value,
-        label
-      ]),
-    [t]
-  );
 
   const handleSubmit = useCallback(async function handleSubmit(event) {
     event.preventDefault();
@@ -577,6 +668,8 @@ function App() {
       form.reset();
       setAttendance("");
       setSelectedMain("");
+      setEvents("");
+      setTransfer("");
     } catch {
       setStatus(t.rsvp.error);
     } finally {
@@ -585,7 +678,7 @@ function App() {
   }, [lang, t]);
 
   return (
-    <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1180px)] pb-12 sm:w-[min(calc(100%-32px),1180px)]">
+    <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1440px)] pb-12 sm:w-[min(calc(100%-48px),1440px)]">
       <header className="relative overflow-hidden rounded-[28px] border border-white/70 bg-[rgba(255,250,243,0.78)] p-5 shadow-[0_24px_80px_rgba(72,40,23,0.12)] backdrop-blur-xl">
         <div className="absolute -right-[10%] -bottom-[20%] h-[340px] w-[340px] rounded-full bg-radial from-[rgba(200,158,91,0.45)] to-transparent" />
         <div className="relative z-10 flex items-center justify-between gap-4">
@@ -612,7 +705,7 @@ function App() {
             <h1 className="mt-3 font-serif text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.95] text-[#2a211c]">
               {t.hero.title}
             </h1>
-            <p className="mt-4 max-w-[56ch] text-base leading-7 text-[#6a5a51]">{t.hero.text}</p>
+            <p className="mt-4 max-w-[56ch] text-base leading-7 text-[#3d2e26]">{t.hero.text}</p>
             <div className="mt-5 flex flex-wrap gap-3">
               <a className="rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-6 py-3.5 font-bold text-white" href="#rsvp">
                 {t.hero.primary}
@@ -649,128 +742,54 @@ function App() {
 
       <main className="space-y-3 pt-3">
         <SectionCard>
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.14em] text-[#5d3426]">{t.welcome.kicker}</p>
-              <h2 className="font-serif text-[clamp(2.2rem,4vw,3.8rem)] leading-[0.95]">{t.welcome.title}</h2>
-            </div>
-            <p className="max-w-[52ch] text-base leading-7 text-[#6a5a51]">{t.welcome.text}</p>
-          </div>
+          <SectionHeading kicker={t.welcome.kicker} title={t.welcome.title} note={t.welcome.text} />
         </SectionCard>
 
-        <SectionCard>
-          <SectionHeading kicker={t.schedule.kicker} title={t.schedule.title} note={t.schedule.note} />
-          <div className="grid gap-4">
-            {t.scheduleItems.map((item) => (
-              <article
-                key={`${item.time}-${item.title}`}
-                className="relative grid gap-3 overflow-hidden rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-4 pl-5 md:grid-cols-[minmax(110px,150px)_minmax(0,1fr)_auto] md:items-start"
-              >
-                <div className="absolute top-0 left-0 bottom-0 w-[3px] rounded-r-sm bg-gradient-to-b from-[#c89e5b] to-[#8a5a44] opacity-50" />
-                <div className="font-bold text-[#5d3426]">{item.time}</div>
-                <div>
-                  <h3 className="mb-1 font-serif text-[clamp(1.2rem,2vw,1.6rem)] leading-[1.05]">{item.title}</h3>
-                  <p className="m-0 text-sm leading-6 text-[#6a5a51]">{item.description}</p>
-                </div>
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex self-start rounded-full border border-[rgba(138,90,68,0.18)] bg-white/70 px-4 py-2 text-sm font-semibold text-[#8a5a44] hover:border-[rgba(138,90,68,0.35)] hover:underline"
-                >
-                  {item.location}
-                </a>
-              </article>
-            ))}
-          </div>
-        </SectionCard>
-
-        <SectionCard>
-          <SectionHeading kicker={t.nextDay.kicker} title={t.nextDay.title} note={t.nextDay.note} />
-          <div className="grid gap-4">
-            {t.nextDayItems.map((item) => (
-              <article
-                key={`${item.time}-${item.title}`}
-                className="relative grid gap-3 overflow-hidden rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-4 pl-5 md:grid-cols-[minmax(110px,150px)_minmax(0,1fr)_auto] md:items-start"
-              >
-                <div className="absolute top-0 left-0 bottom-0 w-[3px] rounded-r-sm bg-gradient-to-b from-[#c89e5b] to-[#8a5a44] opacity-50" />
-                <div className="font-bold text-[#5d3426]">{item.time}</div>
-                <div>
-                  <h3 className="mb-1 font-serif text-[clamp(1.2rem,2vw,1.6rem)] leading-[1.05]">{item.title}</h3>
-                  <p className="m-0 text-sm leading-6 text-[#6a5a51]">{item.description}</p>
-                </div>
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex self-start rounded-full border border-[rgba(138,90,68,0.18)] bg-white/70 px-4 py-2 text-sm font-semibold text-[#8a5a44] hover:border-[rgba(138,90,68,0.35)] hover:underline"
-                >
-                  {item.location}
-                </a>
-              </article>
-            ))}
-          </div>
-        </SectionCard>
+        <ScheduleSection t={t} />
 
         <SectionCard id="menu">
           <SectionHeading kicker={t.menu.kicker} title={t.menu.title} note={t.menu.note} />
-          <div className="grid gap-4">
-            <MenuCard label={t.menu.shared} title={t.menu.starterTitle} highlight>
-              {t.menu.starterDish}
-            </MenuCard>
-            <MenuCard label={t.menu.choice} title={t.menu.mainTitle}>
-              <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[rgba(71,46,31,0.08)] bg-[rgba(248,242,233,0.65)] px-4 py-3">
-                <p className="text-sm text-[#6a5a51]">{t.menu.selectionHint}</p>
-                <div className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#5d3426] shadow-sm">
-                  {t.menu.selectedLabel}: {selectedMain ? menuSelectOptions.find(([value]) => value === selectedMain)?.[1] : t.rsvp.options.choose}
-                </div>
-              </div>
-              <div className="grid gap-3">
-                {t.menuOptions.map(([value, title, description]) => {
-                  const active = value === selectedMain;
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => setSelectedMain(value)}
-                      className={`grid gap-2 rounded-[22px] border px-5 py-4 text-left transition ${
-                        active
-                          ? "border-[#8a5a44] bg-[linear-gradient(180deg,#fffaf2_0%,#fbf3e4_100%)] shadow-[0_14px_34px_rgba(72,40,23,0.10)]"
-                          : "border-[rgba(71,46,31,0.12)] bg-white/80 hover:border-[rgba(138,90,68,0.35)]"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <strong className="block text-xl text-[#2a211c]">{title}</strong>
-                          <p className="mt-2 text-base leading-7 text-[#6a5a51]">{description}</p>
-                        </div>
-                        <span
-                          className={`mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${
-                            active ? "border-[#8a5a44] bg-[#8a5a44] text-white" : "border-[rgba(71,46,31,0.18)] bg-white"
-                          }`}
-                        >
-                          {active ? "✓" : ""}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </MenuCard>
-            <MenuCard label={t.menu.shared} title={t.menu.dessertTitle} highlight>
-              {t.menu.dessertDish}
-            </MenuCard>
-            <div className="rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-5">
-              <strong className="text-[#2a211c]">{t.menu.dietaryTitle}</strong>
-              <p className="mt-2 text-base leading-7 text-[#6a5a51]">{t.menu.dietaryText}</p>
+          <div className="divide-y divide-[rgba(71,46,31,0.08)]">
+
+            {/* Starter */}
+            <div className="pb-6">
+              <p className="mb-3 text-[9px] font-bold uppercase tracking-[0.22em] text-[#8a5a44]">{t.menu.starterTitle}</p>
+              <p className="font-serif text-[1.15rem] leading-snug text-[#2a211c]">{t.menu.starterDish}</p>
             </div>
+
+            {/* Mains */}
+            <div className="py-6">
+              <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.22em] text-[#8a5a44]">{t.menu.mainTitle}</p>
+              <div className="divide-y divide-[rgba(71,46,31,0.06)]">
+                {t.menuOptions.map(([value, title, description]) => (
+                  <div key={value} className="py-3.5 first:pt-0 last:pb-0 sm:grid sm:grid-cols-[160px_1fr] sm:gap-x-6">
+                    <p className="font-serif text-[1.05rem] text-[#2a211c]">{title}</p>
+                    <p className="mt-0.5 text-sm leading-6 text-[#3d2e26] sm:mt-0">{description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Dessert */}
+            <div className="py-6">
+              <p className="mb-3 text-[9px] font-bold uppercase tracking-[0.22em] text-[#8a5a44]">{t.menu.dessertTitle}</p>
+              <p className="font-serif text-[1.15rem] leading-snug text-[#2a211c]">{t.menu.dessertDish}</p>
+            </div>
+
+            {/* Dietary */}
+            <div className="pt-6">
+              <p className="text-xs leading-5 text-[#8a5a44] opacity-70">{t.menu.dietaryText}</p>
+            </div>
+
           </div>
         </SectionCard>
 
         <SectionCard id="rsvp">
           <SectionHeading kicker={t.rsvp.kicker} title={t.rsvp.title} note={t.rsvp.note} />
-          <form className="grid gap-4" onSubmit={handleSubmit}>
-            <div className="grid gap-4 md:grid-cols-2">
+          <form className="grid gap-8" onSubmit={handleSubmit}>
+
+            {/* Contact */}
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label={t.rsvp.fields.name}>
                 <input className={fieldClass} name="name" required />
               </Field>
@@ -780,66 +799,83 @@ function App() {
               <Field label={t.rsvp.fields.phone}>
                 <input className={fieldClass} name="phone" type="tel" />
               </Field>
-              <Field label={t.rsvp.fields.attendance}>
-                <select
-                  className={fieldClass}
-                  name="attendance"
-                  required
-                  value={attendance}
-                  onChange={(event) => setAttendance(event.target.value)}
-                >
-                  <option value="">{t.rsvp.options.choose}</option>
-                  <option value="yes">{t.rsvp.options.yes}</option>
-                  <option value="no">{t.rsvp.options.no}</option>
-                </select>
-              </Field>
-              <Field label={t.rsvp.fields.events}>
-                <select className={fieldClass} name="events" required={menuRequired} disabled={!menuRequired}>
-                  <option value="">{t.rsvp.options.choose}</option>
-                  <option value="wedding-and-brunch">{t.rsvp.options.weddingAndBrunch}</option>
-                  <option value="wedding-only">{t.rsvp.options.weddingOnly}</option>
-                  <option value="brunch-only">{t.rsvp.options.brunchOnly}</option>
-                </select>
-              </Field>
-              <Field label={t.rsvp.fields.menu}>
-                <select
-                  className={fieldClass}
-                  name="menu"
-                  required={menuRequired}
-                  disabled={!menuRequired}
-                  value={selectedMain}
-                  onChange={(event) => setSelectedMain(event.target.value)}
-                >
-                  <option value="">{t.rsvp.options.choose}</option>
-                  {menuSelectOptions.map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label={t.rsvp.fields.transfer}>
-                <select className={fieldClass} name="transfer">
-                  <option value="">{t.rsvp.options.choose}</option>
-                  <option value="yes">{t.rsvp.options.transferYes}</option>
-                  <option value="no">{t.rsvp.options.transferNo}</option>
-                </select>
-              </Field>
             </div>
 
-            <Field label={t.rsvp.fields.dietary}>
-              <textarea className={fieldClass} name="dietary" rows="3" />
-            </Field>
-            <Field label={t.rsvp.fields.notes}>
-              <textarea className={fieldClass} name="notes" rows="4" />
-            </Field>
+            {/* Attendance toggle */}
+            <div className="grid gap-3">
+              <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.attendance}</p>
+              <input type="hidden" name="attendance" value={attendance} />
+              <div className="flex flex-wrap gap-2">
+                {[["yes", t.rsvp.options.yes], ["no", t.rsvp.options.no]].map(([val, label]) => (
+                  <button key={val} type="button" onClick={() => setAttendance(val)}
+                    className={`rounded-full px-6 py-3 text-sm font-semibold transition ${attendance === val ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Progressive disclosure */}
+            <AnimatePresence>
+              {attendance === "yes" && (
+                <motion.div key="yes-fields"
+                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.28 }}
+                  className="grid gap-8">
+
+                  {/* Events */}
+                  <div className="grid gap-3">
+                    <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.events}</p>
+                    <input type="hidden" name="events" value={events} />
+                    <div className="flex flex-wrap gap-2">
+                      {[["wedding-and-brunch", t.rsvp.options.weddingAndBrunch], ["wedding-only", t.rsvp.options.weddingOnly], ["brunch-only", t.rsvp.options.brunchOnly]].map(([val, label]) => (
+                        <button key={val} type="button" onClick={() => setEvents(val)}
+                          className={`rounded-full px-6 py-3 text-sm font-semibold transition ${events === val ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Menu */}
+                  <div className="grid gap-3">
+                    <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.menu}</p>
+                    <input type="hidden" name="menu" value={selectedMain} />
+                    <div className="flex flex-wrap gap-2">
+                      {t.menuOptions.map(([value, label]) => (
+                        <button key={value} type="button" onClick={() => setSelectedMain(value)}
+                          className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedMain === value ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Transfer */}
+                  <div className="grid gap-3">
+                    <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.transfer}</p>
+                    <input type="hidden" name="transfer" value={transfer} />
+                    <div className="flex flex-wrap gap-2">
+                      {[["yes", t.rsvp.options.transferYes], ["no", t.rsvp.options.transferNo]].map(([val, label]) => (
+                        <button key={val} type="button" onClick={() => setTransfer(val)}
+                          className={`rounded-full px-6 py-3 text-sm font-semibold transition ${transfer === val ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Dietary */}
+                  <Field label={t.rsvp.fields.dietary}>
+                    <textarea className={fieldClass} name="dietary" rows="3" placeholder={t.rsvp.fields.notes} />
+                  </Field>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <div className="flex flex-col gap-3 pt-2 md:flex-row md:items-center md:justify-between">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-6 py-3.5 font-bold text-white transition-opacity disabled:opacity-60 md:w-auto"
-              >
+              <button type="submit" disabled={submitting}
+                className="w-full rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-6 py-3.5 font-bold text-white transition-opacity disabled:opacity-60 md:w-auto">
                 {submitting ? "…" : t.rsvp.submit}
               </button>
               <p className="min-h-6 text-sm leading-6 text-[#6a5a51]">{status}</p>
@@ -852,7 +888,7 @@ function App() {
 
       <footer className="mt-8 py-8 text-center">
         <p className="font-serif text-[clamp(1.4rem,3vw,2rem)] leading-none text-[#8a5a44]">
-          Lucas &amp; Ekaterina
+          Ekaterina &amp; Lucas
         </p>
         <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#6a5a51]">9–10 May 2026 · Burgundy</p>
       </footer>
@@ -876,12 +912,15 @@ function SectionCard({ children, id }) {
 
 function SectionHeading({ kicker, title, note }) {
   return (
-    <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-      <div>
-        <p className="text-xs uppercase tracking-[0.14em] text-[#5d3426]">{kicker}</p>
-        <h2 className="font-serif text-[clamp(1.8rem,3.5vw,3rem)] leading-[0.95]">{title}</h2>
+    <div className="mb-8">
+      <div className="mb-4">
+        <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(200,158,91,0.35)] bg-[rgba(200,158,91,0.08)] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.22em] text-[#8a5a44]">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#c89e5b]" />
+          {kicker}
+        </span>
       </div>
-      {note ? <p className="max-w-[48ch] text-sm leading-6 text-[#6a5a51]">{note}</p> : null}
+      <h2 className="font-serif text-[clamp(1.9rem,3.8vw,3.2rem)] leading-[0.92] tracking-[-0.01em] text-[#2a211c]">{title}</h2>
+      {note ? <p className="mt-3 max-w-[58ch] text-[0.8125rem] leading-relaxed text-[#3d2e26]">{note}</p> : null}
     </div>
   );
 }
@@ -890,28 +929,15 @@ function InfoCard({ title, text }) {
   return (
     <article className="rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-6">
       <h3 className="mb-2 font-serif text-[clamp(1.5rem,2.6vw,2rem)] leading-[0.95]">{title}</h3>
-      <p className="text-base leading-7 text-[#6a5a51]">{text}</p>
+      <p className="text-sm leading-6 text-[#3d2e26]">{text}</p>
     </article>
   );
 }
 
-function MenuCard({ label, title, highlight = false, className = "", children }) {
-  return (
-    <div
-      className={`rounded-2xl border border-[rgba(71,46,31,0.12)] p-5 ${
-        highlight ? "bg-gradient-to-b from-[#fffcf6] to-[#fbf3e4]" : "bg-[#fffaf2]"
-      } ${className}`}
-    >
-      <p className="mb-3 text-xs uppercase tracking-[0.12em] text-[#5d3426]">{label}</p>
-      <h3 className="mb-2 font-serif text-[clamp(1.5rem,2.6vw,2rem)] leading-[0.95]">{title}</h3>
-      <div className="text-base leading-7 text-[#6a5a51]">{children}</div>
-    </div>
-  );
-}
 
 function Field({ label, children }) {
   return (
-    <label className="grid gap-2 text-sm text-[#6a5a51]">
+    <label className="grid gap-2 text-sm text-[#3d2e26]">
       <span>{label}</span>
       {children}
     </label>
@@ -926,10 +952,14 @@ const LogisticsSection = memo(function LogisticsSection({ t }) {
       <SectionHeading kicker={t.logistics.kicker} title={t.logistics.title} note={t.logistics.note} />
       <div className="grid gap-6">
         {t.logisticsSections.map((section, sectionIndex) => (
-          <div key={section.title} className="grid gap-3">
-            <h3 className="px-1 font-serif text-[clamp(1.6rem,2.8vw,2.3rem)] leading-[0.95] text-[#2a211c]">
-              {section.title}
-            </h3>
+          <div key={section.title} className="grid gap-2">
+            <div className="flex items-center gap-3 px-1 pb-1">
+              <div className="h-px flex-1 bg-[rgba(71,46,31,0.1)]" />
+              <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-[#5d3426]">
+                {section.title}
+              </h3>
+              <div className="h-px flex-1 bg-[rgba(71,46,31,0.1)]" />
+            </div>
             {section.items.map((card, itemIndex) => {
               const questionId = `${sectionIndex}-${itemIndex}`;
               const isOpen = openQuestion === questionId;
@@ -938,15 +968,15 @@ const LogisticsSection = memo(function LogisticsSection({ t }) {
                   <button
                     type="button"
                     onClick={() => setOpenQuestion(isOpen ? "" : questionId)}
-                    className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[rgba(200,158,91,0.65)]"
                   >
-                    <span className="font-serif text-[clamp(1.35rem,2.4vw,1.9rem)] leading-[1] text-[#2a211c]">{card.title}</span>
+                    <span className="font-serif text-[clamp(1.05rem,1.8vw,1.3rem)] leading-[1.2] text-[#2a211c]">{card.title}</span>
                     <motion.span
-                      animate={{ rotate: isOpen ? 45 : 0 }}
+                      animate={{ rotate: isOpen ? 180 : 0 }}
                       transition={{ duration: 0.2 }}
-                      className="text-2xl leading-none text-[#8a5a44]"
+                      className="shrink-0 text-[#8a5a44]"
                     >
-                      +
+                      <LuChevronDown size={16} />
                     </motion.span>
                   </button>
                   <AnimatePresence initial={false}>
@@ -959,8 +989,8 @@ const LogisticsSection = memo(function LogisticsSection({ t }) {
                         transition={{ duration: 0.25, ease: "easeInOut" }}
                         style={{ overflow: "hidden" }}
                       >
-                        <div className="border-t border-[rgba(71,46,31,0.12)] px-6 pb-6 pt-4">
-                          <p className="text-base leading-7 text-[#6a5a51]">{card.text}</p>
+                        <div className="border-t border-[rgba(71,46,31,0.12)] px-5 pb-5 pt-4">
+                          <p className="text-sm leading-6 text-[#3d2e26]">{card.text}</p>
                           <div className="mt-4 flex flex-wrap gap-2">
                             {card.links.map(([label, href]) => (
                               <a
@@ -970,7 +1000,7 @@ const LogisticsSection = memo(function LogisticsSection({ t }) {
                                 rel="noreferrer"
                                 className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(93,52,38,0.16)] bg-white/80 px-4 py-1.5 text-sm font-semibold text-[#5d3426] transition hover:border-[rgba(93,52,38,0.35)] hover:bg-white"
                               >
-                                <span>↗</span>
+                                <LuArrowUpRight size={12} />
                                 {label}
                               </a>
                             ))}
@@ -1024,19 +1054,16 @@ function StickyBar({ t }) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: "spring", damping: 28, stiffness: 300 }}
-          className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 gap-2 rounded-full border border-white/70 bg-[rgba(255,250,243,0.92)] p-1.5 shadow-[0_8px_40px_rgba(72,40,23,0.22)] backdrop-blur-xl"
+          className="fixed bottom-4 left-4 right-4 z-50 flex gap-2 rounded-full border border-white/70 bg-[rgba(255,250,243,0.92)] p-1.5 shadow-[0_8px_40px_rgba(72,40,23,0.22)] backdrop-blur-xl md:left-1/2 md:right-auto md:w-auto md:-translate-x-1/2"
         >
-          <a
-            href="#menu"
-            className="rounded-full border border-[rgba(71,46,31,0.12)] px-5 py-2.5 text-sm font-semibold text-[#5d3426] transition hover:bg-[rgba(71,46,31,0.06)]"
-          >
-            {t.menu.kicker}
+          <a href="#menu" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[rgba(71,46,31,0.12)] px-4 py-2.5 text-sm font-semibold text-[#5d3426] transition hover:bg-[rgba(71,46,31,0.06)]">
+            <LuUtensils size={13} /> <span className="hidden sm:inline">{t.menu.kicker}</span>
           </a>
-          <a
-            href="#rsvp"
-            className="rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-5 py-2.5 text-sm font-bold text-white"
-          >
-            {t.hero.primary}
+          <a href="#rsvp" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-4 py-2.5 text-sm font-bold text-white">
+            <LuMail size={13} /> {t.hero.primary}
+          </a>
+          <a href="#logistics" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[rgba(71,46,31,0.12)] px-4 py-2.5 text-sm font-semibold text-[#5d3426] transition hover:bg-[rgba(71,46,31,0.06)]">
+            <LuMap size={13} /> <span className="hidden sm:inline">{t.logistics.kicker}</span>
           </a>
         </motion.div>
       )}
