@@ -555,7 +555,7 @@ function getEventIcon(title) {
   if (t.includes("toast") || t.includes("apero") || t.includes("cremant") || t.includes("coupe")) return <LuWine size={13} />;
   if (t.includes("dinner") || t.includes("brunch") || t.includes("tea") || t.includes("gouter") || t.includes("diner") || t.includes("lunch")) return <LuUtensils size={13} />;
   if (t.includes("golf")) return <LuFlag size={13} />;
-  return null;
+  return <LuMapPin size={13} />;
 }
 
 function ScheduleSection({ t }) {
