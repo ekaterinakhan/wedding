@@ -548,71 +548,96 @@ const content = {
   }
 };
 
-const HERO_IMAGES = [
-  { src: "/us.jpeg",      alt: "Ekaterina and Lucas together" },
-  { src: "/us2.jpeg",     alt: "A portrait of the couple" },
-  { src: "/bistro.jpeg",  alt: "The bistro terrace at Roncemay" },
+// Add your own photos here — Unsplash fills the rest indefinitely
+const OWN_PHOTOS = [
+  { src: "/us.jpeg",     alt: "Ekaterina and Lucas together" },
+  { src: "/us2.jpeg",    alt: "A portrait of the couple" },
+  { src: "/bistro.jpeg", alt: "The bistro terrace at Roncemay" },
 ];
 
-function HeroPhotoStack({ images = HERO_IMAGES }) {
+const UNSPLASH_QUERIES = [
+  "wedding+couple", "romantic+couple", "wedding+flowers",
+  "engagement+ring", "wedding+celebration", "bride+groom",
+  "wedding+nature", "love+couple", "wedding+dinner",
+  "chateau+wedding", "couple+portrait", "wedding+burgundy",
+];
+
+function getPhoto(absoluteIdx) {
+  if (absoluteIdx < OWN_PHOTOS.length) return OWN_PHOTOS[absoluteIdx];
+  const i = absoluteIdx - OWN_PHOTOS.length;
+  const query = UNSPLASH_QUERIES[i % UNSPLASH_QUERIES.length];
+  return {
+    src: `https://source.unsplash.com/600x800/?${query}&sig=${absoluteIdx}`,
+    alt: "Wedding inspiration",
+  };
+}
+
+function preload(absoluteIdx) {
+  const { src } = getPhoto(absoluteIdx);
+  if (src.startsWith("/")) return; // local files already cached
+  const img = new window.Image();
+  img.src = src;
+}
+
+function HeroPhotoStack() {
+  // Absolute index — never wraps, always incrementing
   const [idx, setIdx] = useState(0);
-  const n = images.length;
 
+  // Auto-advance
   useEffect(() => {
-    const t = setInterval(() => setIdx(i => (i + 1) % n), 4000);
+    const t = setInterval(() => setIdx(i => i + 1), 4000);
     return () => clearInterval(t);
-  }, [n]);
+  }, []);
 
-  const at = (offset) => images[(idx + offset + n) % n];
+  // Pre-load next 3 images whenever idx changes
+  useEffect(() => {
+    preload(idx + 1);
+    preload(idx + 2);
+    preload(idx + 3);
+  }, [idx]);
+
+  const current = getPhoto(idx);
+  const next    = getPhoto(idx + 1);
+  const after   = getPhoto(idx + 2);
 
   return (
     <div className="flex justify-center lg:justify-end">
       <div className="relative" style={{ width: 300, height: 400 }}>
 
-        {/* Back card */}
-        <motion.div
-          animate={{ rotate: -4, x: -18, y: 16, scale: 0.91 }}
-          transition={{ type: "spring", damping: 30, stiffness: 260 }}
-          className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/60 bg-[rgba(255,250,243,0.6)] p-3 shadow-[0_12px_32px_rgba(72,40,23,0.12)]"
-          style={{ zIndex: 1 }}
+        {/* Back card — 2 ahead */}
+        <div
+          className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/50 bg-[rgba(255,250,243,0.55)] p-3 shadow-[0_8px_24px_rgba(72,40,23,0.10)]"
+          style={{ zIndex: 1, transform: "rotate(-4.5deg) translateX(-20px) translateY(18px) scale(0.90)" }}
         >
-          <img src={at(-1).src} alt={at(-1).alt} className="h-full w-full rounded-[20px] object-cover opacity-70" />
-        </motion.div>
+          <img src={after.src} alt={after.alt} className="h-full w-full rounded-[20px] object-cover opacity-60" />
+        </div>
 
-        {/* Middle card */}
-        <motion.div
-          animate={{ rotate: 3, x: 14, y: 8, scale: 0.95 }}
-          transition={{ type: "spring", damping: 30, stiffness: 260 }}
-          className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/70 bg-[rgba(255,250,243,0.75)] p-3 shadow-[0_18px_48px_rgba(72,40,23,0.15)]"
-          style={{ zIndex: 2 }}
+        {/* Middle card — 1 ahead */}
+        <div
+          className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/65 bg-[rgba(255,250,243,0.70)] p-3 shadow-[0_14px_40px_rgba(72,40,23,0.14)]"
+          style={{ zIndex: 2, transform: "rotate(3deg) translateX(14px) translateY(9px) scale(0.95)" }}
         >
-          <img src={at(1).src} alt={at(1).alt} className="h-full w-full rounded-[20px] object-cover opacity-85" />
-        </motion.div>
+          <img src={next.src} alt={next.alt} className="h-full w-full rounded-[20px] object-cover opacity-80" />
+        </div>
 
-        {/* Top card */}
+        {/* Top card — current, animated */}
         <AnimatePresence mode="wait">
           <motion.figure
             key={idx}
-            initial={{ opacity: 0, scale: 0.93, rotate: -3, y: 24 }}
-            animate={{ opacity: 1, scale: 1, rotate: 1.2, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, rotate: 7, x: 70, y: -24 }}
-            transition={{ duration: 0.52, ease: [0.22, 1, 0.36, 1] }}
-            onClick={() => setIdx(i => (i + 1) % n)}
-            className="absolute inset-0 z-10 cursor-pointer overflow-hidden rounded-[28px] border border-white/80 bg-[rgba(255,250,243,0.9)] p-3 shadow-[0_28px_64px_rgba(72,40,23,0.22)]"
+            initial={{ opacity: 0, scale: 0.93, rotate: -4, y: 28 }}
+            animate={{ opacity: 1, scale: 1, rotate: 1.5, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, rotate: 9, x: 80, y: -28 }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            onClick={() => setIdx(i => i + 1)}
+            className="absolute inset-0 z-10 cursor-pointer overflow-hidden rounded-[28px] border border-white/80 bg-[rgba(255,250,243,0.92)] p-3 shadow-[0_28px_64px_rgba(72,40,23,0.22)]"
           >
-            <img src={images[idx].src} alt={images[idx].alt} className="h-full w-full rounded-[20px] object-cover" />
+            <img src={current.src} alt={current.alt} className="h-full w-full rounded-[20px] object-cover" />
           </motion.figure>
         </AnimatePresence>
 
-        {/* Dots */}
-        <div className="absolute -bottom-7 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
-          {images.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setIdx(i)}
-              className={`h-1 rounded-full transition-all duration-300 ${i === idx ? "w-5 bg-[#8a5a44]" : "w-1.5 bg-[rgba(138,90,68,0.3)]"}`}
-            />
-          ))}
+        {/* Subtle "tap to skip" hint — fades out after first interaction */}
+        <div className="pointer-events-none absolute -bottom-6 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap text-[10px] tracking-widest text-[rgba(93,52,38,0.4)] uppercase">
+          tap to skip
         </div>
       </div>
     </div>
