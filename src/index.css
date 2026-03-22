@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", serif;
+  --font-sans: "Manrope", sans-serif;
+  --color-cream-50: #fffaf2;
+  --color-cream-100: #f8f2e9;
+  --color-cream-200: #f2e8d8;
+  --color-coffee-500: #8a5a44;
+  --color-coffee-700: #5d3426;
+  --color-ink-900: #2a211c;
+  --color-mist-600: #6a5a51;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(200, 158, 91, 0.32), transparent 28%),
+    radial-gradient(circle at top right, rgba(138, 90, 68, 0.2), transparent 30%),
+    linear-gradient(180deg, #f8f2e9 0%, #f2e8d8 100%);
+  color: var(--color-ink-900);
+  font-family: var(--font-sans);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.3), transparent 75%);
+}
+
+#root {
+  isolation: isolate;
+}
