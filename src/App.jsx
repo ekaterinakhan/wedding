@@ -550,9 +550,18 @@ const content = {
 
 // Add your own photos here — picsum fills the rest indefinitely
 const OWN_PHOTOS = [
-  { src: "/us.jpeg",     alt: "Ekaterina and Lucas",        caption: "Sep 2024" },
-  { src: "/us2.jpeg",    alt: "Goðafoss, Iceland",          caption: "Goðafoss, Iceland · Aug 2025" },
-  { src: "/bistro.jpeg", alt: "Roncemay, Burgundy",         caption: "Roncemay, Burgundy · Mar 2026" },
+  { src: "/us.jpeg",                                                              alt: "Ekaterina and Lucas",       caption: "Sep 2024" },
+  { src: "/254F07A8-FABF-491D-9DB6-1881B81BE9FD.jpeg",                           alt: "Colares, Portugal",         caption: "Colares, Portugal · Nov 2024" },
+  { src: "/80FC166B-DF1A-4BFA-A9EF-5279E290537A_1_102_a.jpeg",                   alt: "Costa da Caparica",         caption: "Portugal · Nov 2024" },
+  { src: "/870A20BA-B97F-4EDF-A30A-5847056A1E5E_1_102_o.jpeg",                   alt: "Bourges, France",           caption: "Bourges, France · Jun 2025" },
+  { src: "/2B1A780B-8A87-4BA3-BB9D-67B9E8A80431_4_5005_c.jpeg",                  alt: "Champagne, France",         caption: "Champagne, France · Jul 2025" },
+  { src: "/BBECA63C-E395-4D88-B611-8CCC5111D512_4_5005_c.jpeg",                  alt: "Paris, France",             caption: "Paris, France · Jul 2025" },
+  { src: "/us2.jpeg",                                                             alt: "Goðafoss, Iceland",         caption: "Goðafoss, Iceland · Aug 2025" },
+  { src: "/2CF40FBA-0244-4D28-A4CF-D4E72139D41D_1_105_c.jpeg",                   alt: "Snæfellsnes, Iceland",      caption: "Snæfellsnes, Iceland · Aug 2025" },
+  { src: "/DC789284-ED0D-45BA-BE57-B0327786908C_1_105_c.jpeg",                   alt: "Merry-sur-Yonne, Burgundy", caption: "Burgundy, France · Dec 2025" },
+  { src: "/FFAC5587-E4E7-4DFA-A31F-7885B94E5D5C_1_105_c.jpeg",                   alt: "New York",                  caption: "New York · Jan 2026" },
+  { src: "/0A1CA3AF-D4A6-4B92-9607-7CFFF21CFB41_1_201_a.jpeg",                   alt: "Saint-Malo, France",        caption: "Saint-Malo, France" },
+  { src: "/bistro.jpeg",                                                          alt: "Roncemay, Burgundy",        caption: "Roncemay, Burgundy · Mar 2026" },
 ];
 
 function getPhoto(i) {
