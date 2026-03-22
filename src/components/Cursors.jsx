@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, memo } from "react";
 import { motion, useSpring, useMotionValue, AnimatePresence } from "framer-motion";
 import { useFirebaseCursors } from "../hooks/useFirebaseCursors";
 
-function OtherCursor({ id, cursor }) {
+const OtherCursor = memo(function OtherCursor({ id, cursor }) {
   const x = useMotionValue(cursor.x ?? -9999);
   const y = useMotionValue(cursor.y ?? -9999);
   const springX = useSpring(x, { stiffness: 180, damping: 28, mass: 0.6 });
@@ -61,7 +61,7 @@ function OtherCursor({ id, cursor }) {
       </div>
     </motion.div>
   );
-}
+}, (prev, next) => prev.cursor.x === next.cursor.x && prev.cursor.y === next.cursor.y && prev.cursor.flag === next.cursor.flag);
 
 export function Cursors() {
   const cursors = useFirebaseCursors();

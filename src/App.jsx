@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useCallback, memo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Cursors } from "./components/Cursors";
 
 const RSVP_ENDPOINT = import.meta.env.VITE_RSVP_ENDPOINT || "/api/rsvps";
@@ -20,7 +21,7 @@ const content = {
     schedule: {
       kicker: "Day plan",
       title: "Timeline for 9 May",
-      note: "This timeline lives in one data object in the app, so it stays easy to adjust if plans shift."
+      note: "Times are indicative and may shift slightly on the day."
     },
     nextDay: {
       kicker: "Next day",
@@ -48,7 +49,7 @@ const content = {
     rsvp: {
       kicker: "RSVP",
       title: "Reply with your menu choice",
-      note: "The form is ready for real submissions. Add your preferred endpoint in `src/App.jsx` when you want responses sent online.",
+      note: "Please reply by 15 April 2026.",
       fields: {
         name: "Full name",
         email: "Email",
@@ -279,7 +280,7 @@ const content = {
     schedule: {
       kicker: "Programme",
       title: "Deroule du 9 mai",
-      note: "Ce programme vit dans un seul objet de donnees dans l'app, donc il sera facile a modifier si les horaires changent."
+      note: "Les horaires sont indicatifs et pourront legèrement evoluer le jour J."
     },
     nextDay: {
       kicker: "Le lendemain",
@@ -307,7 +308,7 @@ const content = {
     rsvp: {
       kicker: "RSVP",
       title: "Confirmez votre venue et votre menu",
-      note: "Le formulaire est pret pour de vraies reponses. Ajoutez votre endpoint prefere dans `src/App.jsx` lorsque vous voudrez recevoir les reponses en ligne.",
+      note: "Merci de repondre avant le 15 avril 2026.",
       fields: {
         name: "Nom complet",
         email: "Email",
@@ -530,9 +531,9 @@ const fieldClass =
 function App() {
   const [lang, setLang] = useState("en");
   const [status, setStatus] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [attendance, setAttendance] = useState("");
   const [selectedMain, setSelectedMain] = useState("");
-  const [openQuestion, setOpenQuestion] = useState("0-0");
 
   const t = content[lang];
   const menuRequired = attendance !== "no";
@@ -546,7 +547,7 @@ function App() {
     [t]
   );
 
-  async function handleSubmit(event) {
+  const handleSubmit = useCallback(async function handleSubmit(event) {
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -554,6 +555,8 @@ function App() {
     payload.language = lang;
     payload.submittedAt = new Date().toISOString();
 
+    setSubmitting(true);
+    setStatus("");
     try {
       if (RSVP_ENDPOINT) {
         const response = await fetch(RSVP_ENDPOINT, {
@@ -576,8 +579,10 @@ function App() {
       setSelectedMain("");
     } catch {
       setStatus(t.rsvp.error);
+    } finally {
+      setSubmitting(false);
     }
-  }
+  }, [lang, t]);
 
   return (
     <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1180px)] pb-12 sm:w-[min(calc(100%-32px),1180px)]">
@@ -601,14 +606,14 @@ function App() {
           </div>
         </div>
 
-        <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,440px)] lg:gap-12">
-          <div className="max-w-[760px] py-10 md:py-14 lg:py-16">
+        <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,400px)] lg:gap-10">
+          <div className="max-w-[760px] py-7 md:py-10 lg:py-12">
             <p className="text-xs uppercase tracking-[0.14em] text-[#5d3426]">{t.hero.eyebrow}</p>
-            <h1 className="mt-3 font-serif text-[clamp(3.2rem,9vw,7rem)] leading-[0.95] text-[#2a211c]">
+            <h1 className="mt-3 font-serif text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.95] text-[#2a211c]">
               {t.hero.title}
             </h1>
-            <p className="mt-6 max-w-[56ch] text-lg leading-8 text-[#6a5a51]">{t.hero.text}</p>
-            <div className="mt-7 flex flex-wrap gap-3">
+            <p className="mt-4 max-w-[56ch] text-base leading-7 text-[#6a5a51]">{t.hero.text}</p>
+            <div className="mt-5 flex flex-wrap gap-3">
               <a className="rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-6 py-3.5 font-bold text-white" href="#rsvp">
                 {t.hero.primary}
               </a>
@@ -642,7 +647,7 @@ function App() {
         </div>
       </header>
 
-      <main className="space-y-6 pt-6">
+      <main className="space-y-3 pt-3">
         <SectionCard>
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
@@ -659,12 +664,13 @@ function App() {
             {t.scheduleItems.map((item) => (
               <article
                 key={`${item.time}-${item.title}`}
-                className="grid gap-4 rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-5 md:grid-cols-[minmax(130px,180px)_minmax(0,1fr)_auto] md:items-start"
+                className="relative grid gap-3 overflow-hidden rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-4 pl-5 md:grid-cols-[minmax(110px,150px)_minmax(0,1fr)_auto] md:items-start"
               >
+                <div className="absolute top-0 left-0 bottom-0 w-[3px] rounded-r-sm bg-gradient-to-b from-[#c89e5b] to-[#8a5a44] opacity-50" />
                 <div className="font-bold text-[#5d3426]">{item.time}</div>
                 <div>
-                  <h3 className="mb-2 font-serif text-[clamp(1.5rem,2.6vw,2rem)] leading-[0.95]">{item.title}</h3>
-                  <p className="m-0 text-base leading-7 text-[#6a5a51]">{item.description}</p>
+                  <h3 className="mb-1 font-serif text-[clamp(1.2rem,2vw,1.6rem)] leading-[1.05]">{item.title}</h3>
+                  <p className="m-0 text-sm leading-6 text-[#6a5a51]">{item.description}</p>
                 </div>
                 <a
                   href={item.url}
@@ -685,12 +691,13 @@ function App() {
             {t.nextDayItems.map((item) => (
               <article
                 key={`${item.time}-${item.title}`}
-                className="grid gap-4 rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-5 md:grid-cols-[minmax(130px,180px)_minmax(0,1fr)_auto] md:items-start"
+                className="relative grid gap-3 overflow-hidden rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-4 pl-5 md:grid-cols-[minmax(110px,150px)_minmax(0,1fr)_auto] md:items-start"
               >
+                <div className="absolute top-0 left-0 bottom-0 w-[3px] rounded-r-sm bg-gradient-to-b from-[#c89e5b] to-[#8a5a44] opacity-50" />
                 <div className="font-bold text-[#5d3426]">{item.time}</div>
                 <div>
-                  <h3 className="mb-2 font-serif text-[clamp(1.5rem,2.6vw,2rem)] leading-[0.95]">{item.title}</h3>
-                  <p className="m-0 text-base leading-7 text-[#6a5a51]">{item.description}</p>
+                  <h3 className="mb-1 font-serif text-[clamp(1.2rem,2vw,1.6rem)] leading-[1.05]">{item.title}</h3>
+                  <p className="m-0 text-sm leading-6 text-[#6a5a51]">{item.description}</p>
                 </div>
                 <a
                   href={item.url}
@@ -705,7 +712,7 @@ function App() {
           </div>
         </SectionCard>
 
-        <SectionCard>
+        <SectionCard id="menu">
           <SectionHeading kicker={t.menu.kicker} title={t.menu.title} note={t.menu.note} />
           <div className="grid gap-4">
             <MenuCard label={t.menu.shared} title={t.menu.starterTitle} highlight>
@@ -830,63 +837,27 @@ function App() {
             <div className="flex flex-col gap-3 pt-2 md:flex-row md:items-center md:justify-between">
               <button
                 type="submit"
-                className="w-full rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-6 py-3.5 font-bold text-white md:w-auto"
+                disabled={submitting}
+                className="w-full rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-6 py-3.5 font-bold text-white transition-opacity disabled:opacity-60 md:w-auto"
               >
-                {t.rsvp.submit}
+                {submitting ? "…" : t.rsvp.submit}
               </button>
               <p className="min-h-6 text-sm leading-6 text-[#6a5a51]">{status}</p>
             </div>
           </form>
         </SectionCard>
 
-        <SectionCard id="logistics">
-          <SectionHeading kicker={t.logistics.kicker} title={t.logistics.title} note={t.logistics.note} />
-          <div className="grid gap-6">
-            {t.logisticsSections.map((section, sectionIndex) => (
-              <div key={section.title} className="grid gap-3">
-                <h3 className="px-1 font-serif text-[clamp(1.6rem,2.8vw,2.3rem)] leading-[0.95] text-[#2a211c]">
-                  {section.title}
-                </h3>
-                {section.items.map((card, itemIndex) => {
-                  const questionId = `${sectionIndex}-${itemIndex}`;
-                  const isOpen = openQuestion === questionId;
-
-                  return (
-                    <article key={card.title} className="overflow-hidden rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2]">
-                      <button
-                        type="button"
-                        onClick={() => setOpenQuestion(isOpen ? "" : questionId)}
-                        className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
-                      >
-                        <span className="font-serif text-[clamp(1.35rem,2.4vw,1.9rem)] leading-[1] text-[#2a211c]">{card.title}</span>
-                        <span className="text-2xl text-[#8a5a44]">{isOpen ? "−" : "+"}</span>
-                      </button>
-                      {isOpen ? (
-                        <div className="border-t border-[rgba(71,46,31,0.12)] px-6 pb-6 pt-4">
-                          <p className="text-base leading-7 text-[#6a5a51]">{card.text}</p>
-                          <div className="mt-4 flex flex-wrap gap-3">
-                            {card.links.map(([label, href]) => (
-                              <a
-                                key={href}
-                                href={href}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="font-bold text-[#5d3426] hover:underline"
-                              >
-                                {label}
-                              </a>
-                            ))}
-                          </div>
-                        </div>
-                      ) : null}
-                    </article>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </SectionCard>
+        <LogisticsSection t={t} />
       </main>
+
+      <footer className="mt-8 py-8 text-center">
+        <p className="font-serif text-[clamp(1.4rem,3vw,2rem)] leading-none text-[#8a5a44]">
+          Lucas &amp; Ekaterina
+        </p>
+        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#6a5a51]">9–10 May 2026 · Burgundy</p>
+      </footer>
+
+      <StickyBar t={t} />
       <Cursors />
     </div>
   );
@@ -896,7 +867,7 @@ function SectionCard({ children, id }) {
   return (
     <section
       id={id}
-      className="rounded-[20px] border border-white/70 bg-[rgba(255,250,243,0.78)] p-5 shadow-[0_24px_80px_rgba(72,40,23,0.12)] backdrop-blur-xl md:p-8"
+      className="rounded-[20px] border border-white/70 bg-[rgba(255,250,243,0.78)] p-4 shadow-[0_24px_80px_rgba(72,40,23,0.12)] backdrop-blur-xl md:p-6"
     >
       {children}
     </section>
@@ -905,12 +876,12 @@ function SectionCard({ children, id }) {
 
 function SectionHeading({ kicker, title, note }) {
   return (
-    <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
       <div>
         <p className="text-xs uppercase tracking-[0.14em] text-[#5d3426]">{kicker}</p>
-        <h2 className="font-serif text-[clamp(2.2rem,4vw,3.8rem)] leading-[0.95]">{title}</h2>
+        <h2 className="font-serif text-[clamp(1.8rem,3.5vw,3rem)] leading-[0.95]">{title}</h2>
       </div>
-      {note ? <p className="max-w-[48ch] text-base leading-7 text-[#6a5a51]">{note}</p> : null}
+      {note ? <p className="max-w-[48ch] text-sm leading-6 text-[#6a5a51]">{note}</p> : null}
     </div>
   );
 }
@@ -944,6 +915,132 @@ function Field({ label, children }) {
       <span>{label}</span>
       {children}
     </label>
+  );
+}
+
+const LogisticsSection = memo(function LogisticsSection({ t }) {
+  const [openQuestion, setOpenQuestion] = useState("0-0");
+
+  return (
+    <SectionCard id="logistics">
+      <SectionHeading kicker={t.logistics.kicker} title={t.logistics.title} note={t.logistics.note} />
+      <div className="grid gap-6">
+        {t.logisticsSections.map((section, sectionIndex) => (
+          <div key={section.title} className="grid gap-3">
+            <h3 className="px-1 font-serif text-[clamp(1.6rem,2.8vw,2.3rem)] leading-[0.95] text-[#2a211c]">
+              {section.title}
+            </h3>
+            {section.items.map((card, itemIndex) => {
+              const questionId = `${sectionIndex}-${itemIndex}`;
+              const isOpen = openQuestion === questionId;
+              return (
+                <article key={card.title} className="overflow-hidden rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2]">
+                  <button
+                    type="button"
+                    onClick={() => setOpenQuestion(isOpen ? "" : questionId)}
+                    className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                  >
+                    <span className="font-serif text-[clamp(1.35rem,2.4vw,1.9rem)] leading-[1] text-[#2a211c]">{card.title}</span>
+                    <motion.span
+                      animate={{ rotate: isOpen ? 45 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-2xl leading-none text-[#8a5a44]"
+                    >
+                      +
+                    </motion.span>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key="content"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <div className="border-t border-[rgba(71,46,31,0.12)] px-6 pb-6 pt-4">
+                          <p className="text-base leading-7 text-[#6a5a51]">{card.text}</p>
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {card.links.map(([label, href]) => (
+                              <a
+                                key={href}
+                                href={href}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(93,52,38,0.16)] bg-white/80 px-4 py-1.5 text-sm font-semibold text-[#5d3426] transition hover:border-[rgba(93,52,38,0.35)] hover:bg-white"
+                              >
+                                <span>↗</span>
+                                {label}
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </article>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </SectionCard>
+  );
+});
+
+function StickyBar({ t }) {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const hero = document.querySelector("header");
+    const rsvp = document.getElementById("rsvp");
+    if (!hero || !rsvp) return;
+
+    let heroGone = false;
+    let rsvpVisible = false;
+
+    const update = () => setShow(heroGone && !rsvpVisible);
+
+    const heroObs = new IntersectionObserver(
+      ([e]) => { heroGone = !e.isIntersecting; update(); },
+      { threshold: 0 }
+    );
+    const rsvpObs = new IntersectionObserver(
+      ([e]) => { rsvpVisible = e.isIntersecting; update(); },
+      { threshold: 0.15 }
+    );
+
+    heroObs.observe(hero);
+    rsvpObs.observe(rsvp);
+    return () => { heroObs.disconnect(); rsvpObs.disconnect(); };
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ y: 80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 80, opacity: 0 }}
+          transition={{ type: "spring", damping: 28, stiffness: 300 }}
+          className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 gap-2 rounded-full border border-white/70 bg-[rgba(255,250,243,0.92)] p-1.5 shadow-[0_8px_40px_rgba(72,40,23,0.22)] backdrop-blur-xl"
+        >
+          <a
+            href="#menu"
+            className="rounded-full border border-[rgba(71,46,31,0.12)] px-5 py-2.5 text-sm font-semibold text-[#5d3426] transition hover:bg-[rgba(71,46,31,0.06)]"
+          >
+            {t.menu.kicker}
+          </a>
+          <a
+            href="#rsvp"
+            className="rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-5 py-2.5 text-sm font-bold text-white"
+          >
+            {t.hero.primary}
+          </a>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 

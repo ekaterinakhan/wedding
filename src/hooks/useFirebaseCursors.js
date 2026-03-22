@@ -38,7 +38,7 @@ export function useFirebaseCursors() {
   const [cursors, setCursors] = useState({});
   const myIdRef = useRef(null);
   const cursorDbRef = useRef(null);
-  const countryCodeRef = useRef("XX");
+  const flagRef = useRef("🌍");
   const lastWriteRef = useRef(0);
   const rafRef = useRef(null);
 
@@ -59,8 +59,9 @@ export function useFirebaseCursors() {
     cursorDbRef.current = cursorRef;
 
     const initCursor = async () => {
-      let countryCode = sessionStorage.getItem("country-code");
-      if (!countryCode) {
+      let flag = sessionStorage.getItem("cursor-flag");
+      if (!flag) {
+        let countryCode = "XX";
         try {
           const res = await fetch("/api/country");
           if (res.ok) {
@@ -68,17 +69,18 @@ export function useFirebaseCursors() {
             countryCode = data.country || "XX";
           }
         } catch {
-          countryCode = "XX";
+          // fallback to globe
         }
-        sessionStorage.setItem("country-code", countryCode);
+        flag = countryToFlag(countryCode);
+        sessionStorage.setItem("cursor-flag", flag);
       }
-      countryCodeRef.current = countryCode;
+      flagRef.current = flag;
 
       onDisconnect(cursorRef).remove();
       await set(cursorRef, {
         x: -9999,
         y: -9999,
-        flag: countryToFlag(countryCode),
+        flag: flagRef.current,
         t: Date.now(),
       });
     };
@@ -105,7 +107,7 @@ export function useFirebaseCursors() {
           set(cursorDbRef.current, {
             x: e.pageX,
             y: e.pageY,
-            flag: countryToFlag(countryCodeRef.current),
+            flag: flagRef.current,
             t: Date.now(),
           });
         });
