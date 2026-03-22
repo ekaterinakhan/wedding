@@ -550,9 +550,9 @@ const content = {
 
 // Add your own photos here — picsum fills the rest indefinitely
 const OWN_PHOTOS = [
-  { src: "/us.jpeg",     alt: "Ekaterina and Lucas" },
-  { src: "/us2.jpeg",    alt: "A portrait of the couple" },
-  { src: "/bistro.jpeg", alt: "Roncemay bistro" },
+  { src: "/us.jpeg",     alt: "Ekaterina and Lucas",        caption: "Sep 2024" },
+  { src: "/us2.jpeg",    alt: "Goðafoss, Iceland",          caption: "Goðafoss, Iceland · Aug 2025" },
+  { src: "/bistro.jpeg", alt: "Roncemay, Burgundy",         caption: "Roncemay, Burgundy · Mar 2026" },
 ];
 
 const PICSUM_SEEDS = [10, 22, 39, 55, 67, 84, 91, 103, 118, 130, 147, 162, 179, 195, 210];
@@ -560,7 +560,7 @@ const PICSUM_SEEDS = [10, 22, 39, 55, 67, 84, 91, 103, 118, 130, 147, 162, 179, 
 function getPhoto(i) {
   if (i < OWN_PHOTOS.length) return OWN_PHOTOS[i];
   const seed = PICSUM_SEEDS[(i - OWN_PHOTOS.length) % PICSUM_SEEDS.length];
-  return { src: `https://picsum.photos/seed/${seed}/600/800`, alt: "Wedding inspiration" };
+  return { src: `https://picsum.photos/seed/${seed}/600/800`, alt: "Wedding inspiration", caption: "Roncemay · May 2026" };
 }
 
 // Per-slot rotation & offset so the pile looks natural
@@ -623,7 +623,7 @@ function HeroPhotoStack() {
                 {/* Polaroid caption strip */}
                 <div style={{ height: 58, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <span style={{ fontFamily: "Georgia, serif", fontSize: 11, color: "#8a5a44", opacity: 0.55, letterSpacing: "0.08em" }}>
-                    Roncemay · May 2026
+                    {photo.caption}
                   </span>
                 </div>
               </motion.figure>
