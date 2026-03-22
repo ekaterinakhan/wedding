@@ -555,12 +555,8 @@ const OWN_PHOTOS = [
   { src: "/bistro.jpeg", alt: "Roncemay, Burgundy",         caption: "Roncemay, Burgundy · Mar 2026" },
 ];
 
-const PICSUM_SEEDS = [10, 22, 39, 55, 67, 84, 91, 103, 118, 130, 147, 162, 179, 195, 210];
-
 function getPhoto(i) {
-  if (i < OWN_PHOTOS.length) return OWN_PHOTOS[i];
-  const seed = PICSUM_SEEDS[(i - OWN_PHOTOS.length) % PICSUM_SEEDS.length];
-  return { src: `https://picsum.photos/seed/${seed}/600/800`, alt: "Wedding inspiration", caption: "Roncemay · May 2026" };
+  return OWN_PHOTOS[i % OWN_PHOTOS.length];
 }
 
 // Per-slot rotation & offset so the pile looks natural
