@@ -49,7 +49,9 @@ const content = {
       dietaryText:
         "Vegetarian and vegan alternatives will be prepared on request. Please mention any dietary restrictions or allergies in the RSVP form.",
       selectedLabel: "Selected main",
-      selectionHint: "Tap a main course card to prefill your RSVP choice."
+      selectionHint: "Tap a main course card to prefill your RSVP choice.",
+      upcoming: "Coming soon",
+      upcomingNote: "The menu details will be shared closer to the date."
     },
     rsvp: {
       kicker: "RSVP",
@@ -328,7 +330,9 @@ const content = {
       dietaryText:
         "Des alternatives vegetariennes et vegan pourront etre preparees sur demande. Merci d'indiquer toute allergie ou restriction alimentaire dans le formulaire RSVP.",
       selectedLabel: "Plat selectionne",
-      selectionHint: "Touchez une carte plat pour preremplir votre choix dans le RSVP."
+      selectionHint: "Touchez une carte plat pour preremplir votre choix dans le RSVP.",
+      upcoming: "Bientot disponible",
+      upcomingNote: "Le menu sera partage prochainement."
     },
     rsvp: {
       kicker: "RSVP",
@@ -649,7 +653,7 @@ function HeroPhotoStack() {
                 </div>
                 {/* Polaroid caption strip */}
                 <div style={{ height: 58, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontFamily: "Georgia, serif", fontSize: 11, color: "#8a5a44", opacity: 0.55, letterSpacing: "0.08em" }}>
+                  <span style={{ fontFamily: "Georgia, serif", fontSize: 11, color: "#4d6858", opacity: 0.55, letterSpacing: "0.08em" }}>
                     {photo.caption}
                   </span>
                 </div>
@@ -684,7 +688,7 @@ function ScheduleSection({ t }) {
 
   return (
     <SectionCard>
-      <div className="mb-6 inline-flex rounded-full border border-[rgba(71,46,31,0.12)] bg-[rgba(248,242,233,0.6)] p-1">
+      <div className="mb-6 inline-flex rounded-full border border-[rgba(53,75,62,0.12)] bg-[rgba(248,242,233,0.6)] p-1">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -692,8 +696,8 @@ function ScheduleSection({ t }) {
             onClick={() => setActiveDay(tab.id)}
             className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition ${
               activeDay === tab.id
-                ? "bg-[#5d3426] text-white shadow-sm"
-                : "text-[#6a5a51] hover:text-[#3d2e26]"
+                ? "bg-[#4a6355] text-white shadow-sm"
+                : "text-[#576e63] hover:text-[#354b3e]"
             }`}
           >
             {tab.icon}{tab.label}
@@ -701,7 +705,7 @@ function ScheduleSection({ t }) {
         ))}
       </div>
       {active.note && (
-        <p className="mb-6 text-[0.8125rem] leading-relaxed text-[#3d2e26]">{active.note}</p>
+        <p className="mb-6 text-[0.8125rem] leading-relaxed text-[#354b3e]">{active.note}</p>
       )}
       <AnimatePresence mode="wait">
         <motion.div
@@ -710,7 +714,7 @@ function ScheduleSection({ t }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.2 }}
-          className="divide-y divide-[rgba(71,46,31,0.08)]"
+          className="divide-y divide-[rgba(53,75,62,0.08)]"
         >
           {active.items.map((item) => {
             const icon = getEventIcon(item.title);
@@ -719,14 +723,14 @@ function ScheduleSection({ t }) {
                 key={`${item.time}-${item.title}`}
                 className="grid grid-cols-[72px_1fr] gap-x-4 py-4 first:pt-1 last:pb-0 md:grid-cols-[80px_minmax(180px,220px)_1fr_auto] md:items-center md:gap-x-6"
               >
-                <div className="text-sm font-semibold tabular-nums text-[#8a5a44]">{item.time}</div>
-                <h3 className="inline-flex items-center gap-2 font-serif text-[1.05rem] leading-snug text-[#2a211c]">
-                  {icon && <span className="shrink-0 text-[#c89e5b]">{icon}</span>}
+                <div className="text-sm font-semibold tabular-nums text-[#4d6858]">{item.time}</div>
+                <h3 className="inline-flex items-center gap-2 font-serif text-[1.05rem] leading-snug text-[#1e2a22]">
+                  {icon && <span className="shrink-0 text-[#c4a06e]">{icon}</span>}
                   {item.title}
                 </h3>
-                <p className="col-start-2 mt-0.5 text-sm leading-6 text-[#3d2e26] md:col-start-auto md:mt-0">{item.description}</p>
+                <p className="col-start-2 mt-0.5 text-sm leading-6 text-[#354b3e] md:col-start-auto md:mt-0">{item.description}</p>
                 <a href={item.url} target="_blank" rel="noreferrer"
-                  className="col-start-2 mt-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-[rgba(93,52,38,0.14)] bg-white/60 px-3 py-1 text-[11px] font-medium text-[#8a5a44] transition hover:border-[rgba(93,52,38,0.3)] hover:bg-white md:col-start-auto md:mt-0">
+                  className="col-start-2 mt-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-[rgba(74,99,85,0.14)] bg-white/60 px-3 py-1 text-[11px] font-medium text-[#4d6858] transition hover:border-[rgba(74,99,85,0.3)] hover:bg-white md:col-start-auto md:mt-0">
                   <LuMapPin size={11} /> {item.location}
                 </a>
               </div>
@@ -739,7 +743,7 @@ function ScheduleSection({ t }) {
 }
 
 const fieldClass =
-  "w-full rounded-2xl border border-[rgba(93,52,38,0.16)] bg-[#fffdf9] px-4 py-3 text-sm text-[#2a211c] outline-none transition focus:border-[rgba(93,52,38,0.3)] focus:ring-2 focus:ring-[rgba(200,158,91,0.45)]";
+  "w-full rounded-2xl border border-[rgba(74,99,85,0.16)] bg-[#fffdf9] px-4 py-3 text-sm text-[#1e2a22] outline-none transition focus:border-[rgba(74,99,85,0.3)] focus:ring-2 focus:ring-[rgba(196,160,110,0.45)]";
 
 function App() {
   const [lang, setLang] = useState("en");
@@ -799,19 +803,19 @@ function App() {
   }, [lang, t]);
 
   return (
-    <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1100px)] pb-12 sm:w-[min(calc(100%-48px),1100px)]">
-      <header className="relative overflow-hidden rounded-[28px] border border-white/70 bg-[rgba(255,250,243,0.78)] p-5 shadow-[0_24px_80px_rgba(72,40,23,0.12)] backdrop-blur-xl">
-        <div className="absolute -right-[10%] -bottom-[20%] h-[340px] w-[340px] rounded-full bg-radial from-[rgba(200,158,91,0.45)] to-transparent" />
+    <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1100px)] pb-28 sm:w-[min(calc(100%-48px),1100px)]">
+      <header className="relative overflow-hidden rounded-[28px] border border-white/70 bg-[rgba(249,251,247,0.85)] p-5 shadow-[0_24px_80px_rgba(72,40,23,0.08)] backdrop-blur-xl">
+        <div className="absolute -right-[10%] -bottom-[20%] h-[340px] w-[340px] rounded-full bg-radial from-[rgba(196,160,110,0.45)] to-transparent" />
         <div className="relative z-10 flex items-center justify-between gap-4">
-          <div className="text-xs font-bold uppercase tracking-[0.14em] text-[#5d3426]">Wedding Weekend</div>
-          <div className="inline-flex gap-2 rounded-full border border-[rgba(71,46,31,0.12)] bg-[rgba(255,250,243,0.7)] p-1.5">
+          <div className="text-xs font-bold uppercase tracking-[0.14em] text-[#4a6355]">Wedding Weekend</div>
+          <div className="inline-flex gap-2 rounded-full border border-[rgba(53,75,62,0.12)] bg-[rgba(249,251,247,0.7)] p-1.5">
             {["en", "fr"].map((code) => (
               <button
                 key={code}
                 type="button"
                 onClick={() => setLang(code)}
                 className={`rounded-full px-4 py-2.5 text-sm font-medium transition ${
-                  lang === code ? "bg-[#5d3426] text-[#fffaf3]" : "text-[#6a5a51]"
+                  lang === code ? "bg-[#4a6355] text-[#fffaf3]" : "text-[#576e63]"
                 }`}
               >
                 {code.toUpperCase()}
@@ -822,17 +826,17 @@ function App() {
 
         <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,400px)] lg:gap-10">
           <div className="max-w-[760px] py-7 md:py-10 lg:py-12">
-            <p className="text-xs uppercase tracking-[0.14em] text-[#5d3426]">{t.hero.eyebrow}</p>
-            <h1 className="mt-3 font-serif text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.95] text-[#2a211c]">
+            <p className="text-xs uppercase tracking-[0.14em] text-[#4a6355]">{t.hero.eyebrow}</p>
+            <h1 className="mt-3 font-serif text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.95] text-[#1e2a22]">
               {t.hero.title}
             </h1>
-            <p className="mt-4 max-w-[56ch] text-base leading-7 text-[#3d2e26]">{t.hero.text}</p>
+            <p className="mt-4 max-w-[56ch] text-base leading-7 text-[#354b3e]">{t.hero.text}</p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <a className="rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-6 py-3.5 font-bold text-white" href="#rsvp">
+              <a className="rounded-full bg-gradient-to-br from-[#4a6355] to-[#4d6858] px-6 py-3.5 font-bold text-white" href="#rsvp">
                 {t.hero.primary}
               </a>
               <a
-                className="rounded-full border border-[rgba(71,46,31,0.12)] bg-[rgba(255,250,243,0.9)] px-6 py-3.5 font-bold text-[#5d3426]"
+                className="rounded-full border border-[rgba(53,75,62,0.12)] bg-[rgba(249,251,247,0.9)] px-6 py-3.5 font-bold text-[#4a6355]"
                 href="#logistics"
               >
                 {t.hero.secondary}
@@ -853,39 +857,11 @@ function App() {
         <ScheduleSection t={t} />
 
         <SectionCard id="menu">
-          <SectionHeading kicker={t.menu.kicker} title={t.menu.title} note={t.menu.note} />
-          <div className="divide-y divide-[rgba(71,46,31,0.08)]">
-
-            {/* Starter */}
-            <div className="pb-6">
-              <p className="mb-3 text-[9px] font-bold uppercase tracking-[0.22em] text-[#8a5a44]">{t.menu.starterTitle}</p>
-              <p className="font-serif text-[1.15rem] leading-snug text-[#2a211c]">{t.menu.starterDish}</p>
-            </div>
-
-            {/* Mains */}
-            <div className="py-6">
-              <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.22em] text-[#8a5a44]">{t.menu.mainTitle}</p>
-              <div className="divide-y divide-[rgba(71,46,31,0.06)]">
-                {t.menuOptions.map(([value, title, description]) => (
-                  <div key={value} className="py-3.5 first:pt-0 last:pb-0 sm:grid sm:grid-cols-[160px_1fr] sm:gap-x-6">
-                    <p className="font-serif text-[1.05rem] text-[#2a211c]">{title}</p>
-                    <p className="mt-0.5 text-sm leading-6 text-[#3d2e26] sm:mt-0">{description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Dessert */}
-            <div className="py-6">
-              <p className="mb-3 text-[9px] font-bold uppercase tracking-[0.22em] text-[#8a5a44]">{t.menu.dessertTitle}</p>
-              <p className="font-serif text-[1.15rem] leading-snug text-[#2a211c]">{t.menu.dessertDish}</p>
-            </div>
-
-            {/* Dietary */}
-            <div className="pt-6">
-              <p className="text-xs leading-5 text-[#8a5a44] opacity-70">{t.menu.dietaryText}</p>
-            </div>
-
+          <SectionHeading kicker={t.menu.kicker} title={t.menu.title} />
+          <div className="flex items-center gap-4 py-2">
+            <div className="h-px flex-1 bg-[rgba(53,75,62,0.08)]" />
+            <p className="font-serif text-[1rem] italic text-[#4d6858]/50">{t.menu.upcomingNote}</p>
+            <div className="h-px flex-1 bg-[rgba(53,75,62,0.08)]" />
           </div>
         </SectionCard>
 
@@ -908,7 +884,7 @@ function App() {
 
             {/* Attendance toggle */}
             <div className="grid gap-3">
-              <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.attendance}</p>
+              <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.attendance}</p>
               <input type="hidden" name="attendance" value={attendance} />
               <div className="flex flex-wrap gap-2">
                 {[["yes", t.rsvp.options.yes], ["no", t.rsvp.options.no]].map(([val, label]) => (
@@ -923,7 +899,7 @@ function App() {
                       setSelectedPlusOneMain("");
                     }
                   }}
-                    className={`rounded-full px-6 py-3 text-sm font-semibold transition ${attendance === val ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                    className={`rounded-full px-6 py-3 text-sm font-semibold transition ${attendance === val ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
                     {label}
                   </button>
                 ))}
@@ -940,12 +916,12 @@ function App() {
 
                   {/* Events */}
                   <div className="grid gap-3">
-                    <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.events}</p>
+                    <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.events}</p>
                     <input type="hidden" name="events" value={events} />
                     <div className="flex flex-wrap gap-2">
                       {[["wedding-and-brunch", t.rsvp.options.weddingAndBrunch], ["wedding-only", t.rsvp.options.weddingOnly], ["brunch-only", t.rsvp.options.brunchOnly]].map(([val, label]) => (
                         <button key={val} type="button" onClick={() => setEvents(val)}
-                          className={`rounded-full px-6 py-3 text-sm font-semibold transition ${events === val ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                          className={`rounded-full px-6 py-3 text-sm font-semibold transition ${events === val ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
                           {label}
                         </button>
                       ))}
@@ -995,24 +971,24 @@ function App() {
                   </div>
 
                   {/* Menu */}
-                  <div className="grid gap-4 rounded-[24px] border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-5">
+                  <div className="grid gap-4 rounded-[24px] border border-[rgba(53,75,62,0.12)] bg-[#f7f9f6] p-5">
                     <div className="grid gap-2">
-                      <h3 className="font-serif text-[clamp(1.5rem,2.5vw,2rem)] leading-[0.95] text-[#2a211c]">
+                      <h3 className="font-serif text-[clamp(1.5rem,2.5vw,2rem)] leading-[0.95] text-[#1e2a22]">
                         {plusOneEnabled ? t.rsvp.menuGroupTitlePair : t.rsvp.menuGroupTitleSingle}
                       </h3>
-                      <p className="text-sm leading-6 text-[#3d2e26]">
+                      <p className="text-sm leading-6 text-[#354b3e]">
                         {plusOneEnabled ? t.rsvp.menuGroupNotePair : t.rsvp.menuGroupNoteSingle}
                       </p>
                     </div>
 
                     <div className={`grid gap-5 ${plusOneEnabled ? "lg:grid-cols-2" : ""}`}>
                       <div className="grid gap-3">
-                        <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.menu}</p>
+                        <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.menu}</p>
                         <input type="hidden" name="menu" value={selectedMain} />
                         <div className="flex flex-wrap gap-2">
                           {t.menuOptions.map(([value, label]) => (
                             <button key={value} type="button" onClick={() => setSelectedMain(value)}
-                              className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedMain === value ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                              className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedMain === value ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
                               {label}
                             </button>
                           ))}
@@ -1021,12 +997,12 @@ function App() {
 
                       {plusOneEnabled ? (
                         <div className="grid gap-3">
-                          <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.plusOneMenu}</p>
+                          <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.plusOneMenu}</p>
                           <input type="hidden" name="plusOneMenu" value={selectedPlusOneMain} />
                           <div className="flex flex-wrap gap-2">
                             {t.menuOptions.map(([value, label]) => (
                               <button key={`plus-${value}`} type="button" onClick={() => setSelectedPlusOneMain(value)}
-                                className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedPlusOneMain === value ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                                className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedPlusOneMain === value ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
                                 {label}
                               </button>
                             ))}
@@ -1038,12 +1014,12 @@ function App() {
 
                   {/* Transfer */}
                   <div className="grid gap-3">
-                    <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.transfer}</p>
+                    <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.transfer}</p>
                     <input type="hidden" name="transfer" value={transfer} />
                     <div className="flex flex-wrap gap-2">
                       {[["yes", t.rsvp.options.transferYes], ["no", t.rsvp.options.transferNo]].map(([val, label]) => (
                         <button key={val} type="button" onClick={() => setTransfer(val)}
-                          className={`rounded-full px-6 py-3 text-sm font-semibold transition ${transfer === val ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                          className={`rounded-full px-6 py-3 text-sm font-semibold transition ${transfer === val ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
                           {label}
                         </button>
                       ))}
@@ -1060,10 +1036,10 @@ function App() {
 
             <div className="flex flex-col gap-3 pt-2 md:flex-row md:items-center md:justify-between">
               <button type="submit" disabled={submitting}
-                className="w-full rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-6 py-3.5 font-bold text-white transition-opacity disabled:opacity-60 md:w-auto">
+                className="w-full rounded-full bg-gradient-to-br from-[#4a6355] to-[#4d6858] px-6 py-3.5 font-bold text-white transition-opacity disabled:opacity-60 md:w-auto">
                 {submitting ? "…" : t.rsvp.submit}
               </button>
-              <p className="min-h-6 text-sm leading-6 text-[#6a5a51]">{status}</p>
+              <p className="min-h-6 text-sm leading-6 text-[#576e63]">{status}</p>
             </div>
           </form>
         </SectionCard>
@@ -1072,10 +1048,10 @@ function App() {
       </main>
 
       <footer className="mt-8 py-8 text-center">
-        <p className="font-serif text-[clamp(1.4rem,3vw,2rem)] leading-none text-[#8a5a44]">
+        <p className="font-serif text-[clamp(1.4rem,3vw,2rem)] leading-none text-[#4d6858]">
           Ekaterina &amp; Lucas
         </p>
-        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#6a5a51]">9–10 May 2026 · Burgundy</p>
+        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#576e63]">9–10 May 2026 · Burgundy</p>
       </footer>
 
       <StickyBar t={t} />
@@ -1088,7 +1064,7 @@ function SectionCard({ children, id }) {
   return (
     <section
       id={id}
-      className="rounded-[20px] border border-white/70 bg-[rgba(255,250,243,0.78)] p-4 shadow-[0_24px_80px_rgba(72,40,23,0.12)] backdrop-blur-xl md:p-6"
+      className="rounded-[20px] border border-white/70 bg-[rgba(249,251,247,0.85)] p-4 shadow-[0_24px_80px_rgba(72,40,23,0.08)] backdrop-blur-xl md:p-6"
     >
       {children}
     </section>
@@ -1099,22 +1075,22 @@ function SectionHeading({ kicker, title, note }) {
   return (
     <div className="mb-8">
       <div className="mb-4">
-        <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(200,158,91,0.35)] bg-[rgba(200,158,91,0.08)] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.22em] text-[#8a5a44]">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#c89e5b]" />
+        <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(196,160,110,0.35)] bg-[rgba(196,160,110,0.08)] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.22em] text-[#4d6858]">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#c4a06e]" />
           {kicker}
         </span>
       </div>
-      <h2 className="font-serif text-[clamp(1.9rem,3.8vw,3.2rem)] leading-[0.92] tracking-[-0.01em] text-[#2a211c]">{title}</h2>
-      {note ? <p className="mt-3 max-w-[58ch] text-[0.8125rem] leading-relaxed text-[#3d2e26]">{note}</p> : null}
+      <h2 className="font-serif text-[clamp(1.9rem,3.8vw,3.2rem)] leading-[0.92] tracking-[-0.01em] text-[#1e2a22]">{title}</h2>
+      {note ? <p className="mt-3 text-[0.8125rem] leading-relaxed text-[#354b3e]">{note}</p> : null}
     </div>
   );
 }
 
 function InfoCard({ title, text }) {
   return (
-    <article className="rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-6">
+    <article className="rounded-2xl border border-[rgba(53,75,62,0.12)] bg-[#f7f9f6] p-6">
       <h3 className="mb-2 font-serif text-[clamp(1.5rem,2.6vw,2rem)] leading-[0.95]">{title}</h3>
-      <p className="text-sm leading-6 text-[#3d2e26]">{text}</p>
+      <p className="text-sm leading-6 text-[#354b3e]">{text}</p>
     </article>
   );
 }
@@ -1122,7 +1098,7 @@ function InfoCard({ title, text }) {
 
 function Field({ label, children }) {
   return (
-    <label className="grid gap-2 text-sm text-[#3d2e26]">
+    <label className="grid gap-2 text-sm text-[#354b3e]">
       <span>{label}</span>
       {children}
     </label>
@@ -1139,27 +1115,27 @@ const LogisticsSection = memo(function LogisticsSection({ t }) {
         {t.logisticsSections.map((section, sectionIndex) => (
           <div key={section.title} className="grid gap-2">
             <div className="flex items-center gap-3 px-1 pb-1">
-              <div className="h-px flex-1 bg-[rgba(71,46,31,0.1)]" />
-              <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-[#5d3426]">
+              <div className="h-px flex-1 bg-[rgba(53,75,62,0.1)]" />
+              <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-[#4a6355]">
                 {section.title}
               </h3>
-              <div className="h-px flex-1 bg-[rgba(71,46,31,0.1)]" />
+              <div className="h-px flex-1 bg-[rgba(53,75,62,0.1)]" />
             </div>
             {section.items.map((card, itemIndex) => {
               const questionId = `${sectionIndex}-${itemIndex}`;
               const isOpen = openQuestion === questionId;
               return (
-                <article key={card.title} className="overflow-hidden rounded-2xl border border-[rgba(71,46,31,0.12)] bg-[#fffaf2]">
+                <article key={card.title} className="overflow-hidden rounded-2xl border border-[rgba(53,75,62,0.12)] bg-[#f7f9f6]">
                   <button
                     type="button"
                     onClick={() => setOpenQuestion(isOpen ? "" : questionId)}
-                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[rgba(200,158,91,0.65)]"
+                    className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left transition-colors duration-150 hover:bg-[rgba(53,75,62,0.03)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[rgba(196,160,110,0.65)]"
                   >
-                    <span className="font-serif text-[clamp(1.05rem,1.8vw,1.3rem)] leading-[1.2] text-[#2a211c]">{card.title}</span>
+                    <span className="font-serif text-[clamp(1.05rem,1.8vw,1.3rem)] leading-[1.2] text-[#1e2a22]">{card.title}</span>
                     <motion.span
                       animate={{ rotate: isOpen ? 180 : 0 }}
                       transition={{ duration: 0.2 }}
-                      className="shrink-0 text-[#8a5a44]"
+                      className="shrink-0 text-[#4d6858]"
                     >
                       <LuChevronDown size={16} />
                     </motion.span>
@@ -1174,8 +1150,8 @@ const LogisticsSection = memo(function LogisticsSection({ t }) {
                         transition={{ duration: 0.25, ease: "easeInOut" }}
                         style={{ overflow: "hidden" }}
                       >
-                        <div className="border-t border-[rgba(71,46,31,0.12)] px-5 pb-5 pt-4">
-                          <p className="whitespace-pre-line text-sm leading-6 text-[#3d2e26]">{card.text}</p>
+                        <div className="border-t border-[rgba(53,75,62,0.12)] px-5 pb-5 pt-4">
+                          <p className="whitespace-pre-line text-sm leading-6 text-[#354b3e]">{card.text}</p>
                           {card.links.length ? (
                             <div className="mt-4 flex flex-wrap gap-2">
                               {card.links.map(([label, href]) => (
@@ -1184,7 +1160,7 @@ const LogisticsSection = memo(function LogisticsSection({ t }) {
                                   href={href}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(93,52,38,0.16)] bg-white/80 px-4 py-1.5 text-sm font-semibold text-[#5d3426] transition hover:border-[rgba(93,52,38,0.35)] hover:bg-white"
+                                  className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(74,99,85,0.16)] bg-white/80 px-4 py-1.5 text-sm font-semibold text-[#4a6355] transition hover:border-[rgba(74,99,85,0.35)] hover:bg-white"
                                 >
                                   <LuArrowUpRight size={12} />
                                   {label}
@@ -1241,15 +1217,15 @@ function StickyBar({ t }) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: "spring", damping: 28, stiffness: 300 }}
-          className="fixed bottom-4 left-4 right-4 z-50 flex gap-2 rounded-full border border-white/70 bg-[rgba(255,250,243,0.92)] p-1.5 shadow-[0_8px_40px_rgba(72,40,23,0.22)] backdrop-blur-xl md:left-1/2 md:right-auto md:w-auto md:-translate-x-1/2"
+          className="fixed bottom-4 left-4 right-4 z-50 flex gap-2 rounded-full border border-white/70 bg-[rgba(249,251,247,0.92)] p-1.5 shadow-[0_8px_40px_rgba(72,40,23,0.22)] backdrop-blur-xl md:left-1/2 md:right-auto md:w-auto md:-translate-x-1/2"
         >
-          <a href="#menu" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[rgba(71,46,31,0.12)] px-4 py-2.5 text-sm font-semibold text-[#5d3426] transition hover:bg-[rgba(71,46,31,0.06)]">
+          <a href="#menu" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[rgba(53,75,62,0.12)] px-4 py-2.5 text-sm font-semibold text-[#4a6355] transition hover:bg-[rgba(53,75,62,0.06)]">
             <LuUtensils size={13} /> <span className="hidden sm:inline">{t.menu.kicker}</span>
           </a>
-          <a href="#rsvp" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#5d3426] to-[#8a5a44] px-4 py-2.5 text-sm font-bold text-white">
+          <a href="#rsvp" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#4a6355] to-[#4d6858] px-4 py-2.5 text-sm font-bold text-white">
             <LuMail size={13} /> {t.hero.primary}
           </a>
-          <a href="#logistics" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[rgba(71,46,31,0.12)] px-4 py-2.5 text-sm font-semibold text-[#5d3426] transition hover:bg-[rgba(71,46,31,0.06)]">
+          <a href="#logistics" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[rgba(53,75,62,0.12)] px-4 py-2.5 text-sm font-semibold text-[#4a6355] transition hover:bg-[rgba(53,75,62,0.06)]">
             <LuMap size={13} /> <span className="hidden sm:inline">{t.logistics.kicker}</span>
           </a>
         </motion.div>
