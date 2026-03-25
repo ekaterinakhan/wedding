@@ -707,12 +707,12 @@ function HeroPhotoStack() {
 
 function getEventIcon(title) {
   const t = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  if (t.includes("ceremony") || t.includes("civil") || t.includes("ceremonie")) return <LuHeart size={13} />;
-  if (t.includes("transfer") || t.includes("transfert")) return <LuCar size={13} />;
-  if (t.includes("toast") || t.includes("apero") || t.includes("cremant") || t.includes("coupe")) return <LuWine size={13} />;
-  if (t.includes("dinner") || t.includes("brunch") || t.includes("tea") || t.includes("gouter") || t.includes("diner") || t.includes("lunch")) return <LuUtensils size={13} />;
-  if (t.includes("golf")) return <LuFlag size={13} />;
-  return <LuMapPin size={13} />;
+  if (t.includes("ceremony") || t.includes("civil") || t.includes("ceremonie")) return { icon: <LuHeart size={15} />, bg: "bg-[rgba(180,80,80,0.08)]", color: "text-[#b45050]" };
+  if (t.includes("transfer") || t.includes("transfert")) return { icon: <LuCar size={15} />, bg: "bg-[rgba(74,99,85,0.08)]", color: "text-[#4a6355]" };
+  if (t.includes("toast") || t.includes("apero") || t.includes("cremant") || t.includes("coupe")) return { icon: <LuWine size={15} />, bg: "bg-[rgba(196,160,110,0.12)]", color: "text-[#b08a4a]" };
+  if (t.includes("dinner") || t.includes("brunch") || t.includes("tea") || t.includes("gouter") || t.includes("diner") || t.includes("lunch")) return { icon: <LuUtensils size={15} />, bg: "bg-[rgba(196,160,110,0.12)]", color: "text-[#b08a4a]" };
+  if (t.includes("golf")) return { icon: <LuFlag size={15} />, bg: "bg-[rgba(74,99,85,0.08)]", color: "text-[#4a6355]" };
+  return { icon: <LuMapPin size={15} />, bg: "bg-[rgba(74,99,85,0.08)]", color: "text-[#4a6355]" };
 }
 
 function ScheduleSection({ t }) {
@@ -756,15 +756,15 @@ function ScheduleSection({ t }) {
           className="divide-y divide-[rgba(53,75,62,0.08)]"
         >
           {active.items.map((item) => {
-            const icon = getEventIcon(item.title);
+            const { icon, bg, color } = getEventIcon(item.title);
             return (
               <div
                 key={`${item.time}-${item.title}`}
                 className="grid grid-cols-[72px_1fr] gap-x-4 py-4 first:pt-1 last:pb-0 md:grid-cols-[80px_minmax(180px,220px)_1fr_auto] md:items-center md:gap-x-6"
               >
                 <div className="text-sm font-semibold tabular-nums text-[#4d6858]">{item.time}</div>
-                <h3 className="inline-flex items-center gap-2 font-serif text-[1.05rem] leading-snug text-[#1e2a22]">
-                  {icon && <span className="shrink-0 text-[#c4a06e]">{icon}</span>}
+                <h3 className="inline-flex items-center gap-2.5 font-serif text-[1.05rem] leading-snug text-[#1e2a22]">
+                  <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${bg} ${color}`}>{icon}</span>
                   {item.title}
                 </h3>
                 <p className="col-start-2 mt-0.5 text-sm leading-6 text-[#354b3e] md:col-start-auto md:mt-0">{item.description}</p>
