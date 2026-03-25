@@ -43,8 +43,18 @@ export function useFirebaseCursors() {
   const rafRef = useRef(null);
 
   useEffect(() => {
-    // Skip if Firebase isn't configured
-    if (!import.meta.env.VITE_FIREBASE_DATABASE_URL) return;
+    // Check for missing credentials
+    const missingVars = [
+      "VITE_FIREBASE_API_KEY",
+      "VITE_FIREBASE_AUTH_DOMAIN",
+      "VITE_FIREBASE_DATABASE_URL",
+      "VITE_FIREBASE_PROJECT_ID",
+    ].filter((key) => !import.meta.env[key]);
+
+    if (missingVars.length > 0) {
+      console.error("[Cursors] Firebase not configured — missing env vars:", missingVars);
+      return;
+    }
 
     let mounted = true;
 
@@ -55,8 +65,15 @@ export function useFirebaseCursors() {
     }
     myIdRef.current = id;
 
-    const app = initFirebase();
-    const db = getDatabase(app);
+    let app, db;
+    try {
+      app = initFirebase();
+      db = getDatabase(app);
+    } catch (err) {
+      console.error("[Cursors] Failed to initialize Firebase:", err);
+      return;
+    }
+
     const cursorRef = ref(db, `cursors/${id}`);
     cursorDbRef.current = cursorRef;
 
@@ -90,16 +107,25 @@ export function useFirebaseCursors() {
       });
     };
 
-    initCursor().catch(() => {});
+    initCursor().catch((err) => {
+      console.error("[Cursors] Failed to init cursor in Firebase:", err);
+    });
 
     const cursorsRef = ref(db, "cursors");
-    const unsubscribe = onValue(cursorsRef, (snapshot) => {
-      const data = snapshot.val() || {};
-      const others = Object.fromEntries(
-        Object.entries(data).filter(([k]) => k !== id)
-      );
-      setCursors(others);
-    });
+    const unsubscribe = onValue(
+      cursorsRef,
+      (snapshot) => {
+        const data = snapshot.val() || {};
+        const now = Date.now();
+        const others = Object.fromEntries(
+          Object.entries(data).filter(([k, v]) => k !== id && now - (v.t || 0) < 30000)
+        );
+        setCursors(others);
+      },
+      (err) => {
+        console.error("[Cursors] Firebase onValue error (check DB rules or credentials):", err);
+      }
+    );
 
     const handleMouseMove = (e) => {
       if (!cursorDbRef.current) return;
