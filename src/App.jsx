@@ -615,28 +615,27 @@ const content = {
 
 // Add your own photos here — picsum fills the rest indefinitely
 const OWN_PHOTOS = [
-  { src: "/US/us.jpeg",                                                           alt: "Ekaterina and Lucas",       caption: "Sep 2024" },
-  { src: "/US/4FFF7C9B-0B4A-4D4E-839B-A9E72AB1CCEE_4_5005_c.jpeg",              alt: "Cologne, Germany",          caption: "Cologne, Germany · Oct 2024" },
-  { src: "/US/254F07A8-FABF-491D-9DB6-1881B81BE9FD.jpeg",                        alt: "Colares, Portugal",         caption: "Colares, Portugal · Nov 2024" },
-  { src: "/US/1BDDC947-11B0-4884-A3F1-C8E572157DE6_1_105_c.jpeg",               alt: "Algarve, Portugal",         caption: "Algarve, Portugal · Nov 2024" },
-  { src: "/US/FD496A6E-2160-4C7D-BE51-261A4C8F4CD5_1_105_c.jpeg",               alt: "Portugal coast",            caption: "Portugal · Nov 2024" },
-  { src: "/US/80FC166B-DF1A-4BFA-A9EF-5279E290537A_1_102_a.jpeg",                alt: "Costa da Caparica",         caption: "Portugal · Nov 2024" },
-  { src: "/US/482F6450-1CAF-4AA6-B1AD-FCD22353ED55_1_105_c.jpeg",               alt: "Paris, France",             caption: "Paris, France · Nov 2024" },
-  { src: "/US/DD117C22-4102-47D8-B34D-AEE20D1B441E_1_105_c.jpeg",               alt: "Paris, France",             caption: "Paris, France · Feb 2025" },
-  { src: "/US/B3D5FAF4-DC07-4A70-9851-07A33C3457F0_1_105_c.jpeg",               alt: "Alps ski resort",           caption: "Alps · Winter 2025" },
-  { src: "/US/870A20BA-B97F-4EDF-A30A-5847056A1E5E_1_102_o.jpeg",                alt: "Bourges, France",           caption: "Bourges, France · Jun 2025" },
-  { src: "/US/5CB92410-2691-4E79-AA10-AE6874815518_1_105_c.jpeg",               alt: "Bourges cathedral",         caption: "Bourges, France · Jun 2025" },
-  { src: "/US/43435194-C570-4508-9E88-9C99271C5769_1_105_c.jpeg",               alt: "Champagne fields",          caption: "Champagne, France · Jul 2025" },
-  { src: "/US/2B1A780B-8A87-4BA3-BB9D-67B9E8A80431_4_5005_c.jpeg",               alt: "Champagne, France",         caption: "Champagne, France · Jul 2025" },
-  { src: "/US/BBECA63C-E395-4D88-B611-8CCC5111D512_4_5005_c.jpeg",               alt: "Paris, France",             caption: "Paris, France · Jul 2025" },
-  { src: "/US/9188E803-F867-4D62-BD13-579188465F37_1_105_c.jpeg",               alt: "Paris, Eiffel Tower",       caption: "Paris, France · Jul 2025" },
-  { src: "/US/us2.jpeg",                                                          alt: "Goðafoss, Iceland",         caption: "Goðafoss, Iceland · Aug 2025" },
-  { src: "/US/2CF40FBA-0244-4D28-A4CF-D4E72139D41D_1_105_c.jpeg",                alt: "Snæfellsnes, Iceland",      caption: "Snæfellsnes, Iceland · Aug 2025" },
-  { src: "/US/DC789284-ED0D-45BA-BE57-B0327786908C_1_105_c.jpeg",                alt: "Merry-sur-Yonne, Burgundy", caption: "Burgundy, France · Dec 2025" },
-  { src: "/US/FFAC5587-E4E7-4DFA-A31F-7885B94E5D5C_1_105_c.jpeg",                alt: "New York",                  caption: "New York · Jan 2026" },
-  { src: "/US/0A1CA3AF-D4A6-4B92-9607-7CFFF21CFB41_1_201_a.jpeg",                alt: "Saint-Malo, France",        caption: "Saint-Malo, France · Feb 2026" },
-  { src: "/US/51CDE3DF-1D24-4271-9700-174675341EBE_1_105_c.jpeg",               alt: "Amsterdam, Netherlands",    caption: "Amsterdam · Mar 2026" },
-  { src: "/bistro.jpeg",                                                          alt: "Roncemay, Burgundy",        caption: "Roncemay, Burgundy · Mar 2026" },
+  { src: "/US/us.jpeg", alt: "Ekaterina and Lucas", caption: "Paris, France · Sep 2024" },
+  { src: "/US/254F07A8-FABF-491D-9DB6-1881B81BE9FD.jpeg", alt: "Colares, Portugal", caption: "Colares, Portugal · Nov 2024" },
+  { src: "/US/1BDDC947-11B0-4884-A3F1-C8E572157DE6_1_105_c.jpeg", alt: "Algarve, Portugal", caption: "Algarve, Portugal · Nov 2024" },
+  { src: "/US/FD496A6E-2160-4C7D-BE51-261A4C8F4CD5_1_105_c.jpeg", alt: "Portugal coast", caption: "Portugal · Nov 2024" },
+  { src: "/US/80FC166B-DF1A-4BFA-A9EF-5279E290537A_1_102_a.jpeg", alt: "Costa da Caparica", caption: "Portugal · Nov 2024" },
+  { src: "/US/482F6450-1CAF-4AA6-B1AD-FCD22353ED55_1_105_c.jpeg", alt: "Paris, France", caption: "Paris, France · Nov 2024" },
+  { src: "/US/B3D5FAF4-DC07-4A70-9851-07A33C3457F0_1_105_c.jpeg", alt: "Alps, France", caption: "Alps, France · Dec 2024" },
+  { src: "/US/DD117C22-4102-47D8-B34D-AEE20D1B441E_1_105_c.jpeg", alt: "Paris, France", caption: "Paris, France · Feb 2025" },
+  { src: "/US/5CB92410-2691-4E79-AA10-AE6874815518_1_105_c.jpeg", alt: "Bourges cathedral", caption: "Barcelona, Spain · Feb 2025" },
+  { src: "/US/870A20BA-B97F-4EDF-A30A-5847056A1E5E_1_102_o.jpeg", alt: "Bourges, France", caption: "Bourges, France · Jun 2025" },
+  { src: "/US/43435194-C570-4508-9E88-9C99271C5769_1_105_c.jpeg", alt: "Champagne", caption: "Champagne, France · Jul 2025" },
+  { src: "/US/4FFF7C9B-0B4A-4D4E-839B-A9E72AB1CCEE_4_5005_c.jpeg", alt: "Rouen , France", caption: "Rouen, France · Sept 2025" },
+  { src: "/US/2B1A780B-8A87-4BA3-BB9D-67B9E8A80431_4_5005_c.jpeg", alt: "Champagne, France", caption: "Champagne, France · Jul 2025" },
+  { src: "/US/BBECA63C-E395-4D88-B611-8CCC5111D512_4_5005_c.jpeg", alt: "Paris, France", caption: "Paris, France · Jul 2025" },
+  { src: "/US/9188E803-F867-4D62-BD13-579188465F37_1_105_c.jpeg", alt: "Paris, Eiffel Tower", caption: "Paris, France · Jul 2025" },
+  { src: "/US/us2.jpeg", alt: "Goðafoss, Iceland", caption: "Goðafoss, Iceland · Aug 2025" },
+  { src: "/US/2CF40FBA-0244-4D28-A4CF-D4E72139D41D_1_105_c.jpeg", alt: "Snæfellsnes, Iceland", caption: "Snæfellsnes, Iceland · Aug 2025" },
+  { src: "/US/DC789284-ED0D-45BA-BE57-B0327786908C_1_105_c.jpeg", alt: "Merry-sur-Yonne, Burgundy", caption: "Burgundy, France · Dec 2025" },
+  { src: "/US/FFAC5587-E4E7-4DFA-A31F-7885B94E5D5C_1_105_c.jpeg", alt: "New York", caption: "New York · Jan 2026" },
+  { src: "/US/0A1CA3AF-D4A6-4B92-9607-7CFFF21CFB41_1_201_a.jpeg", alt: "Saint-Malo, France", caption: "Saint-Malo, France · Feb 2026" },
+  { src: "/US/51CDE3DF-1D24-4271-9700-174675341EBE_1_105_c.jpeg", alt: "Amsterdam, Netherlands", caption: "Amsterdam · Mar 2026" },
 ];
 
 function getPhoto(i) {
@@ -645,9 +644,9 @@ function getPhoto(i) {
 
 // Per-slot rotation & offset so the pile looks natural
 const SLOT = [
-  { rotate:  2.5, x:   0, y:  0 },   // top
-  { rotate: -3.5, x:  -6, y:  9 },   // middle
-  { rotate:  4.5, x:   8, y: 16 },   // back
+  { rotate: 2.5, x: 0, y: 0 },   // top
+  { rotate: -3.5, x: -6, y: 9 },   // middle
+  { rotate: 4.5, x: 8, y: 16 },   // back
 ];
 const STACK = SLOT.length;
 
@@ -743,11 +742,10 @@ function ScheduleSection({ t }) {
             key={tab.id}
             type="button"
             onClick={() => setActiveDay(tab.id)}
-            className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition ${
-              activeDay === tab.id
-                ? "bg-[#4a6355] text-white shadow-sm"
-                : "text-[#576e63] hover:text-[#354b3e]"
-            }`}
+            className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition ${activeDay === tab.id
+              ? "bg-[#4a6355] text-white shadow-sm"
+              : "text-[#576e63] hover:text-[#354b3e]"
+              }`}
           >
             {tab.icon}{tab.label}
           </button>
@@ -825,7 +823,7 @@ function App() {
     fetch("/api/country")
       .then((r) => r.json())
       .then((data) => { if (data.country && data.country !== "XX") setPhoneCountry(data.country); })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const handleSubmit = useCallback(async function handleSubmit(event) {
@@ -903,9 +901,8 @@ function App() {
                 key={code}
                 type="button"
                 onClick={() => setLang(code)}
-                className={`rounded-full px-4 py-2.5 text-sm font-medium transition ${
-                  lang === code ? "bg-[#4a6355] text-[#fffaf3]" : "text-[#576e63]"
-                }`}
+                className={`rounded-full px-4 py-2.5 text-sm font-medium transition ${lang === code ? "bg-[#4a6355] text-[#fffaf3]" : "text-[#576e63]"
+                  }`}
               >
                 {code.toUpperCase()}
               </button>
@@ -959,141 +956,102 @@ function App() {
           {rsvpConfirmed ? (
             <RsvpConfirmed name={rsvpConfirmed.name} plusOneName={rsvpConfirmed.plusOneName} kids={rsvpConfirmed.kids || []} already={rsvpConfirmed.already} t={t} />
           ) : (
-          <form className="grid gap-8" onSubmit={handleSubmit}>
+            <form className="grid gap-8" onSubmit={handleSubmit}>
 
-            {/* Contact */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label={t.rsvp.fields.name}>
-                <input className={fieldClass} name="name" required />
-              </Field>
-              <Field label={t.rsvp.fields.email}>
-                <input className={fieldClass} name="email" type="email" required />
-              </Field>
-              <Field label={t.rsvp.fields.phone}>
-                <PhoneInput
-                  international
-                  defaultCountry={phoneCountry}
-                  value={phone}
-                  onChange={setPhone}
-                  className="phone-input"
-                />
-              </Field>
-            </div>
-
-            {/* Attendance toggle */}
-            <div className="grid gap-3">
-              <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.attendance}</p>
-              <input type="hidden" name="attendance" value={attendance} />
-              <div className="flex flex-wrap gap-2">
-                {[["yes", t.rsvp.options.yes], ["no", t.rsvp.options.no]].map(([val, label]) => (
-                  <button key={val} type="button" onClick={() => {
-                    setAttendance(val);
-                    if (val === "no") {
-                      setEvents("");
-                      setTransfer("");
-                      setArrivalDateTime("");
-                      setArrivalLocation("");
-                      setReturnDateTime("");
-                      setReturnLocation("");
-                      setTransferPartySize("");
-                      setSelectedMain("");
-                      setHasPlusOne("");
-                      setPlusOneName("");
-                      setSelectedPlusOneMain("");
-                      setHasKids("");
-                      setKids([]);
-                    }
-                  }}
-                    className={`rounded-full px-6 py-3 text-sm font-semibold transition ${attendance === val ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
-                    {label}
-                  </button>
-                ))}
+              {/* Contact */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label={t.rsvp.fields.name}>
+                  <input className={fieldClass} name="name" required />
+                </Field>
+                <Field label={t.rsvp.fields.email}>
+                  <input className={fieldClass} name="email" type="email" required />
+                </Field>
+                <Field label={t.rsvp.fields.phone}>
+                  <PhoneInput
+                    international
+                    defaultCountry={phoneCountry}
+                    value={phone}
+                    onChange={setPhone}
+                    className="phone-input"
+                  />
+                </Field>
               </div>
-            </div>
 
-            {/* Progressive disclosure */}
-            <AnimatePresence>
-              {attendance === "yes" && (
-                <motion.div key="yes-fields"
-                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.28 }}
-                  className="grid gap-8">
+              {/* Attendance toggle */}
+              <div className="grid gap-3">
+                <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.attendance}</p>
+                <input type="hidden" name="attendance" value={attendance} />
+                <div className="flex flex-wrap gap-2">
+                  {[["yes", t.rsvp.options.yes], ["no", t.rsvp.options.no]].map(([val, label]) => (
+                    <button key={val} type="button" onClick={() => {
+                      setAttendance(val);
+                      if (val === "no") {
+                        setEvents("");
+                        setTransfer("");
+                        setArrivalDateTime("");
+                        setArrivalLocation("");
+                        setReturnDateTime("");
+                        setReturnLocation("");
+                        setTransferPartySize("");
+                        setSelectedMain("");
+                        setHasPlusOne("");
+                        setPlusOneName("");
+                        setSelectedPlusOneMain("");
+                        setHasKids("");
+                        setKids([]);
+                      }
+                    }}
+                      className={`rounded-full px-6 py-3 text-sm font-semibold transition ${attendance === val ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-                  {/* Events */}
-                  <div className="grid gap-3">
-                    <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.events}</p>
-                    <input type="hidden" name="events" value={events} />
-                    <div className="flex flex-wrap gap-2">
-                      {[["wedding-and-brunch", t.rsvp.options.weddingAndBrunch], ["wedding-only", t.rsvp.options.weddingOnly], ["brunch-only", t.rsvp.options.brunchOnly]].map(([val, label]) => (
-                        <button key={val} type="button" onClick={() => setEvents(val)}
-                          className={`rounded-full px-6 py-3 text-sm font-semibold transition ${events === val ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+              {/* Progressive disclosure */}
+              <AnimatePresence>
+                {attendance === "yes" && (
+                  <motion.div key="yes-fields"
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.28 }}
+                    className="grid gap-8">
 
-                  {/* Plus one */}
-                  <div className="grid gap-4 rounded-[24px] border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-5">
-                    <div className="grid gap-2">
-                      <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.plusOne}</p>
-                      <input type="hidden" name="plusOne" value={hasPlusOne} />
+                    {/* Events */}
+                    <div className="grid gap-3">
+                      <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.events}</p>
+                      <input type="hidden" name="events" value={events} />
                       <div className="flex flex-wrap gap-2">
-                        {[["yes", t.rsvp.options.plusOneYes], ["no", t.rsvp.options.plusOneNo]].map(([val, label]) => (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => {
-                              setHasPlusOne(val);
-                              if (val !== "yes") {
-                                setPlusOneName("");
-                                setSelectedPlusOneMain("");
-                              }
-                            }}
-                            className={`rounded-full px-6 py-3 text-sm font-semibold transition ${
-                              hasPlusOne === val
-                                ? "bg-[#5d3426] text-white shadow-sm"
-                                : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"
-                            }`}
-                          >
+                        {[["wedding-and-brunch", t.rsvp.options.weddingAndBrunch], ["wedding-only", t.rsvp.options.weddingOnly], ["brunch-only", t.rsvp.options.brunchOnly]].map(([val, label]) => (
+                          <button key={val} type="button" onClick={() => setEvents(val)}
+                            className={`rounded-full px-6 py-3 text-sm font-semibold transition ${events === val ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
                             {label}
                           </button>
                         ))}
                       </div>
                     </div>
 
-                    {plusOneEnabled ? (
-                      <Field label={t.rsvp.fields.plusOneName}>
-                        <input
-                          className={fieldClass}
-                          name="plusOneName"
-                          value={plusOneName}
-                          onChange={(event) => setPlusOneName(event.target.value)}
-                          required={plusOneEnabled}
-                        />
-                      </Field>
-                    ) : null}
-                  </div>
-
-                  {/* Menu */}
-                  <div className="grid gap-4 rounded-[24px] border border-[rgba(53,75,62,0.12)] bg-[#f7f9f6] p-5">
-                    <div className="grid gap-2">
-                      <h3 className="font-serif text-[clamp(1.5rem,2.5vw,2rem)] leading-[0.95] text-[#1e2a22]">
-                        {plusOneEnabled ? t.rsvp.menuGroupTitlePair : t.rsvp.menuGroupTitleSingle}
-                      </h3>
-                      <p className="text-sm leading-6 text-[#354b3e]">
-                        {plusOneEnabled ? t.rsvp.menuGroupNotePair : t.rsvp.menuGroupNoteSingle}
-                      </p>
-                    </div>
-
-                    <div className={`grid gap-5 ${plusOneEnabled ? "lg:grid-cols-2" : ""}`}>
-                      <div className="grid gap-3">
-                        <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.menu}</p>
-                        <input type="hidden" name="menu" value={selectedMain} />
+                    {/* Plus one */}
+                    <div className="grid gap-4 rounded-[24px] border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-5">
+                      <div className="grid gap-2">
+                        <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.plusOne}</p>
+                        <input type="hidden" name="plusOne" value={hasPlusOne} />
                         <div className="flex flex-wrap gap-2">
-                          {t.menuOptions.map(([value, label]) => (
-                            <button key={value} type="button" onClick={() => setSelectedMain(value)}
-                              className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedMain === value ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
+                          {[["yes", t.rsvp.options.plusOneYes], ["no", t.rsvp.options.plusOneNo]].map(([val, label]) => (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={() => {
+                                setHasPlusOne(val);
+                                if (val !== "yes") {
+                                  setPlusOneName("");
+                                  setSelectedPlusOneMain("");
+                                }
+                              }}
+                              className={`rounded-full px-6 py-3 text-sm font-semibold transition ${hasPlusOne === val
+                                ? "bg-[#5d3426] text-white shadow-sm"
+                                : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"
+                                }`}
+                            >
                               {label}
                             </button>
                           ))}
@@ -1101,184 +1059,222 @@ function App() {
                       </div>
 
                       {plusOneEnabled ? (
+                        <Field label={t.rsvp.fields.plusOneName}>
+                          <input
+                            className={fieldClass}
+                            name="plusOneName"
+                            value={plusOneName}
+                            onChange={(event) => setPlusOneName(event.target.value)}
+                            required={plusOneEnabled}
+                          />
+                        </Field>
+                      ) : null}
+                    </div>
+
+                    {/* Menu */}
+                    <div className="grid gap-4 rounded-[24px] border border-[rgba(53,75,62,0.12)] bg-[#f7f9f6] p-5">
+                      <div className="grid gap-2">
+                        <h3 className="font-serif text-[clamp(1.5rem,2.5vw,2rem)] leading-[0.95] text-[#1e2a22]">
+                          {plusOneEnabled ? t.rsvp.menuGroupTitlePair : t.rsvp.menuGroupTitleSingle}
+                        </h3>
+                        <p className="text-sm leading-6 text-[#354b3e]">
+                          {plusOneEnabled ? t.rsvp.menuGroupNotePair : t.rsvp.menuGroupNoteSingle}
+                        </p>
+                      </div>
+
+                      <div className={`grid gap-5 ${plusOneEnabled ? "lg:grid-cols-2" : ""}`}>
                         <div className="grid gap-3">
-                          <p className="text-sm font-medium text-[#1e2a22]">{plusOneName.trim() ? `${t.rsvp.fields.plusOneMenuFor} ${plusOneName.trim().split(" ")[0]}` : t.rsvp.fields.plusOneMenu}</p>
-                          <input type="hidden" name="plusOneMenu" value={selectedPlusOneMain} />
+                          <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.menu}</p>
+                          <input type="hidden" name="menu" value={selectedMain} />
                           <div className="flex flex-wrap gap-2">
                             {t.menuOptions.map(([value, label]) => (
-                              <button key={`plus-${value}`} type="button" onClick={() => setSelectedPlusOneMain(value)}
-                                className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedPlusOneMain === value ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
+                              <button key={value} type="button" onClick={() => setSelectedMain(value)}
+                                className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedMain === value ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
                                 {label}
                               </button>
                             ))}
                           </div>
                         </div>
-                      ) : null}
-                    </div>
-                  </div>
 
-                  {/* Transfer */}
-                  <div className="grid gap-3">
-                    <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.transfer}</p>
-                    <input type="hidden" name="transfer" value={transfer} />
-                    <div className="flex flex-wrap gap-2">
-                      {[["yes", t.rsvp.options.transferYes], ["no", t.rsvp.options.transferNo]].map(([val, label]) => (
-                        <button key={val} type="button" onClick={() => {
-                          setTransfer(val);
-                          if (val !== "yes") {
-                            setArrivalDateTime("");
-                            setArrivalLocation("");
-                            setReturnDateTime("");
-                            setReturnLocation("");
-                            setTransferPartySize("");
-                          }
-                        }}
-                          className={`rounded-full px-6 py-3 text-sm font-semibold transition ${transfer === val ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {transfer === "yes" ? (
-                    <div className="grid gap-4 rounded-[24px] border border-[rgba(53,75,62,0.12)] bg-[#f7f9f6] p-5">
-                      <div className="grid gap-2">
-                        <h3 className="font-serif text-[clamp(1.5rem,2.5vw,2rem)] leading-[0.95] text-[#1e2a22]">
-                          {t.rsvp.fields.transferDetails}
-                        </h3>
-                      </div>
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <Field label={t.rsvp.fields.arrivalDateTime}>
-                          <input
-                            className={fieldClass}
-                            name="arrivalDateTime"
-                            type="datetime-local"
-                            value={arrivalDateTime}
-                            onChange={(event) => setArrivalDateTime(event.target.value)}
-                            required={transfer === "yes"}
-                          />
-                        </Field>
-                        <Field label={t.rsvp.fields.arrivalLocation}>
-                          <input
-                            className={fieldClass}
-                            name="arrivalLocation"
-                            value={arrivalLocation}
-                            onChange={(event) => setArrivalLocation(event.target.value)}
-                            placeholder={t.ui.transferLocationPlaceholder}
-                            required={transfer === "yes"}
-                          />
-                        </Field>
-                        <Field label={t.rsvp.fields.returnDateTime}>
-                          <input
-                            className={fieldClass}
-                            name="returnDateTime"
-                            type="datetime-local"
-                            value={returnDateTime}
-                            onChange={(event) => setReturnDateTime(event.target.value)}
-                            required={transfer === "yes"}
-                          />
-                        </Field>
-                        <Field label={t.rsvp.fields.returnLocation}>
-                          <input
-                            className={fieldClass}
-                            name="returnLocation"
-                            value={returnLocation}
-                            onChange={(event) => setReturnLocation(event.target.value)}
-                            placeholder={t.ui.transferLocationPlaceholder}
-                            required={transfer === "yes"}
-                          />
-                        </Field>
-                        <Field label={t.rsvp.fields.transferPartySize}>
-                          <input
-                            className={fieldClass}
-                            name="transferPartySize"
-                            type="number"
-                            min="1"
-                            step="1"
-                            value={transferPartySize}
-                            onChange={(event) => setTransferPartySize(event.target.value)}
-                            required={transfer === "yes"}
-                          />
-                        </Field>
+                        {plusOneEnabled ? (
+                          <div className="grid gap-3">
+                            <p className="text-sm font-medium text-[#1e2a22]">{plusOneName.trim() ? `${t.rsvp.fields.plusOneMenuFor} ${plusOneName.trim().split(" ")[0]}` : t.rsvp.fields.plusOneMenu}</p>
+                            <input type="hidden" name="plusOneMenu" value={selectedPlusOneMain} />
+                            <div className="flex flex-wrap gap-2">
+                              {t.menuOptions.map(([value, label]) => (
+                                <button key={`plus-${value}`} type="button" onClick={() => setSelectedPlusOneMain(value)}
+                                  className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedPlusOneMain === value ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
+                                  {label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null}
                       </div>
                     </div>
-                  ) : null}
 
-                  {/* Dietary */}
-                  <Field label={t.rsvp.fields.dietary}>
-                    <textarea className={fieldClass} name="dietary" rows="3" placeholder={t.rsvp.fields.notes} />
-                  </Field>
-
-                  {/* Kids */}
-                  <div className="grid gap-4 rounded-[24px] border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-5">
-                    <div className="grid gap-2">
-                      <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.kids.question}</p>
+                    {/* Transfer */}
+                    <div className="grid gap-3">
+                      <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.transfer}</p>
+                      <input type="hidden" name="transfer" value={transfer} />
                       <div className="flex flex-wrap gap-2">
-                        {[["yes", t.rsvp.kids.yes], ["no", t.rsvp.kids.no]].map(([val, label]) => (
-                          <button key={val} type="button"
-                            onClick={() => { setHasKids(val); if (val === "no") setKids([]); }}
-                            className={`rounded-full px-6 py-3 text-sm font-semibold transition ${hasKids === val ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                        {[["yes", t.rsvp.options.transferYes], ["no", t.rsvp.options.transferNo]].map(([val, label]) => (
+                          <button key={val} type="button" onClick={() => {
+                            setTransfer(val);
+                            if (val !== "yes") {
+                              setArrivalDateTime("");
+                              setArrivalLocation("");
+                              setReturnDateTime("");
+                              setReturnLocation("");
+                              setTransferPartySize("");
+                            }
+                          }}
+                            className={`rounded-full px-6 py-3 text-sm font-semibold transition ${transfer === val ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
                             {label}
                           </button>
                         ))}
                       </div>
                     </div>
 
-                    <AnimatePresence>
-                      {hasKids === "yes" && (
-                        <motion.div key="kids-fields"
-                          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.22 }}
-                          className="grid gap-3">
-                          <p className="text-xs text-[#6a5a51]">{t.rsvp.kids.note}</p>
-                          {kids.map((kid, i) => (
-                            <div key={i} className="grid grid-cols-[1fr_1fr_auto] items-start gap-2">
-                              <input
-                                className={fieldClass}
-                                placeholder={`${t.rsvp.kids.childLabel} ${i + 1} — ${t.rsvp.kids.namePlaceholder}`}
-                                value={kid.name}
-                                onChange={(e) => setKids(k => k.map((c, idx) => idx === i ? { ...c, name: e.target.value } : c))}
-                                required
-                              />
-                              <input
-                                className={fieldClass}
-                                placeholder={t.rsvp.kids.dietaryPlaceholder}
-                                value={kid.dietary}
-                                onChange={(e) => setKids(k => k.map((c, idx) => idx === i ? { ...c, dietary: e.target.value } : c))}
-                              />
-                              <button type="button"
-                                onClick={() => setKids(k => k.filter((_, idx) => idx !== i))}
-                                className="mt-[10px] flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-[rgba(71,46,31,0.18)] text-[#9a7a6a] transition hover:border-[rgba(71,46,31,0.35)] hover:text-[#5d3426]">
-                                ×
-                              </button>
-                            </div>
-                          ))}
-                          {kids.length < 3 && (
-                            <button type="button"
-                              onClick={() => setKids(k => [...k, { name: "", dietary: "" }])}
-                              className="mt-1 self-start rounded-full border border-dashed border-[rgba(71,46,31,0.25)] px-5 py-2.5 text-sm text-[#6a5a51] transition hover:border-[rgba(71,46,31,0.45)] hover:text-[#3d2e26]">
-                              {t.rsvp.kids.addChild}
-                            </button>
-                          )}
-                          {kids.length === 3 && (
-                            <p className="text-xs text-[#9a7a6a]">{t.rsvp.kids.max}</p>
-                          )}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    {transfer === "yes" ? (
+                      <div className="grid gap-4 rounded-[24px] border border-[rgba(53,75,62,0.12)] bg-[#f7f9f6] p-5">
+                        <div className="grid gap-2">
+                          <h3 className="font-serif text-[clamp(1.5rem,2.5vw,2rem)] leading-[0.95] text-[#1e2a22]">
+                            {t.rsvp.fields.transferDetails}
+                          </h3>
+                        </div>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <Field label={t.rsvp.fields.arrivalDateTime}>
+                            <input
+                              className={fieldClass}
+                              name="arrivalDateTime"
+                              type="datetime-local"
+                              value={arrivalDateTime}
+                              onChange={(event) => setArrivalDateTime(event.target.value)}
+                              required={transfer === "yes"}
+                            />
+                          </Field>
+                          <Field label={t.rsvp.fields.arrivalLocation}>
+                            <input
+                              className={fieldClass}
+                              name="arrivalLocation"
+                              value={arrivalLocation}
+                              onChange={(event) => setArrivalLocation(event.target.value)}
+                              placeholder={t.ui.transferLocationPlaceholder}
+                              required={transfer === "yes"}
+                            />
+                          </Field>
+                          <Field label={t.rsvp.fields.returnDateTime}>
+                            <input
+                              className={fieldClass}
+                              name="returnDateTime"
+                              type="datetime-local"
+                              value={returnDateTime}
+                              onChange={(event) => setReturnDateTime(event.target.value)}
+                              required={transfer === "yes"}
+                            />
+                          </Field>
+                          <Field label={t.rsvp.fields.returnLocation}>
+                            <input
+                              className={fieldClass}
+                              name="returnLocation"
+                              value={returnLocation}
+                              onChange={(event) => setReturnLocation(event.target.value)}
+                              placeholder={t.ui.transferLocationPlaceholder}
+                              required={transfer === "yes"}
+                            />
+                          </Field>
+                          <Field label={t.rsvp.fields.transferPartySize}>
+                            <input
+                              className={fieldClass}
+                              name="transferPartySize"
+                              type="number"
+                              min="1"
+                              step="1"
+                              value={transferPartySize}
+                              onChange={(event) => setTransferPartySize(event.target.value)}
+                              required={transfer === "yes"}
+                            />
+                          </Field>
+                        </div>
+                      </div>
+                    ) : null}
 
-            <div className="flex flex-col gap-3 pt-2 md:flex-row md:items-center md:justify-between">
-              <button type="submit" disabled={submitting}
-                className="w-full rounded-full bg-gradient-to-br from-[#4a6355] to-[#4d6858] px-6 py-3.5 font-bold text-white transition-opacity disabled:opacity-60 md:w-auto">
-                {submitting ? "…" : t.rsvp.submit}
-              </button>
-              <p className="min-h-6 text-sm leading-6 text-[#576e63]">{status}</p>
-            </div>
-          </form>
+                    {/* Dietary */}
+                    <Field label={t.rsvp.fields.dietary}>
+                      <textarea className={fieldClass} name="dietary" rows="3" placeholder={t.rsvp.fields.notes} />
+                    </Field>
+
+                    {/* Kids */}
+                    <div className="grid gap-4 rounded-[24px] border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-5">
+                      <div className="grid gap-2">
+                        <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.kids.question}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {[["yes", t.rsvp.kids.yes], ["no", t.rsvp.kids.no]].map(([val, label]) => (
+                            <button key={val} type="button"
+                              onClick={() => { setHasKids(val); if (val === "no") setKids([]); }}
+                              className={`rounded-full px-6 py-3 text-sm font-semibold transition ${hasKids === val ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                              {label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <AnimatePresence>
+                        {hasKids === "yes" && (
+                          <motion.div key="kids-fields"
+                            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.22 }}
+                            className="grid gap-3">
+                            <p className="text-xs text-[#6a5a51]">{t.rsvp.kids.note}</p>
+                            {kids.map((kid, i) => (
+                              <div key={i} className="grid grid-cols-[1fr_1fr_auto] items-start gap-2">
+                                <input
+                                  className={fieldClass}
+                                  placeholder={`${t.rsvp.kids.childLabel} ${i + 1} — ${t.rsvp.kids.namePlaceholder}`}
+                                  value={kid.name}
+                                  onChange={(e) => setKids(k => k.map((c, idx) => idx === i ? { ...c, name: e.target.value } : c))}
+                                  required
+                                />
+                                <input
+                                  className={fieldClass}
+                                  placeholder={t.rsvp.kids.dietaryPlaceholder}
+                                  value={kid.dietary}
+                                  onChange={(e) => setKids(k => k.map((c, idx) => idx === i ? { ...c, dietary: e.target.value } : c))}
+                                />
+                                <button type="button"
+                                  onClick={() => setKids(k => k.filter((_, idx) => idx !== i))}
+                                  className="mt-[10px] flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-[rgba(71,46,31,0.18)] text-[#9a7a6a] transition hover:border-[rgba(71,46,31,0.35)] hover:text-[#5d3426]">
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                            {kids.length < 3 && (
+                              <button type="button"
+                                onClick={() => setKids(k => [...k, { name: "", dietary: "" }])}
+                                className="mt-1 self-start rounded-full border border-dashed border-[rgba(71,46,31,0.25)] px-5 py-2.5 text-sm text-[#6a5a51] transition hover:border-[rgba(71,46,31,0.45)] hover:text-[#3d2e26]">
+                                {t.rsvp.kids.addChild}
+                              </button>
+                            )}
+                            {kids.length === 3 && (
+                              <p className="text-xs text-[#9a7a6a]">{t.rsvp.kids.max}</p>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="flex flex-col gap-3 pt-2 md:flex-row md:items-center md:justify-between">
+                <button type="submit" disabled={submitting}
+                  className="w-full rounded-full bg-gradient-to-br from-[#4a6355] to-[#4d6858] px-6 py-3.5 font-bold text-white transition-opacity disabled:opacity-60 md:w-auto">
+                  {submitting ? "…" : t.rsvp.submit}
+                </button>
+                <p className="min-h-6 text-sm leading-6 text-[#576e63]">{status}</p>
+              </div>
+            </form>
           )}
         </SectionCard>
 
