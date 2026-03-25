@@ -820,7 +820,7 @@ function App() {
         });
 
         if (response.status === 409) {
-          const confirmed = { name: payload.name, already: true };
+          const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", already: true };
           localStorage.setItem(RSVP_LS_KEY, JSON.stringify(confirmed));
           setRsvpConfirmed(confirmed);
           return;
@@ -830,7 +830,7 @@ function App() {
           throw new Error("Submission failed");
         }
 
-        const confirmed = { name: payload.name, already: false };
+        const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", already: false };
         localStorage.setItem(RSVP_LS_KEY, JSON.stringify(confirmed));
         setRsvpConfirmed(confirmed);
       } else {
@@ -924,7 +924,7 @@ function App() {
         <SectionCard id="rsvp">
           <SectionHeading kicker={t.rsvp.kicker} title={t.rsvp.title} note={t.rsvp.note} />
           {rsvpConfirmed ? (
-            <RsvpConfirmed name={rsvpConfirmed.name} already={rsvpConfirmed.already} t={t} />
+            <RsvpConfirmed name={rsvpConfirmed.name} plusOneName={rsvpConfirmed.plusOneName} already={rsvpConfirmed.already} t={t} />
           ) : (
           <form className="grid gap-8" onSubmit={handleSubmit}>
 
@@ -1204,7 +1204,9 @@ function App() {
   );
 }
 
-function RsvpConfirmed({ name, already, t }) {
+function RsvpConfirmed({ name, plusOneName, already, t }) {
+  const firstName = name ? name.trim().split(" ")[0] : "";
+  const plusOneFirst = plusOneName ? plusOneName.trim().split(" ")[0] : "";
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -1218,7 +1220,7 @@ function RsvpConfirmed({ name, already, t }) {
       <div className="grid gap-2">
         <h3 className="font-serif text-[clamp(1.8rem,4vw,2.8rem)] leading-[1] text-[#1e2a22]">
           {t.rsvp.confirmedTitle}
-          {name ? `, ${name.split(" ")[0]}` : ""}.
+          {firstName ? `, ${firstName}${plusOneFirst ? ` & ${plusOneFirst}` : ""}` : ""}.
         </h3>
         <p className="mx-auto max-w-[42ch] text-base leading-7 text-[#576e63]">
           {already ? t.rsvp.confirmedAlreadyNote : t.rsvp.confirmedNote}
