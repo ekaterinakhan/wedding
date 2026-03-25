@@ -273,9 +273,9 @@ const content = {
             title: "Where to stay in Auxerre",
             text: "A few reliable options nearby include ibis Auxerre Centre, ibis budget Auxerre Centre, and Mercure Auxerre Autoroute du Soleil. Booking early is strongly recommended.",
             links: [
-              ["ibis Auxerre Centre", "https://all.accor.com/hotel/1361/index.en.shtml"],
-              ["ibis budget Auxerre Centre", "https://all.accor.com/hotel/A1R3/index.en.shtml"],
-              ["Mercure Auxerre", "https://all.accor.com/hotel/0348/index.en.shtml"]
+              ["ibis Auxerre Centre", "https://www.booking.com/hotel/fr/ibis-auxerre-centre.html"],
+              ["ibis budget Auxerre Centre", "https://www.booking.com/hotel/fr/ibis-budget-auxerre-centre.html"],
+              ["Mercure Auxerre", "https://www.booking.com/hotel/fr/auxerre-nord.html"]
             ]
           },
         ]
@@ -324,7 +324,7 @@ const content = {
       eyebrow: "9-10 mai 2026 • Bourgogne",
       title: "Un week-end pour célébrer avec nous",
       text: "Toutes les informations utiles pour le mariage, le brunch du lendemain, le RSVP, le dîner et l'organisation pratique du voyage.",
-      primary: "Confirmer sa venue",
+      primary: "RSVP",
       secondary: "Organiser son trajet"
     },
     welcome: {
@@ -572,9 +572,9 @@ const content = {
             title: "Où loger à Auxerre",
             text: "Quelques options fiables à proximité incluent ibis Auxerre Centre, ibis budget Auxerre Centre et Mercure Auxerre Autoroute du Soleil. Nous recommandons de réserver tôt.",
             links: [
-              ["ibis Auxerre Centre", "https://all.accor.com/hotel/1361/index.fr.shtml"],
-              ["ibis budget Auxerre Centre", "https://all.accor.com/hotel/A1R3/index.fr.shtml"],
-              ["Mercure Auxerre", "https://all.accor.com/hotel/0348/index.fr.shtml"]
+              ["ibis Auxerre Centre", "https://www.booking.com/hotel/fr/ibis-auxerre-centre.fr.html"],
+              ["ibis budget Auxerre Centre", "https://www.booking.com/hotel/fr/ibis-budget-auxerre-centre.fr.html"],
+              ["Mercure Auxerre", "https://www.booking.com/hotel/fr/auxerre-nord.fr.html"]
             ]
           },
         ]
