@@ -259,11 +259,11 @@ const content = {
         items: [
           {
             title: "Where to stay in Auxerre",
-            text: "A few central options include Hotel Le Maxime, Hotel Normandie, and Ibis Budget Auxerre Centre. Booking early is strongly recommended.",
+            text: "A few reliable options nearby include ibis Auxerre Centre, ibis budget Auxerre Centre, and Mercure Auxerre Autoroute du Soleil. Booking early is strongly recommended.",
             links: [
-              ["Hotel Le Maxime", "https://www.ot-auxerre.fr/offres/hotel-le-maxime-bw-signature-collection-auxerre-fr-2563381/"],
-              ["Hotel Normandie", "https://www.ot-auxerre.fr/offres/the-originals-hotel-normandie-auxerre-auxerre-fr-2563385/"],
-              ["2026 tourism guide", "https://www.ot-auxerre.fr/app/uploads/auxerrois/2026/03/OT_Guide-Touristique-2026-web.pdf"]
+              ["ibis Auxerre Centre", "https://all.accor.com/hotel/1361/index.en.shtml"],
+              ["ibis budget Auxerre Centre", "https://all.accor.com/hotel/A1R3/index.en.shtml"],
+              ["Mercure Auxerre", "https://all.accor.com/hotel/0348/index.en.shtml"]
             ]
           },
         ]
@@ -546,11 +546,11 @@ const content = {
         items: [
           {
             title: "Où loger à Auxerre",
-            text: "Quelques options centrales incluent Hotel Le Maxime, Hotel Normandie et Ibis Budget Auxerre Centre. Nous recommandons de réserver tôt.",
+            text: "Quelques options fiables à proximité incluent ibis Auxerre Centre, ibis budget Auxerre Centre et Mercure Auxerre Autoroute du Soleil. Nous recommandons de réserver tôt.",
             links: [
-              ["Hotel Le Maxime", "https://www.ot-auxerre.fr/offres/hotel-le-maxime-bw-signature-collection-auxerre-fr-2563381/"],
-              ["Hotel Normandie", "https://www.ot-auxerre.fr/offres/the-originals-hotel-normandie-auxerre-auxerre-fr-2563385/"],
-              ["Guide touristique 2026", "https://www.ot-auxerre.fr/app/uploads/auxerrois/2026/03/OT_Guide-Touristique-2026-web.pdf"]
+              ["ibis Auxerre Centre", "https://all.accor.com/hotel/1361/index.fr.shtml"],
+              ["ibis budget Auxerre Centre", "https://all.accor.com/hotel/A1R3/index.fr.shtml"],
+              ["Mercure Auxerre", "https://all.accor.com/hotel/0348/index.fr.shtml"]
             ]
           },
         ]
