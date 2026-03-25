@@ -45,7 +45,7 @@ async function handleRsvpPost(request, env) {
 
   const token = crypto.randomUUID();
 
-  // Insert guest
+  // Insert primary guest
   const guest = await env.DB.prepare(`
     INSERT INTO guests (submitted_at, language, name, email, phone, attendance, events, plus_one, plus_one_name, dietary, notes, token)
     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)
@@ -66,13 +66,15 @@ async function handleRsvpPost(request, env) {
   ).first();
 
   const guestId = guest.id;
+  const plusOneName = (body.plusOneName || "").trim();
+  const hasPlusOne = body.plusOne === "yes" && plusOneName;
 
-  // Insert menu + transfer in parallel
-  await env.DB.batch([
-    env.DB.prepare(`
-      INSERT INTO guest_menus (guest_id, menu, plus_one_menu) VALUES (?1, ?2, ?3)
-    `).bind(guestId, body.menu || "", body.plusOneMenu || ""),
+  const statements = [
+    // Primary guest menu
+    env.DB.prepare(`INSERT INTO guest_menus (guest_id, menu) VALUES (?1, ?2)`)
+      .bind(guestId, body.menu || ""),
 
+    // Transfer details
     env.DB.prepare(`
       INSERT INTO guest_transfers (guest_id, needs_transfer, arrival_datetime, arrival_location, return_datetime, return_location, party_size)
       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
@@ -85,7 +87,27 @@ async function handleRsvpPost(request, env) {
       (body.returnLocation || "").trim(),
       (body.transferPartySize || "").trim(),
     ),
-  ]);
+  ];
+
+  if (hasPlusOne) {
+    statements.push(
+      env.DB.prepare(`
+        INSERT INTO guests (submitted_at, language, name, primary_guest_id)
+        VALUES (?1, ?2, ?3, ?4)
+        RETURNING id
+      `).bind(body.submittedAt || new Date().toISOString(), body.language || "", plusOneName, guestId)
+    );
+  }
+
+  const batchResults = await env.DB.batch(statements);
+
+  // Insert +1 menu using the returned guest id
+  if (hasPlusOne) {
+    const plusOneId = batchResults[batchResults.length - 1].results[0].id;
+    await env.DB.prepare(`INSERT INTO guest_menus (guest_id, menu) VALUES (?1, ?2)`)
+      .bind(plusOneId, body.plusOneMenu || "")
+      .run();
+  }
 
   return Response.json({ ok: true, id: guestId, token }, { status: 201 });
 }
@@ -94,14 +116,17 @@ async function handleRsvpGet(env) {
   const { results } = await env.DB.prepare(`
     SELECT
       g.id, g.submitted_at, g.language, g.name, g.email, g.phone,
-      g.attendance, g.events, g.plus_one, g.plus_one_name, g.dietary, g.notes,
-      gm.menu, gm.plus_one_menu,
+      g.attendance, g.events, g.dietary, g.notes,
+      g.primary_guest_id,
+      pg.name AS primary_guest_name,
+      gm.menu,
       gt.needs_transfer, gt.arrival_datetime, gt.arrival_location,
       gt.return_datetime, gt.return_location, gt.party_size
     FROM guests g
+    LEFT JOIN guests pg ON pg.id = g.primary_guest_id
     LEFT JOIN guest_menus gm ON gm.guest_id = g.id
     LEFT JOIN guest_transfers gt ON gt.guest_id = g.id
-    ORDER BY g.submitted_at DESC, g.id DESC
+    ORDER BY COALESCE(g.primary_guest_id, g.id), g.primary_guest_id IS NOT NULL, g.id
   `).all();
   return Response.json(results);
 }
