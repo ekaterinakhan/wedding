@@ -74,6 +74,7 @@ const content = {
         events: "Which moments will you join?",
         menu: "Your main course choice",
         plusOneMenu: "Main course choice for your +1",
+        plusOneMenuFor: "Main course choice for",
         transfer: "Do you need transfer from Paris to Auxerre and back?",
         transferDetails: "Transfer details",
         arrivalDateTime: "When do you arrive in Paris?",
@@ -364,6 +365,7 @@ const content = {
         events: "A quels moments serez-vous parmi nous ?",
         menu: "Votre choix de plat",
         plusOneMenu: "Choix du plat pour votre +1",
+        plusOneMenuFor: "Choix du plat pour",
         transfer: "Avez-vous besoin d'un transfert de Paris a Auxerre puis du retour ?",
         transferDetails: "Details du transfert",
         arrivalDateTime: "Quand arrivez-vous a Paris ?",
@@ -1065,7 +1067,7 @@ function App() {
 
                       {plusOneEnabled ? (
                         <div className="grid gap-3">
-                          <p className="text-sm font-medium text-[#1e2a22]">{plusOneName.trim() ? `${t.rsvp.fields.menu} — ${plusOneName.trim().split(" ")[0]}` : t.rsvp.fields.plusOneMenu}</p>
+                          <p className="text-sm font-medium text-[#1e2a22]">{plusOneName.trim() ? `${t.rsvp.fields.plusOneMenuFor} ${plusOneName.trim().split(" ")[0]}` : t.rsvp.fields.plusOneMenu}</p>
                           <input type="hidden" name="plusOneMenu" value={selectedPlusOneMain} />
                           <div className="flex flex-wrap gap-2">
                             {t.menuOptions.map(([value, label]) => (
