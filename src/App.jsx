@@ -54,14 +54,21 @@ const content = {
     rsvp: {
       kicker: "RSVP",
       title: "Reply with your menu choice",
-      note: "Please reply by 15 April 2026.",
+      note: "Please reply by 15 April 2026. If you are coming with a +1, you can optionally add their name and choose a second main course below.",
+      menuGroupTitleSingle: "Your menu choice",
+      menuGroupTitlePair: "Menu choices for both of you",
+      menuGroupNoteSingle: "Please choose your preferred main course below.",
+      menuGroupNotePair: "Please choose one main course for yourself and one for your guest.",
       fields: {
         name: "Full name",
         email: "Email",
         phone: "Phone",
         attendance: "Will you attend?",
+        plusOne: "Will you bring a +1?",
+        plusOneName: "Full name of your +1 for place cards",
         events: "Which moments will you join?",
-        menu: "Main course choice",
+        menu: "Your main course choice",
+        plusOneMenu: "Main course choice for your +1",
         transfer: "Would you like transfer help?",
         dietary: "Dietary restrictions or allergies",
         notes: "Anything else we should know?"
@@ -70,6 +77,8 @@ const content = {
         choose: "Please choose",
         yes: "Yes, with pleasure",
         no: "Sadly, no",
+        plusOneYes: "Yes, I will bring a +1",
+        plusOneNo: "No, just me",
         weddingAndBrunch: "Wedding day + brunch",
         weddingOnly: "Wedding day only",
         brunchOnly: "Brunch only",
@@ -252,8 +261,9 @@ const content = {
         items: [
           {
             title: "Why we are here",
-            text: "Auxerre is where we begin the wedding weekend with the civil ceremony, and it gives everyone a lovely Burgundy stop before heading to Domaine du Roncemay.",
-            links: [["Auxerre tourism", "https://www.ot-auxerre.fr/"]]
+            text:
+              "Auxerre was Lucas' home from the age of 12 to 19, just before he moved to Paris to study at Ecole 42 a few days before his birthday that year.\n\nAuxerre is still home to Valerie and Franck, who have explored every tiny corner of the city and the nearby vineyards during their long bike rides on summer days.\n\nAuxerre is a city Lucas told me so much about even before we started dating, describing how peaceful, green, easy, and calm life in this old Burgundy city is.\n\nAuxerre now holds a piece of mine and Phoebe's hearts, as we have spent so many great days and nights here, running and biking along the Yonne, watching AJA play at the home stadium, and sharing many good laughs over dinners at Lucas' parents'.\n\nWe have prepared a few tips to share with you, so maybe you will like it too and keep great memories of the city and of the couple of days we will spend together.",
+            links: []
           },
           {
             title: "Where to go for a walk",
@@ -267,11 +277,12 @@ const content = {
           },
           {
             title: "Where to eat",
-            text: "Good local picks include Le Cadet Roussel, Le Saint-Pelerin, and L'Asperule for guests arriving early.",
+            text: "Good local picks include Le Goût des Autres, Mamma Giulia, and L'Asperule for lunch or dinner, plus Cannelle for coffee and breakfast.",
             links: [
-              ["Le Cadet Roussel", "https://www.ot-auxerre.fr/offres/le-cadet-roussel-auxerre-fr-5336590/"],
-              ["Le Saint-Pelerin", "https://www.ot-auxerre.fr/offres/le-saint-pelerin-auxerre-fr-2563341/"],
-              ["L'Asperule", "https://www.ot-auxerre.fr/offres/lasperule-auxerre-fr-2563250/"]
+              ["Le Gout des Autres", "https://www.google.com/maps/search/?api=1&query=Le+Gout+des+Autres+4+Place+du+Marechal+Leclerc+89000+Auxerre"],
+              ["Mama Giulia", "https://www.google.com/maps/search/?api=1&query=Mamma+Giulia+3+Place+des+Cordeliers+89000+Auxerre"],
+              ["L'Asperule", "https://www.google.com/maps/search/?api=1&query=L%27Asperule+34+Rue+du+Pont+89000+Auxerre"],
+              ["Cannelle - coffee & breakfast", "https://www.google.com/maps/search/?api=1&query=Cannelle+12+Rue+Fecauderie+89000+Auxerre"]
             ]
           }
         ]
@@ -322,14 +333,21 @@ const content = {
     rsvp: {
       kicker: "RSVP",
       title: "Confirmez votre venue et votre menu",
-      note: "Merci de repondre avant le 15 avril 2026.",
+      note: "Merci de repondre avant le 15 avril 2026. Si vous venez avec un +1, vous pouvez ajouter son nom et choisir un second plat principal ci-dessous.",
+      menuGroupTitleSingle: "Votre choix de menu",
+      menuGroupTitlePair: "Les choix de menu pour vous deux",
+      menuGroupNoteSingle: "Merci de choisir votre plat principal ci-dessous.",
+      menuGroupNotePair: "Merci de choisir un plat principal pour vous et un autre pour votre invite(e).",
       fields: {
         name: "Nom complet",
         email: "Email",
         phone: "Telephone",
         attendance: "Serez-vous present(e) ?",
+        plusOne: "Viendrez-vous avec un +1 ?",
+        plusOneName: "Nom complet de votre +1 pour les marque-places",
         events: "A quels moments serez-vous parmi nous ?",
-        menu: "Choix du plat",
+        menu: "Votre choix de plat",
+        plusOneMenu: "Choix du plat pour votre +1",
         transfer: "Avez-vous besoin d'aide pour les transferts ?",
         dietary: "Allergies ou regime alimentaire",
         notes: "Autre information utile"
@@ -338,6 +356,8 @@ const content = {
         choose: "Merci de choisir",
         yes: "Oui, avec joie",
         no: "Malheureusement non",
+        plusOneYes: "Oui, je viendrai avec un +1",
+        plusOneNo: "Non, je viendrai seul(e)",
         weddingAndBrunch: "Mariage + brunch",
         weddingOnly: "Mariage uniquement",
         brunchOnly: "Brunch uniquement",
@@ -520,8 +540,9 @@ const content = {
         items: [
           {
             title: "Pourquoi sommes-nous ici ?",
-            text: "Auxerre est le point de depart de notre week-end de mariage avec la ceremonie civile, et une tres belle etape bourguignonne avant de rejoindre le Domaine du Roncemay.",
-            links: [["Office de tourisme d'Auxerre", "https://www.ot-auxerre.fr/"]]
+            text:
+              "Auxerre a ete la maison de Lucas de ses 12 ans a ses 19 ans, juste avant qu'il parte a Paris pour etudier a l'Ecole 42, quelques jours avant son anniversaire cette annee-la.\n\nAuxerre est toujours la maison de Valerie et Franck, qui ont explore chaque petit coin de la ville et les vignobles voisins lors de leurs longues balades a velo pendant les journees d'ete.\n\nAuxerre est une ville dont Lucas m'a beaucoup parle avant meme que nous commencions a sortir ensemble, en me racontant a quel point la vie y est paisible, verte, simple et calme dans cette ancienne ville de Bourgogne.\n\nAuxerre garde maintenant un morceau de mon coeur et de celui de Phoebe, car nous y avons passe tant de belles journees et de belles soirees, a courir et faire du velo le long de l'Yonne, a regarder jouer l'AJA dans son stade, et a partager beaucoup de rires autour de diners chez les parents de Lucas.\n\nNous vous avons prepare quelques suggestions a partager avec vous, et nous esperons que vous aimerez vous aussi cette ville et que vous en garderez de beaux souvenirs, ainsi que des quelques jours que nous passerons ensemble.",
+            links: []
           },
           {
             title: "Ou aller se promener ?",
@@ -535,11 +556,12 @@ const content = {
           },
           {
             title: "Ou manger ?",
-            text: "Pour les invites qui arrivent en avance, Le Cadet Roussel, Le Saint-Pelerin et L'Asperule sont de bonnes pistes.",
+            text: "Pour les invites qui arrivent en avance, Le Goût des Autres, Mamma Giulia et L'Asperule sont de bonnes adresses pour dejeuner ou diner, et Cannelle est parfait pour un cafe et un petit-dejeuner.",
             links: [
-              ["Le Cadet Roussel", "https://www.ot-auxerre.fr/offres/le-cadet-roussel-auxerre-fr-5336590/"],
-              ["Le Saint-Pelerin", "https://www.ot-auxerre.fr/offres/le-saint-pelerin-auxerre-fr-2563341/"],
-              ["L'Asperule", "https://www.ot-auxerre.fr/offres/lasperule-auxerre-fr-2563250/"]
+              ["Le Gout des Autres", "https://www.google.com/maps/search/?api=1&query=Le+Gout+des+Autres+4+Place+du+Marechal+Leclerc+89000+Auxerre"],
+              ["Mama Giulia", "https://www.google.com/maps/search/?api=1&query=Mamma+Giulia+3+Place+des+Cordeliers+89000+Auxerre"],
+              ["L'Asperule", "https://www.google.com/maps/search/?api=1&query=L%27Asperule+34+Rue+du+Pont+89000+Auxerre"],
+              ["Cannelle - cafe & petit-dejeuner", "https://www.google.com/maps/search/?api=1&query=Cannelle+12+Rue+Fecauderie+89000+Auxerre"]
             ]
           }
         ]
@@ -727,8 +749,12 @@ function App() {
   const [selectedMain, setSelectedMain] = useState("");
   const [events, setEvents] = useState("");
   const [transfer, setTransfer] = useState("");
-
+  const [hasPlusOne, setHasPlusOne] = useState("");
+  const [plusOneName, setPlusOneName] = useState("");
+  const [selectedPlusOneMain, setSelectedPlusOneMain] = useState("");
   const t = content[lang];
+  const menuRequired = attendance !== "no";
+  const plusOneEnabled = menuRequired && hasPlusOne === "yes";
 
   const handleSubmit = useCallback(async function handleSubmit(event) {
     event.preventDefault();
@@ -762,6 +788,9 @@ function App() {
       setSelectedMain("");
       setEvents("");
       setTransfer("");
+      setHasPlusOne("");
+      setPlusOneName("");
+      setSelectedPlusOneMain("");
     } catch {
       setStatus(t.rsvp.error);
     } finally {
@@ -883,7 +912,17 @@ function App() {
               <input type="hidden" name="attendance" value={attendance} />
               <div className="flex flex-wrap gap-2">
                 {[["yes", t.rsvp.options.yes], ["no", t.rsvp.options.no]].map(([val, label]) => (
-                  <button key={val} type="button" onClick={() => setAttendance(val)}
+                  <button key={val} type="button" onClick={() => {
+                    setAttendance(val);
+                    if (val === "no") {
+                      setEvents("");
+                      setTransfer("");
+                      setSelectedMain("");
+                      setHasPlusOne("");
+                      setPlusOneName("");
+                      setSelectedPlusOneMain("");
+                    }
+                  }}
                     className={`rounded-full px-6 py-3 text-sm font-semibold transition ${attendance === val ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
                     {label}
                   </button>
@@ -913,17 +952,87 @@ function App() {
                     </div>
                   </div>
 
+                  {/* Plus one */}
+                  <div className="grid gap-4 rounded-[24px] border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-5">
+                    <div className="grid gap-2">
+                      <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.plusOne}</p>
+                      <input type="hidden" name="plusOne" value={hasPlusOne} />
+                      <div className="flex flex-wrap gap-2">
+                        {[["yes", t.rsvp.options.plusOneYes], ["no", t.rsvp.options.plusOneNo]].map(([val, label]) => (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => {
+                              setHasPlusOne(val);
+                              if (val !== "yes") {
+                                setPlusOneName("");
+                                setSelectedPlusOneMain("");
+                              }
+                            }}
+                            className={`rounded-full px-6 py-3 text-sm font-semibold transition ${
+                              hasPlusOne === val
+                                ? "bg-[#5d3426] text-white shadow-sm"
+                                : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {plusOneEnabled ? (
+                      <Field label={t.rsvp.fields.plusOneName}>
+                        <input
+                          className={fieldClass}
+                          name="plusOneName"
+                          value={plusOneName}
+                          onChange={(event) => setPlusOneName(event.target.value)}
+                          required={plusOneEnabled}
+                        />
+                      </Field>
+                    ) : null}
+                  </div>
+
                   {/* Menu */}
-                  <div className="grid gap-3">
-                    <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.menu}</p>
-                    <input type="hidden" name="menu" value={selectedMain} />
-                    <div className="flex flex-wrap gap-2">
-                      {t.menuOptions.map(([value, label]) => (
-                        <button key={value} type="button" onClick={() => setSelectedMain(value)}
-                          className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedMain === value ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
-                          {label}
-                        </button>
-                      ))}
+                  <div className="grid gap-4 rounded-[24px] border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-5">
+                    <div className="grid gap-2">
+                      <h3 className="font-serif text-[clamp(1.5rem,2.5vw,2rem)] leading-[0.95] text-[#2a211c]">
+                        {plusOneEnabled ? t.rsvp.menuGroupTitlePair : t.rsvp.menuGroupTitleSingle}
+                      </h3>
+                      <p className="text-sm leading-6 text-[#3d2e26]">
+                        {plusOneEnabled ? t.rsvp.menuGroupNotePair : t.rsvp.menuGroupNoteSingle}
+                      </p>
+                    </div>
+
+                    <div className={`grid gap-5 ${plusOneEnabled ? "lg:grid-cols-2" : ""}`}>
+                      <div className="grid gap-3">
+                        <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.menu}</p>
+                        <input type="hidden" name="menu" value={selectedMain} />
+                        <div className="flex flex-wrap gap-2">
+                          {t.menuOptions.map(([value, label]) => (
+                            <button key={value} type="button" onClick={() => setSelectedMain(value)}
+                              className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedMain === value ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                              {label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {plusOneEnabled ? (
+                        <div className="grid gap-3">
+                          <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.fields.plusOneMenu}</p>
+                          <input type="hidden" name="plusOneMenu" value={selectedPlusOneMain} />
+                          <div className="flex flex-wrap gap-2">
+                            {t.menuOptions.map(([value, label]) => (
+                              <button key={`plus-${value}`} type="button" onClick={() => setSelectedPlusOneMain(value)}
+                                className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedPlusOneMain === value ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                                {label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
 
@@ -1066,21 +1175,23 @@ const LogisticsSection = memo(function LogisticsSection({ t }) {
                         style={{ overflow: "hidden" }}
                       >
                         <div className="border-t border-[rgba(71,46,31,0.12)] px-5 pb-5 pt-4">
-                          <p className="text-sm leading-6 text-[#3d2e26]">{card.text}</p>
-                          <div className="mt-4 flex flex-wrap gap-2">
-                            {card.links.map(([label, href]) => (
-                              <a
-                                key={href}
-                                href={href}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(93,52,38,0.16)] bg-white/80 px-4 py-1.5 text-sm font-semibold text-[#5d3426] transition hover:border-[rgba(93,52,38,0.35)] hover:bg-white"
-                              >
-                                <LuArrowUpRight size={12} />
-                                {label}
-                              </a>
-                            ))}
-                          </div>
+                          <p className="whitespace-pre-line text-sm leading-6 text-[#3d2e26]">{card.text}</p>
+                          {card.links.length ? (
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              {card.links.map(([label, href]) => (
+                                <a
+                                  key={href}
+                                  href={href}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(93,52,38,0.16)] bg-white/80 px-4 py-1.5 text-sm font-semibold text-[#5d3426] transition hover:border-[rgba(93,52,38,0.35)] hover:bg-white"
+                                >
+                                  <LuArrowUpRight size={12} />
+                                  {label}
+                                </a>
+                              ))}
+                            </div>
+                          ) : null}
                         </div>
                       </motion.div>
                     )}
