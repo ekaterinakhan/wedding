@@ -7,6 +7,63 @@ export default {
       return Response.json({ country });
     }
 
+    if (url.pathname === "/api/rsvps") {
+      if (request.method === "POST") {
+        return handleRsvpPost(request, env);
+      }
+      if (request.method === "GET") {
+        return handleRsvpGet(env);
+      }
+    }
+
     return env.ASSETS.fetch(request);
   },
 };
+
+async function handleRsvpPost(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "Invalid JSON." }, { status: 400 });
+  }
+
+  const name = (body.name || "").trim();
+  const email = (body.email || "").trim();
+
+  if (!name || !email) {
+    return Response.json({ error: "Name and email are required." }, { status: 400 });
+  }
+
+  const result = await env.DB.prepare(`
+    INSERT INTO rsvps (
+      submitted_at, language, name, email, phone,
+      attendance, events, menu, transfer, dietary, notes,
+      plus_one, plus_one_name, plus_one_menu
+    ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)
+  `).bind(
+    body.submittedAt || new Date().toISOString(),
+    body.language || "",
+    name,
+    email,
+    (body.phone || "").trim(),
+    body.attendance || "",
+    body.events || "",
+    body.menu || "",
+    body.transfer || "",
+    (body.dietary || "").trim(),
+    (body.notes || "").trim(),
+    body.plusOne || "",
+    (body.plusOneName || "").trim(),
+    body.plusOneMenu || "",
+  ).run();
+
+  return Response.json({ ok: true, id: result.meta.last_row_id }, { status: 201 });
+}
+
+async function handleRsvpGet(env) {
+  const { results } = await env.DB.prepare(
+    "SELECT * FROM rsvps ORDER BY submitted_at DESC, id DESC"
+  ).all();
+  return Response.json(results);
+}
