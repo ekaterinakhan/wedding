@@ -616,9 +616,9 @@ const content = {
 // Add your own photos here — picsum fills the rest indefinitely
 const OWN_PHOTOS = [
   { src: "/US/us.jpeg", alt: "Ekaterina and Lucas", caption: "Paris, France · Sep 2024" },
-  { src: "/US/254F07A8-FABF-491D-9DB6-1881B81BE9FD.jpeg", alt: "Colares, Portugal", caption: "Colares, Portugal · Nov 2024" },
-  { src: "/US/1BDDC947-11B0-4884-A3F1-C8E572157DE6_1_105_c.jpeg", alt: "Algarve, Portugal", caption: "Algarve, Portugal · Nov 2024" },
   { src: "/US/FD496A6E-2160-4C7D-BE51-261A4C8F4CD5_1_105_c.jpeg", alt: "Saint Malo, France", caption: "Saint Malo, France · October 2024" },
+  { src: "/US/254F07A8-FABF-491D-9DB6-1881B81BE9FD.jpeg", alt: "Cabo da Roca, Portugal", caption: "Cabo da Roca, Portugal · Nov 2024" },
+  { src: "/US/1BDDC947-11B0-4884-A3F1-C8E572157DE6_1_105_c.jpeg", alt: "Algarve, Portugal", caption: "Algarve, Portugal · Nov 2024" },
   { src: "/US/80FC166B-DF1A-4BFA-A9EF-5279E290537A_1_102_a.jpeg", alt: "Costa da Caparica", caption: "Costa da Caparica, Portugal · Nov 2024" },
   { src: "/US/482F6450-1CAF-4AA6-B1AD-FCD22353ED55_1_105_c.jpeg", alt: "Paris, France", caption: "Paris, France · Nov 2024" },
   { src: "/US/B3D5FAF4-DC07-4A70-9851-07A33C3457F0_1_105_c.jpeg", alt: "Alps, France", caption: "Alps, France · Dec 2024" },
