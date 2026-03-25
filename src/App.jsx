@@ -14,6 +14,13 @@ const RSVP_LS_KEY = "wedding_rsvp_confirmed";
 
 const content = {
   en: {
+    ui: {
+      siteLabel: "Wedding Weekend",
+      day1Label: "9 May",
+      day2Label: "10 May",
+      footerDate: "9-10 May 2026 · Burgundy",
+      transferLocationPlaceholder: "CDG, Orly, Gare de Lyon..."
+    },
     hero: {
       eyebrow: "9-10 May 2026 • Burgundy",
       title: "A weekend to celebrate with us",
@@ -75,13 +82,13 @@ const content = {
         menu: "Your main course choice",
         plusOneMenu: "Main course choice for your +1",
         plusOneMenuFor: "Main course choice for",
-        transfer: "Do you need transfer from Paris to Auxerre and back?",
+        transfer: "Do you need a transfer from Paris to Auxerre and back?",
         transferDetails: "Transfer details",
         arrivalDateTime: "When do you arrive in Paris?",
         arrivalLocation: "Which Paris airport or train station will you arrive at?",
         returnDateTime: "When is your flight or train back?",
         returnLocation: "Which airport or train station will you leave from?",
-        transferPartySize: "How many people need transfer?",
+        transferPartySize: "How many people need a transfer?",
         dietary: "Dietary restrictions or allergies",
         notes: "Anything else we should know?"
       },
@@ -94,10 +101,9 @@ const content = {
         weddingAndBrunch: "Wedding day + brunch",
         weddingOnly: "Wedding day only",
         brunchOnly: "Brunch only",
-        beef: "Beef",
+        meat: "Meat",
         fish: "Fish",
-        guineaFowl: "Guinea fowl",
-        pork: "Pork",
+        poultry: "Poultry",
         vegetarian: "Vegetarian",
         vegan: "Vegan",
         transferYes: "Yes",
@@ -208,10 +214,9 @@ const content = {
       }
     ],
     menuOptions: [
-      ["beef", "Beef", "Beef cut with herb crust, short jus, and oven-roasted potatoes"],
+      ["meat", "Meat", "Chef's meat main course selection."],
       ["fish", "Fish", "Market fish with bouillabaisse jus, aioli espuma, and fennel variations"],
-      ["guinea-fowl", "Guinea fowl", "Roasted guinea fowl with chestnut jus, braised red cabbage, and parsnip puree"],
-      ["pork", "Pork", "Slow-cooked farm pork in its jus with Yonne lentils"],
+      ["poultry", "Poultry", "Chef's poultry main course selection."],
       ["vegetarian", "Vegetarian", "A seasonal vegetarian plate will be prepared on request."],
       ["vegan", "Vegan", "A seasonal vegan plate will be prepared on request."]
     ],
@@ -261,15 +266,6 @@ const content = {
               ["2026 tourism guide", "https://www.ot-auxerre.fr/app/uploads/auxerrois/2026/03/OT_Guide-Touristique-2026-web.pdf"]
             ]
           },
-          {
-            title: "Where to stay near Roncemay",
-            text: "The Domaine itself is fully booked. The closest alternatives are Domaine de l'Ocrerie in Pourrain (~3 km, a charming award-winning B&B right next to the golf course, table d'hôte available) and Chambres de la Fontaine in Gy-l'Évêque (~5 km, from €60/night including breakfast). In Joigny (~15 km), La Côte Saint-Jacques & Spa is a prestigious 5-star Relais & Châteaux with pool and spa.",
-            links: [
-              ["Domaine de l'Ocrerie", "https://www.domainedelocrerie.com/en"],
-              ["Chambres de la Fontaine", "http://www.chambresdegy.com/"],
-              ["La Côte Saint-Jacques & Spa", "https://www.cotesaintjacques.com/en/pagex/5-star-hotel-at-joigny.1922.html"]
-            ]
-          }
         ]
       },
       {
@@ -305,52 +301,59 @@ const content = {
     ]
   },
   fr: {
+    ui: {
+      siteLabel: "Week-end de mariage",
+      day1Label: "9 mai",
+      day2Label: "10 mai",
+      footerDate: "9-10 mai 2026 · Bourgogne",
+      transferLocationPlaceholder: "CDG, Orly, Gare de Lyon..."
+    },
     hero: {
       eyebrow: "9-10 mai 2026 • Bourgogne",
-      title: "Un week-end pour celebrer avec nous",
-      text: "Toutes les informations utiles pour le mariage, le brunch du lendemain, le RSVP, le diner et l'organisation pratique du voyage.",
+      title: "Un week-end pour célébrer avec nous",
+      text: "Toutes les informations utiles pour le mariage, le brunch du lendemain, le RSVP, le dîner et l'organisation pratique du voyage.",
       primary: "Confirmer sa venue",
       secondary: "Organiser son trajet"
     },
     welcome: {
       kicker: "Jour du mariage",
       title: "Samedi 9 mai 2026",
-      text: "Nous commencerons a Auxerre pour la ceremonie civile, puis nous poursuivrons au Domaine du Roncemay pour l'apres-midi et la soiree."
+      text: "Nous commencerons à Auxerre pour la cérémonie civile, puis nous poursuivrons au Domaine du Roncemay pour l'après-midi et la soirée."
     },
     schedule: {
       kicker: "Programme",
-      title: "Deroule du 9 mai",
-      note: "Les horaires sont indicatifs et pourront legèrement evoluer le jour J."
+      title: "Déroulé du 9 mai",
+      note: "Les horaires sont indicatifs et pourront légèrement évoluer le jour J."
     },
     nextDay: {
       kicker: "Le lendemain",
       title: "Dimanche 10 mai 2026",
-      note: "Un programme tranquille au Domaine du Roncemay, avec les transferts de retour dans l'apres-midi."
+      note: "Un programme tranquille au Domaine du Roncemay, avec les transferts de retour dans l'après-midi."
     },
     menu: {
-      kicker: "Diner au Roncemay",
-      title: "Le menu de notre diner",
-      note: "Nous avons choisi une entree et un dessert dans la carte actuelle du Roncemay pour tout le monde, et chaque invite peut selectionner son plat principal ci-dessous.",
+      kicker: "Dîner au Roncemay",
+      title: "Le menu de notre dîner",
+      note: "Nous avons choisi une entrée et un dessert dans la carte actuelle du Roncemay pour tout le monde, et chaque invité peut sélectionner son plat principal ci-dessous.",
       shared: "Pour tout le monde",
-      choice: "A choisir",
-      starterTitle: "Entree",
-      starterDish: "Oeuf cocotte fermier au soumaintrain, confit de volaille et pain au levain",
+      choice: "À choisir",
+      starterTitle: "Entrée",
+      starterDish: "Œuf cocotte fermier au soumaintrain, confit de volaille et pain au levain",
       mainTitle: "Plat principal",
       dessertTitle: "Dessert",
       dessertDish:
-        "La profiterole au gianduja, creme glacee, craquelin cacao et sauce gianduja avec quelques noisettes torrefiees",
+        "La profiterole au gianduja, crème glacée, craquelin cacao et sauce gianduja avec quelques noisettes torréfiées",
       dietaryTitle: "Note alimentaire",
       dietaryText:
-        "Des alternatives vegetariennes et vegan pourront etre preparees sur demande. Merci d'indiquer toute allergie ou restriction alimentaire dans le formulaire RSVP.",
-      selectedLabel: "Plat selectionne",
-      selectionHint: "Touchez une carte plat pour preremplir votre choix dans le RSVP.",
-      upcoming: "Bientot disponible",
-      upcomingNote: "Le menu sera partage prochainement."
+        "Des alternatives végétariennes et vegan pourront être préparées sur demande. Merci d'indiquer toute allergie ou restriction alimentaire dans le formulaire RSVP.",
+      selectedLabel: "Plat sélectionné",
+      selectionHint: "Touchez une carte pour préremplir votre choix dans le RSVP.",
+      upcoming: "Bientôt disponible",
+      upcomingNote: "Le menu sera partagé prochainement."
     },
     rsvp: {
       kicker: "RSVP",
       title: "Confirmez votre venue et votre menu",
-      note: "Merci de repondre avant le 15 avril 2026. Si vous venez avec un +1, vous pouvez ajouter son nom et choisir un second plat principal ci-dessous.",
+      note: "Merci de répondre avant le 15 avril 2026. Si vous venez avec un +1, vous pouvez ajouter son nom et choisir un second plat principal ci-dessous.",
       menuGroupTitleSingle: "Votre choix de menu",
       menuGroupTitlePair: "Les choix de menu pour vous deux",
       menuGroupNoteSingle: "Merci de choisir votre plat principal ci-dessous.",
@@ -358,22 +361,22 @@ const content = {
       fields: {
         name: "Nom complet",
         email: "Email",
-        phone: "Telephone",
-        attendance: "Serez-vous present(e) ?",
+        phone: "Téléphone",
+        attendance: "Serez-vous présent(e) ?",
         plusOne: "Viendrez-vous avec un +1 ?",
         plusOneName: "Nom complet de votre +1 pour les marque-places",
-        events: "A quels moments serez-vous parmi nous ?",
+        events: "À quels moments serez-vous parmi nous ?",
         menu: "Votre choix de plat",
         plusOneMenu: "Choix du plat pour votre +1",
         plusOneMenuFor: "Choix du plat pour",
-        transfer: "Avez-vous besoin d'un transfert de Paris a Auxerre puis du retour ?",
-        transferDetails: "Details du transfert",
-        arrivalDateTime: "Quand arrivez-vous a Paris ?",
-        arrivalLocation: "A quel aeroport ou dans quelle gare de Paris arrivez-vous ?",
+        transfer: "Avez-vous besoin d'un transfert de Paris à Auxerre puis du retour ?",
+        transferDetails: "Détails du transfert",
+        arrivalDateTime: "Quand arrivez-vous à Paris ?",
+        arrivalLocation: "À quel aéroport ou dans quelle gare de Paris arrivez-vous ?",
         returnDateTime: "Quand est votre vol ou train retour ?",
-        returnLocation: "Depuis quel aeroport ou quelle gare repartez-vous ?",
+        returnLocation: "Depuis quel aéroport ou quelle gare repartez-vous ?",
         transferPartySize: "Combien de personnes ont besoin du transfert ?",
-        dietary: "Allergies ou regime alimentaire",
+        dietary: "Allergies ou régime alimentaire",
         notes: "Autre information utile"
       },
       options: {
@@ -385,77 +388,76 @@ const content = {
         weddingAndBrunch: "Mariage + brunch",
         weddingOnly: "Mariage uniquement",
         brunchOnly: "Brunch uniquement",
-        beef: "Boeuf",
+        meat: "Viande",
         fish: "Poisson",
-        guineaFowl: "Pintade",
-        pork: "Porc",
-        vegetarian: "Vegetarien",
+        poultry: "Volaille",
+        vegetarian: "Végétarien",
         vegan: "Vegan",
         transferYes: "Oui",
         transferNo: "Non"
       },
       submit: "Envoyer le RSVP",
-      successRemote: "Merci. Votre reponse a bien ete envoyee.",
+      successRemote: "Merci. Votre réponse a bien été envoyée.",
       successLocal:
-        "Le RSVP est enregistre dans ce navigateur pour le moment. Ajoutez un vrai endpoint dans l'app pour recevoir les reponses en ligne.",
-      duplicate: "Nous avons deja recu votre reponse. Si vous souhaitez la modifier, contactez-nous directement.",
-      error: "Une erreur est survenue pendant l'envoi. Merci de reessayer.",
-      confirmedTitle: "A bientot en Bourgogne",
-      confirmedNote: "Votre reponse est bien enregistree. On a hate de feter ca avec vous.",
-      confirmedAlreadyNote: "Nous avions deja votre reponse. On a hate de feter ca avec vous."
+        "Le RSVP est enregistré dans ce navigateur pour le moment. Ajoutez un vrai endpoint dans l'app pour recevoir les réponses en ligne.",
+      duplicate: "Nous avons déjà reçu votre réponse. Si vous souhaitez la modifier, contactez-nous directement.",
+      error: "Une erreur est survenue pendant l'envoi. Merci de réessayer.",
+      confirmedTitle: "À bientôt en Bourgogne",
+      confirmedNote: "Votre réponse est bien enregistrée. On a hâte de fêter ça avec vous.",
+      confirmedAlreadyNote: "Nous avions déjà votre réponse. On a hâte de fêter ça avec vous."
     },
     logistics: {
       kicker: "Logistique",
-      title: "Informations de trajet et de sejour",
-      note: "Parcourez les informations par theme ci-dessous. Ouvrez une question pour lire le detail, et reverifiez les horaires en temps reel plus pres de la date."
+      title: "Informations de trajet et de séjour",
+      note: "Parcourez les informations par thème ci-dessous. Ouvrez une question pour lire le détail, et revérifiez les horaires en temps réel plus près de la date."
     },
     scheduleItems: [
       {
         time: "13:30",
-        title: "Accueil des invites a la Mairie d'Auxerre",
-        description: "Merci d'arriver a partir de 13:30 afin que tout le monde soit installe avant la ceremonie.",
+        title: "Accueil des invités à la Mairie d'Auxerre",
+        description: "Merci d'arriver à partir de 13:30 afin que tout le monde soit installé avant la cérémonie.",
         location: "Mairie d'Auxerre",
         url: "https://maps.app.goo.gl/wDfwtcaomWeJhkoi6"
       },
       {
         time: "14:00",
-        title: "Ceremonie civile a la Mairie d'Auxerre",
-        description: "La ceremonie officielle commence a 14:00.",
+        title: "Cérémonie civile à la Mairie d'Auxerre",
+        description: "La cérémonie officielle commence à 14:00.",
         location: "Mairie d'Auxerre",
         url: "https://maps.app.goo.gl/wDfwtcaomWeJhkoi6"
       },
       {
-        time: "Apres la ceremonie",
-        title: "Coupe de cremant",
-        description: "Un verre pour celebrer ensemble juste apres la ceremonie.",
+        time: "Après la cérémonie",
+        title: "Coupe de crémant",
+        description: "Un verre pour célébrer ensemble juste après la cérémonie.",
         location: "Mairie d'Auxerre",
         url: "https://maps.app.goo.gl/wDfwtcaomWeJhkoi6"
       },
       {
         time: "15:15-15:45",
         title: "Transfert vers le Domaine du Roncemay",
-        description: "Plage de transfert prevue entre Auxerre et le lieu de reception.",
+        description: "Plage de transfert prévue entre Auxerre et le lieu de réception.",
         location: "Place de l'Arquebuse",
         url: "https://maps.app.goo.gl/kAozCZSt48x1raUN7"
       },
       {
         time: "16:00",
-        title: "Gouter sur la terrasse du bistrot",
-        description: "Une pause gourmande et detendue dans l'apres-midi.",
+        title: "Goûter sur la terrasse du bistrot",
+        description: "Une pause gourmande et détendue dans l'après-midi.",
         location: "Domaine du Roncemay",
         url: "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
       },
       {
         time: "18:00",
-        title: "Apero",
-        description: "Verres, discussions et jolie lumiere de fin de journee.",
+        title: "Apéro",
+        description: "Verres, discussions et jolie lumière de fin de journée.",
         location: "Domaine du Roncemay",
         url: "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
       },
       {
         time: "19:00-00:00",
-        title: "Diner et soiree",
-        description: "Le diner commence a 19:00 et la fete se poursuit jusqu'a minuit.",
+        title: "Dîner et soirée",
+        description: "Le dîner commence à 19:00 et la fête se poursuit jusqu'à minuit.",
         location: "Domaine du Roncemay",
         url: "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
       }
@@ -464,14 +466,14 @@ const content = {
       {
         time: "09:30",
         title: "Transfert depuis Auxerre",
-        description: "Depart depuis le meme point de rendez-vous a Auxerre pour les invites qui rejoignent le Domaine du Roncemay.",
+        description: "Départ depuis le même point de rendez-vous à Auxerre pour les invités qui rejoignent le Domaine du Roncemay.",
         location: "Place de l'Arquebuse",
         url: "https://maps.app.goo.gl/kAozCZSt48x1raUN7"
       },
       {
         time: "10:00-12:00",
         title: "Brunch au Domaine du Roncemay",
-        description: "Un brunch detendu tous ensemble au Domaine.",
+        description: "Un brunch détendu tous ensemble au Domaine.",
         location: "Domaine du Roncemay",
         url: "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
       },
@@ -479,88 +481,78 @@ const content = {
         time: "12:00-14:00",
         title: "Initiation au golf",
         description:
-          "Si vous preferez ne pas participer, vous pourrez profiter d'une balade a velo, d'une partie de petanque, d'une promenade dans le domaine ou simplement discuter avec les autres invites.",
+          "Si vous préférez ne pas participer, vous pourrez profiter d'une balade à vélo, d'une partie de pétanque, d'une promenade dans le domaine ou simplement discuter avec les autres invités.",
         location: "Domaine du Roncemay",
         url: "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
       },
       {
         time: "16:00",
         title: "Transfert retour vers Auxerre",
-        description: "Transfert de retour pour les invites qui repartent vers Auxerre.",
+        description: "Transfert de retour pour les invités qui repartent vers Auxerre.",
         location: "Domaine du Roncemay",
         url: "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
       },
       {
         time: "16:00",
         title: "Transfert vers Paris",
-        description: "Depart du transfert direct pour les invites qui poursuivent ensuite vers Paris.",
+        description: "Départ du transfert direct pour les invités qui poursuivent ensuite vers Paris.",
         location: "Domaine du Roncemay",
         url: "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
       }
     ],
     menuOptions: [
-      ["beef", "Boeuf", "Piece de boeuf craquelin fleurs de gazette, jus court, pommes de terre au four"],
-      ["fish", "Poisson", "Poisson du marche, jus bouillabaisse, espuma aioli et declinaison autour du fenouil"],
-      ["guinea-fowl", "Pintade", "Pintade et cuisse rotie a plat, jus aux eclats de chataignes, choux rouges braises, puree de panais"],
-      ["pork", "Porc", "Carre de porc fermier cuisson basse temperature dans son jus, lentilles de l'Yonne"],
-      ["vegetarian", "Vegetarien", "Une assiette vegetarienne de saison pourra etre preparee sur demande."],
-      ["vegan", "Vegan", "Une assiette vegan de saison pourra etre preparee sur demande."]
+      ["meat", "Viande", "Suggestion de plat de viande du chef."],
+      ["fish", "Poisson", "Poisson du marché, jus bouillabaisse, espuma aïoli et déclinaison autour du fenouil"],
+      ["poultry", "Volaille", "Suggestion de plat de volaille du chef."],
+      ["vegetarian", "Végétarien", "Une assiette végétarienne de saison pourra être préparée sur demande."],
+      ["vegan", "Vegan", "Une assiette vegan de saison pourra être préparée sur demande."]
     ],
     logisticsSections: [
       {
         title: "Transport",
         items: [
           {
-            title: "Comment venir a Auxerre",
-            text: "Auxerre est tres facilement accessible en train depuis Paris Bercy Bourgogne. Les trajets directs durent souvent autour de 1 h 37 a 1 h 39.",
+            title: "Comment venir à Auxerre",
+            text: "Auxerre est très facilement accessible en train depuis Paris Bercy Bourgogne. Les trajets directs durent souvent autour de 1 h 37 à 1 h 39.",
             links: [["Trains Paris > Auxerre", "https://www.sncf-connect.com/fr-fr/train/horaires/paris/auxerre"]]
           },
           {
-            title: "De la gare d'Auxerre-Saint-Gervais a la Mairie",
-            text: "La gare se trouve a une courte distance en taxi du centre-ville. A pied, comptez environ 20 a 25 minutes jusqu'a la Place de l'Hotel de Ville.",
+            title: "De la gare d'Auxerre-Saint-Gervais à la Mairie",
+            text: "La gare se trouve à une courte distance en taxi du centre-ville. À pied, comptez environ 20 à 25 minutes jusqu'à la Place de l'Hôtel de Ville.",
             links: [["Office de tourisme", "https://www.ot-auxerre.fr/espace-pro/contacts/"]]
           },
           {
-            title: "Lieu de reception: Domaine du Roncemay",
-            text: "La reception aura lieu au Domaine du Roncemay a Chassy. Auxerre se trouve a environ 22 km, soit environ 25 minutes de route.",
+            title: "Lieu de réception : Domaine du Roncemay",
+            text: "La réception aura lieu au Domaine du Roncemay à Chassy. Auxerre se trouve à environ 22 km, soit environ 25 minutes de route.",
             links: [
               ["Infos pratiques du Domaine", "https://roncemay.com/fr/informations-pratiques.html"],
               ["Site du Domaine", "https://roncemay.com/fr/"]
             ]
           },
           {
-            title: "Transfert du samedi matin: Paris vers Auxerre",
-            text: "Le plus simple sera generalement de prendre un TER tot le matin depuis Paris Bercy Bourgogne vers Auxerre-Saint-Gervais.",
-            links: [["Verifier les horaires SNCF", "https://www.sncf-connect.com/fr-fr/train/horaires/paris/auxerre"]]
+            title: "Transfert du samedi matin : Paris vers Auxerre",
+            text: "Le plus simple sera généralement de prendre un TER tôt le matin depuis Paris Bercy Bourgogne vers Auxerre-Saint-Gervais.",
+            links: [["Vérifier les horaires SNCF", "https://www.sncf-connect.com/fr-fr/train/horaires/paris/auxerre"]]
           },
           {
-            title: "Transfert du dimanche apres-midi: Auxerre vers Paris",
-            text: "Les retours vers Paris durent souvent autour de 1 h 44. Un train l'apres-midi sera probablement le plus confortable.",
+            title: "Transfert du dimanche après-midi : Auxerre vers Paris",
+            text: "Les retours vers Paris durent souvent autour de 1 h 44. Un train l'après-midi sera probablement le plus confortable.",
             links: [["Trains Auxerre > Paris", "https://www.sncf-connect.com/fr-ch/train/trajet/auxerre/paris"]]
           }
         ]
       },
       {
-        title: "Hebergement",
+        title: "Hébergement",
         items: [
           {
-            title: "Ou loger a Auxerre",
-            text: "Quelques options centrales incluent Hotel Le Maxime, Hotel Normandie et Ibis Budget Auxerre Centre. Nous recommandons de reserver tot.",
+            title: "Où loger à Auxerre",
+            text: "Quelques options centrales incluent Hotel Le Maxime, Hotel Normandie et Ibis Budget Auxerre Centre. Nous recommandons de réserver tôt.",
             links: [
               ["Hotel Le Maxime", "https://www.ot-auxerre.fr/offres/hotel-le-maxime-bw-signature-collection-auxerre-fr-2563381/"],
               ["Hotel Normandie", "https://www.ot-auxerre.fr/offres/the-originals-hotel-normandie-auxerre-auxerre-fr-2563385/"],
               ["Guide touristique 2026", "https://www.ot-auxerre.fr/app/uploads/auxerrois/2026/03/OT_Guide-Touristique-2026-web.pdf"]
             ]
           },
-          {
-            title: "Ou loger pres du Roncemay",
-            text: "Le Domaine est complet. Les alternatives les plus proches sont le Domaine de l'Ocrerie a Pourrain (~3 km, chambre d'hotes de charme primee juste a cote du golf, table d'hotes disponible) et les Chambres de la Fontaine a Gy-l'Eveque (~5 km, a partir de 60 €/nuit petit-dejeuner inclus). A Joigny (~15 km), La Cote Saint-Jacques & Spa est une option 5 etoiles Relais & Chateaux avec piscine et spa.",
-            links: [
-              ["Domaine de l'Ocrerie", "https://www.domainedelocrerie.com/fr"],
-              ["Chambres de la Fontaine", "http://www.chambresdegy.com/"],
-              ["La Cote Saint-Jacques & Spa", "https://www.cotesaintjacques.com/fr/pagex/hotel-5-etoiles-joigny.1922.html"]
-            ]
-          }
         ]
       },
       {
@@ -569,26 +561,26 @@ const content = {
           {
             title: "Pourquoi sommes-nous ici ?",
             text:
-              "Auxerre a ete la maison de Lucas de ses 12 ans a ses 19 ans, juste avant qu'il parte a Paris pour etudier a l'Ecole 42, quelques jours avant son anniversaire cette annee-la.\n\nAuxerre est toujours la maison de Valerie et Franck, qui ont explore chaque petit coin de la ville et les vignobles voisins lors de leurs longues balades a velo pendant les journees d'ete.\n\nAuxerre est une ville dont Lucas m'a beaucoup parle avant meme que nous commencions a sortir ensemble, en me racontant a quel point la vie y est paisible, verte, simple et calme dans cette ancienne ville de Bourgogne.\n\nAuxerre garde maintenant un morceau de mon coeur et de celui de Phoebe, car nous y avons passe tant de belles journees et de belles soirees, a courir et faire du velo le long de l'Yonne, a regarder jouer l'AJA dans son stade, et a partager beaucoup de rires autour de diners chez les parents de Lucas.\n\nNous vous avons prepare quelques suggestions a partager avec vous, et nous esperons que vous aimerez vous aussi cette ville et que vous en garderez de beaux souvenirs, ainsi que des quelques jours que nous passerons ensemble.",
+              "Auxerre a été la maison de Lucas de ses 12 ans à ses 19 ans, juste avant qu'il parte à Paris pour étudier à l'École 42, quelques jours avant son anniversaire cette année-là.\n\nAuxerre est toujours la maison de Valérie et Franck, qui ont exploré chaque petit coin de la ville et les vignobles voisins lors de leurs longues balades à vélo pendant les journées d'été.\n\nAuxerre est une ville dont Lucas m'a beaucoup parlé avant même que nous commencions à sortir ensemble, en me racontant à quel point la vie y est paisible, verte, simple et calme dans cette ancienne ville de Bourgogne.\n\nAuxerre garde maintenant un morceau de mon cœur et de celui de Phoebe, car nous y avons passé tant de belles journées et de belles soirées, à courir et faire du vélo le long de l'Yonne, à regarder jouer l'AJA dans son stade, et à partager beaucoup de rires autour de dîners chez les parents de Lucas.\n\nNous vous avons préparé quelques suggestions à partager avec vous, et nous espérons que vous aimerez vous aussi cette ville et que vous en garderez de beaux souvenirs, ainsi que des quelques jours que nous passerons ensemble.",
             links: []
           },
           {
             title: "Que voir ?",
-            text: "Si vous avez un peu de temps, le centre historique, la cathedrale Saint-Etienne, le quartier de la tour de l'Horloge et les bords de l'Yonne valent le detour. Si vous avez envie de faire un peu de sport, vous pouvez aussi aller a la piscine d'Auxerre, a la piste d'athletisme ou aux courts de tennis. Il y a egalement un joli espace public de sport dans le parc de la ville, juste a cote du pont.",
+            text: "Si vous avez un peu de temps, le centre historique, la cathédrale Saint-Étienne, le quartier de la tour de l'Horloge et les bords de l'Yonne valent le détour. Si vous avez envie de faire un peu de sport, vous pouvez aussi aller à la piscine d'Auxerre, à la piste d'athlétisme ou aux courts de tennis. Il y a également un joli espace public de sport dans le parc de la ville, juste à côté du pont.",
             links: [
               ["Piscine d'Auxerre", "https://www.google.com/maps/search/?api=1&query=Stade+nautique+83+Avenue+Yver+89000+Auxerre"],
-              ["Piste d'athletisme", "https://www.google.com/maps/search/?api=1&query=Stade+Guy+Drut+27+Rue+de+Preuilly+89000+Auxerre"],
+              ["Piste d'athlétisme", "https://www.google.com/maps/search/?api=1&query=Stade+Guy+Drut+27+Rue+de+Preuilly+89000+Auxerre"],
               ["Courts de tennis", "https://www.google.com/maps/search/?api=1&query=Stade+Auxerrois+Tennis+27+Rue+de+Preuilly+89000+Auxerre"]
             ]
           },
           {
-            title: "Ou manger ?",
-            text: "Pour les invites qui arrivent en avance, Le Goût des Autres, Mamma Giulia et L'Asperule sont de bonnes adresses pour dejeuner ou diner, et Cannelle est parfait pour un cafe et un petit-dejeuner.",
+            title: "Où manger ?",
+            text: "Pour les invités qui arrivent en avance, Le Goût des Autres, Mamma Giulia et L'Asperule sont de bonnes adresses pour déjeuner ou dîner, et Cannelle est parfait pour un café et un petit-déjeuner.",
             links: [
-              ["Le Gout des Autres", "https://www.google.com/maps/search/?api=1&query=Le+Gout+des+Autres+4+Place+du+Marechal+Leclerc+89000+Auxerre"],
-              ["Mama Giulia", "https://www.google.com/maps/search/?api=1&query=Mamma+Giulia+3+Place+des+Cordeliers+89000+Auxerre"],
+              ["Le Goût des Autres", "https://www.google.com/maps/search/?api=1&query=Le+Gout+des+Autres+4+Place+du+Marechal+Leclerc+89000+Auxerre"],
+              ["Mamma Giulia", "https://www.google.com/maps/search/?api=1&query=Mamma+Giulia+3+Place+des+Cordeliers+89000+Auxerre"],
               ["L'Asperule", "https://www.google.com/maps/search/?api=1&query=L%27Asperule+34+Rue+du+Pont+89000+Auxerre"],
-              ["Cannelle - cafe & petit-dejeuner", "https://www.google.com/maps/search/?api=1&query=Cannelle+12+Rue+Fecauderie+89000+Auxerre"]
+              ["Cannelle - café & petit-déjeuner", "https://www.google.com/maps/search/?api=1&query=Cannelle+12+Rue+Fecauderie+89000+Auxerre"]
             ]
           }
         ]
@@ -690,7 +682,7 @@ function HeroPhotoStack() {
 }
 
 function getEventIcon(title) {
-  const t = title.toLowerCase();
+  const t = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (t.includes("ceremony") || t.includes("civil") || t.includes("ceremonie")) return <LuHeart size={13} />;
   if (t.includes("transfer") || t.includes("transfert")) return <LuCar size={13} />;
   if (t.includes("toast") || t.includes("apero") || t.includes("cremant") || t.includes("coupe")) return <LuWine size={13} />;
@@ -703,8 +695,8 @@ function ScheduleSection({ t }) {
   const [activeDay, setActiveDay] = useState("day1");
 
   const tabs = [
-    { id: "day1", icon: <LuCalendarDays size={13} />, label: "9 May", note: t.schedule.note, items: t.scheduleItems },
-    { id: "day2", icon: <LuSunrise size={13} />, label: "10 May", note: t.nextDay.note, items: t.nextDayItems },
+    { id: "day1", icon: <LuCalendarDays size={13} />, label: t.ui.day1Label, note: t.schedule.note, items: t.scheduleItems },
+    { id: "day2", icon: <LuSunrise size={13} />, label: t.ui.day2Label, note: t.nextDay.note, items: t.nextDayItems },
   ];
 
   const active = tabs.find((tab) => tab.id === activeDay);
@@ -865,7 +857,7 @@ function App() {
       <header className="relative overflow-hidden rounded-[28px] border border-white/70 bg-[rgba(249,251,247,0.85)] p-5 shadow-[0_24px_80px_rgba(72,40,23,0.08)] backdrop-blur-xl">
         <div className="absolute -right-[10%] -bottom-[20%] h-[340px] w-[340px] rounded-full bg-radial from-[rgba(196,160,110,0.45)] to-transparent" />
         <div className="relative z-10 flex items-center justify-between gap-4">
-          <div className="text-xs font-bold uppercase tracking-[0.14em] text-[#4a6355]">Wedding Weekend</div>
+          <div className="text-xs font-bold uppercase tracking-[0.14em] text-[#4a6355]">{t.ui.siteLabel}</div>
           <div className="inline-flex gap-2 rounded-full border border-[rgba(53,75,62,0.12)] bg-[rgba(249,251,247,0.7)] p-1.5">
             {["en", "fr"].map((code) => (
               <button
@@ -1131,7 +1123,7 @@ function App() {
                             name="arrivalLocation"
                             value={arrivalLocation}
                             onChange={(event) => setArrivalLocation(event.target.value)}
-                            placeholder="CDG, Orly, Gare de Lyon..."
+                            placeholder={t.ui.transferLocationPlaceholder}
                             required={transfer === "yes"}
                           />
                         </Field>
@@ -1151,7 +1143,7 @@ function App() {
                             name="returnLocation"
                             value={returnLocation}
                             onChange={(event) => setReturnLocation(event.target.value)}
-                            placeholder="CDG, Orly, Gare de Lyon..."
+                            placeholder={t.ui.transferLocationPlaceholder}
                             required={transfer === "yes"}
                           />
                         </Field>
@@ -1197,7 +1189,7 @@ function App() {
         <p className="font-serif text-[clamp(1.4rem,3vw,2rem)] leading-none text-[#4d6858]">
           Ekaterina &amp; Lucas
         </p>
-        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#576e63]">9–10 May 2026 · Burgundy</p>
+        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#576e63]">{t.ui.footerDate}</p>
       </footer>
 
       <StickyBar t={t} />
@@ -1233,7 +1225,7 @@ function RsvpConfirmed({ name, plusOneName, already, t }) {
         <LuHeart size={14} />
         <div className="h-px w-12 bg-[rgba(196,160,110,0.4)]" />
       </div>
-      <p className="text-xs uppercase tracking-[0.18em] text-[#4d6858]">9–10 May 2026 · Burgundy</p>
+      <p className="text-xs uppercase tracking-[0.18em] text-[#4d6858]">{t.ui.footerDate}</p>
     </motion.div>
   );
 }
