@@ -783,12 +783,20 @@ function App() {
   const [plusOneName, setPlusOneName] = useState("");
   const [selectedPlusOneMain, setSelectedPlusOneMain] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneCountry, setPhoneCountry] = useState("FR");
   const [rsvpConfirmed, setRsvpConfirmed] = useState(() => {
     try { return JSON.parse(localStorage.getItem(RSVP_LS_KEY)) || null; } catch { return null; }
   });
   const t = content[lang];
   const menuRequired = attendance !== "no";
   const plusOneEnabled = menuRequired && hasPlusOne === "yes";
+
+  useEffect(() => {
+    fetch("/api/country")
+      .then((r) => r.json())
+      .then((data) => { if (data.country && data.country !== "XX") setPhoneCountry(data.country); })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = useCallback(async function handleSubmit(event) {
     event.preventDefault();
@@ -929,7 +937,7 @@ function App() {
               <Field label={t.rsvp.fields.phone}>
                 <PhoneInput
                   international
-                  defaultCountry="FR"
+                  defaultCountry={phoneCountry}
                   value={phone}
                   onChange={setPhone}
                   className="phone-input"
