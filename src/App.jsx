@@ -1513,13 +1513,13 @@ function StickyBar({ t }) {
           className="fixed bottom-4 left-4 right-4 z-50 flex gap-2 rounded-full border border-white/70 bg-[rgba(249,251,247,0.92)] p-1.5 shadow-[0_8px_40px_rgba(72,40,23,0.22)] backdrop-blur-xl md:left-1/2 md:right-auto md:w-auto md:-translate-x-1/2"
         >
           <a href="#menu" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[rgba(53,75,62,0.12)] px-4 py-2.5 text-sm font-semibold text-[#4a6355] transition hover:bg-[rgba(53,75,62,0.06)]">
-            <LuUtensils size={13} /> <span className="whitespace-nowrap">{t.menu.kicker}</span>
+            <LuUtensils size={13} /> <span className="hidden whitespace-nowrap sm:inline">{t.menu.kicker}</span>
           </a>
           <a href="#rsvp" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#4a6355] to-[#4d6858] px-4 py-2.5 text-sm font-bold text-white">
             <LuMail size={13} /> <span className="whitespace-nowrap">{t.hero.primary}</span>
           </a>
           <a href="#logistics" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[rgba(53,75,62,0.12)] px-4 py-2.5 text-sm font-semibold text-[#4a6355] transition hover:bg-[rgba(53,75,62,0.06)]">
-            <LuMap size={13} /> <span className="whitespace-nowrap">{t.logistics.kicker}</span>
+            <LuMap size={13} /> <span className="hidden whitespace-nowrap sm:inline">{t.logistics.kicker}</span>
           </a>
         </motion.div>
       )}
