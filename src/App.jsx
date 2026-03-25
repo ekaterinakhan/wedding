@@ -4,10 +4,11 @@ import { Cursors } from "./components/Cursors";
 import {
   LuMapPin, LuArrowUpRight, LuChevronDown,
   LuHeart, LuCar, LuWine, LuUtensils, LuFlag,
-  LuMail, LuMap, LuCalendarDays, LuSunrise,
+  LuMail, LuMap, LuCalendarDays, LuSunrise, LuCircleCheck,
 } from "react-icons/lu";
 
 const RSVP_ENDPOINT = import.meta.env.VITE_RSVP_ENDPOINT || "/api/rsvps";
+const RSVP_LS_KEY = "wedding_rsvp_confirmed";
 
 const content = {
   en: {
@@ -98,7 +99,10 @@ const content = {
       successLocal:
         "RSVP saved in this browser for now. Add a real RSVP endpoint in the app to receive submissions online.",
       duplicate: "We already have your RSVP. If you need to make a change, please reach out to us directly.",
-      error: "Something went wrong while sending the RSVP. Please try again."
+      error: "Something went wrong while sending the RSVP. Please try again.",
+      confirmedTitle: "See you in Burgundy",
+      confirmedNote: "Your RSVP is confirmed. We can't wait to celebrate with you.",
+      confirmedAlreadyNote: "We already had your RSVP on file. We can't wait to celebrate with you."
     },
     logistics: {
       kicker: "Logistics",
@@ -380,7 +384,10 @@ const content = {
       successLocal:
         "Le RSVP est enregistre dans ce navigateur pour le moment. Ajoutez un vrai endpoint dans l'app pour recevoir les reponses en ligne.",
       duplicate: "Nous avons deja recu votre reponse. Si vous souhaitez la modifier, contactez-nous directement.",
-      error: "Une erreur est survenue pendant l'envoi. Merci de reessayer."
+      error: "Une erreur est survenue pendant l'envoi. Merci de reessayer.",
+      confirmedTitle: "A bientot en Bourgogne",
+      confirmedNote: "Votre reponse est bien enregistree. On a hate de feter ca avec vous.",
+      confirmedAlreadyNote: "Nous avions deja votre reponse. On a hate de feter ca avec vous."
     },
     logistics: {
       kicker: "Logistique",
@@ -758,6 +765,9 @@ function App() {
   const [hasPlusOne, setHasPlusOne] = useState("");
   const [plusOneName, setPlusOneName] = useState("");
   const [selectedPlusOneMain, setSelectedPlusOneMain] = useState("");
+  const [rsvpConfirmed, setRsvpConfirmed] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(RSVP_LS_KEY)) || null; } catch { return null; }
+  });
   const t = content[lang];
   const menuRequired = attendance !== "no";
   const plusOneEnabled = menuRequired && hasPlusOne === "yes";
@@ -781,7 +791,9 @@ function App() {
         });
 
         if (response.status === 409) {
-          setStatus(t.rsvp.duplicate);
+          const confirmed = { name: payload.name, already: true };
+          localStorage.setItem(RSVP_LS_KEY, JSON.stringify(confirmed));
+          setRsvpConfirmed(confirmed);
           return;
         }
 
@@ -789,7 +801,9 @@ function App() {
           throw new Error("Submission failed");
         }
 
-        setStatus(t.rsvp.successRemote);
+        const confirmed = { name: payload.name, already: false };
+        localStorage.setItem(RSVP_LS_KEY, JSON.stringify(confirmed));
+        setRsvpConfirmed(confirmed);
       } else {
         setStatus(t.rsvp.successLocal);
       }
@@ -874,6 +888,9 @@ function App() {
 
         <SectionCard id="rsvp">
           <SectionHeading kicker={t.rsvp.kicker} title={t.rsvp.title} note={t.rsvp.note} />
+          {rsvpConfirmed ? (
+            <RsvpConfirmed name={rsvpConfirmed.name} already={rsvpConfirmed.already} t={t} />
+          ) : (
           <form className="grid gap-8" onSubmit={handleSubmit}>
 
             {/* Contact */}
@@ -1049,6 +1066,7 @@ function App() {
               <p className="min-h-6 text-sm leading-6 text-[#576e63]">{status}</p>
             </div>
           </form>
+          )}
         </SectionCard>
 
         <LogisticsSection t={t} />
@@ -1064,6 +1082,36 @@ function App() {
       <StickyBar t={t} />
       <Cursors />
     </div>
+  );
+}
+
+function RsvpConfirmed({ name, already, t }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className="flex flex-col items-center gap-6 py-10 text-center"
+    >
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[rgba(74,99,85,0.1)] text-[#4a6355]">
+        <LuCircleCheck size={36} strokeWidth={1.5} />
+      </div>
+      <div className="grid gap-2">
+        <h3 className="font-serif text-[clamp(1.8rem,4vw,2.8rem)] leading-[1] text-[#1e2a22]">
+          {t.rsvp.confirmedTitle}
+          {name ? `, ${name.split(" ")[0]}` : ""}.
+        </h3>
+        <p className="mx-auto max-w-[42ch] text-base leading-7 text-[#576e63]">
+          {already ? t.rsvp.confirmedAlreadyNote : t.rsvp.confirmedNote}
+        </p>
+      </div>
+      <div className="flex items-center gap-3 text-[#c4a06e]">
+        <div className="h-px w-12 bg-[rgba(196,160,110,0.4)]" />
+        <LuHeart size={14} />
+        <div className="h-px w-12 bg-[rgba(196,160,110,0.4)]" />
+      </div>
+      <p className="text-xs uppercase tracking-[0.18em] text-[#4d6858]">9–10 May 2026 · Burgundy</p>
+    </motion.div>
   );
 }
 
