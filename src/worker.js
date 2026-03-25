@@ -47,8 +47,8 @@ async function handleRsvpPost(request, env) {
 
   // Insert primary guest
   const guest = await env.DB.prepare(`
-    INSERT INTO guests (submitted_at, language, name, email, phone, attendance, events, plus_one, plus_one_name, dietary, notes, token)
-    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)
+    INSERT INTO guests (submitted_at, language, name, email, phone, attendance, events, plus_one, plus_one_name, dietary, notes, token, guest_type)
+    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, 'primary')
     RETURNING id
   `).bind(
     body.submittedAt || new Date().toISOString(),
@@ -92,8 +92,8 @@ async function handleRsvpPost(request, env) {
   if (hasPlusOne) {
     statements.push(
       env.DB.prepare(`
-        INSERT INTO guests (submitted_at, language, name, primary_guest_id)
-        VALUES (?1, ?2, ?3, ?4)
+        INSERT INTO guests (submitted_at, language, name, primary_guest_id, guest_type)
+        VALUES (?1, ?2, ?3, ?4, 'plus_one')
         RETURNING id
       `).bind(body.submittedAt || new Date().toISOString(), body.language || "", plusOneName, guestId)
     );
@@ -109,6 +109,27 @@ async function handleRsvpPost(request, env) {
       .run();
   }
 
+  // Insert children as linked guests (no menu — custom menu for kids)
+  const kids = Array.isArray(body.kids) ? body.kids.slice(0, 3) : [];
+  if (kids.length > 0) {
+    await env.DB.batch(
+      kids
+        .filter((k) => (k.name || "").trim())
+        .map((k) =>
+          env.DB.prepare(`
+            INSERT INTO guests (submitted_at, language, name, dietary, primary_guest_id, guest_type)
+            VALUES (?1, ?2, ?3, ?4, ?5, 'child')
+          `).bind(
+            body.submittedAt || new Date().toISOString(),
+            body.language || "",
+            k.name.trim(),
+            (k.dietary || "").trim(),
+            guestId,
+          )
+        )
+    );
+  }
+
   return Response.json({ ok: true, id: guestId, token }, { status: 201 });
 }
 
@@ -117,7 +138,7 @@ async function handleRsvpGet(env) {
     SELECT
       g.id, g.submitted_at, g.language, g.name, g.email, g.phone,
       g.attendance, g.events, g.dietary, g.notes,
-      g.primary_guest_id,
+      g.guest_type, g.primary_guest_id,
       pg.name AS primary_guest_name,
       gm.menu,
       gt.needs_transfer, gt.arrival_datetime, gt.arrival_location,

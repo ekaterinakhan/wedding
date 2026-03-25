@@ -109,6 +109,17 @@ const content = {
         transferYes: "Yes",
         transferNo: "No"
       },
+      kids: {
+        question: "Are children joining?",
+        yes: "Yes",
+        no: "No",
+        addChild: "+ Add a child",
+        childLabel: "Child",
+        namePlaceholder: "First name",
+        dietaryPlaceholder: "Dietary restrictions or allergies (optional)",
+        note: "Children will have a dedicated kids menu.",
+        max: "Maximum 3 children"
+      },
       submit: "Send RSVP",
       successRemote: "Thank you. Your RSVP has been sent.",
       successLocal:
@@ -395,6 +406,17 @@ const content = {
         vegan: "Vegan",
         transferYes: "Oui",
         transferNo: "Non"
+      },
+      kids: {
+        question: "Des enfants seront-ils presents ?",
+        yes: "Oui",
+        no: "Non",
+        addChild: "+ Ajouter un enfant",
+        childLabel: "Enfant",
+        namePlaceholder: "Prenom",
+        dietaryPlaceholder: "Allergies ou restrictions alimentaires (optionnel)",
+        note: "Les enfants auront un menu enfant dedie.",
+        max: "Maximum 3 enfants"
       },
       submit: "Envoyer le RSVP",
       successRemote: "Merci. Votre réponse a bien été envoyée.",
@@ -778,6 +800,8 @@ function App() {
   const [selectedPlusOneMain, setSelectedPlusOneMain] = useState("");
   const [phone, setPhone] = useState("");
   const [phoneCountry, setPhoneCountry] = useState("FR");
+  const [kids, setKids] = useState([]);
+  const [hasKids, setHasKids] = useState("");
   const [rsvpConfirmed, setRsvpConfirmed] = useState(() => {
     try { return JSON.parse(localStorage.getItem(RSVP_LS_KEY)) || null; } catch { return null; }
   });
@@ -800,6 +824,7 @@ function App() {
     payload.language = lang;
     payload.submittedAt = new Date().toISOString();
     payload.phone = phone || "";
+    payload.kids = kids.filter((k) => k.name.trim());
 
     setSubmitting(true);
     setStatus("");
@@ -845,6 +870,8 @@ function App() {
       setPlusOneName("");
       setSelectedPlusOneMain("");
       setPhone("");
+      setKids([]);
+      setHasKids("");
     } catch {
       setStatus(t.rsvp.error);
     } finally {
@@ -961,6 +988,8 @@ function App() {
                       setHasPlusOne("");
                       setPlusOneName("");
                       setSelectedPlusOneMain("");
+                      setHasKids("");
+                      setKids([]);
                     }
                   }}
                     className={`rounded-full px-6 py-3 text-sm font-semibold transition ${attendance === val ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
@@ -1167,6 +1196,65 @@ function App() {
                   <Field label={t.rsvp.fields.dietary}>
                     <textarea className={fieldClass} name="dietary" rows="3" placeholder={t.rsvp.fields.notes} />
                   </Field>
+
+                  {/* Kids */}
+                  <div className="grid gap-4 rounded-[24px] border border-[rgba(71,46,31,0.12)] bg-[#fffaf2] p-5">
+                    <div className="grid gap-2">
+                      <p className="text-sm font-medium text-[#2a211c]">{t.rsvp.kids.question}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {[["yes", t.rsvp.kids.yes], ["no", t.rsvp.kids.no]].map(([val, label]) => (
+                          <button key={val} type="button"
+                            onClick={() => { setHasKids(val); if (val === "no") setKids([]); }}
+                            className={`rounded-full px-6 py-3 text-sm font-semibold transition ${hasKids === val ? "bg-[#5d3426] text-white shadow-sm" : "border border-[rgba(71,46,31,0.18)] bg-white/60 text-[#3d2e26] hover:border-[rgba(71,46,31,0.35)] hover:bg-white"}`}>
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <AnimatePresence>
+                      {hasKids === "yes" && (
+                        <motion.div key="kids-fields"
+                          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.22 }}
+                          className="grid gap-3">
+                          <p className="text-xs text-[#6a5a51]">{t.rsvp.kids.note}</p>
+                          {kids.map((kid, i) => (
+                            <div key={i} className="grid grid-cols-[1fr_1fr_auto] items-start gap-2">
+                              <input
+                                className={fieldClass}
+                                placeholder={`${t.rsvp.kids.childLabel} ${i + 1} — ${t.rsvp.kids.namePlaceholder}`}
+                                value={kid.name}
+                                onChange={(e) => setKids(k => k.map((c, idx) => idx === i ? { ...c, name: e.target.value } : c))}
+                                required
+                              />
+                              <input
+                                className={fieldClass}
+                                placeholder={t.rsvp.kids.dietaryPlaceholder}
+                                value={kid.dietary}
+                                onChange={(e) => setKids(k => k.map((c, idx) => idx === i ? { ...c, dietary: e.target.value } : c))}
+                              />
+                              <button type="button"
+                                onClick={() => setKids(k => k.filter((_, idx) => idx !== i))}
+                                className="mt-[10px] flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-[rgba(71,46,31,0.18)] text-[#9a7a6a] transition hover:border-[rgba(71,46,31,0.35)] hover:text-[#5d3426]">
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                          {kids.length < 3 && (
+                            <button type="button"
+                              onClick={() => setKids(k => [...k, { name: "", dietary: "" }])}
+                              className="mt-1 self-start rounded-full border border-dashed border-[rgba(71,46,31,0.25)] px-5 py-2.5 text-sm text-[#6a5a51] transition hover:border-[rgba(71,46,31,0.45)] hover:text-[#3d2e26]">
+                              {t.rsvp.kids.addChild}
+                            </button>
+                          )}
+                          {kids.length === 3 && (
+                            <p className="text-xs text-[#9a7a6a]">{t.rsvp.kids.max}</p>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
