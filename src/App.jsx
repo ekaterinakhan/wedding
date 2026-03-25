@@ -820,7 +820,8 @@ function App() {
         });
 
         if (response.status === 409) {
-          const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", already: true };
+          const data = await response.json();
+          const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", already: true, token: data.token || null };
           localStorage.setItem(RSVP_LS_KEY, JSON.stringify(confirmed));
           setRsvpConfirmed(confirmed);
           return;
@@ -830,7 +831,8 @@ function App() {
           throw new Error("Submission failed");
         }
 
-        const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", already: false };
+        const data = await response.json();
+        const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", already: false, token: data.token || null };
         localStorage.setItem(RSVP_LS_KEY, JSON.stringify(confirmed));
         setRsvpConfirmed(confirmed);
       } else {
