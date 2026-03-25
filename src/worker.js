@@ -47,8 +47,9 @@ async function handleRsvpPost(request, env) {
     INSERT INTO rsvps (
       submitted_at, language, name, email, phone,
       attendance, events, menu, transfer, dietary, notes,
-      plus_one, plus_one_name, plus_one_menu
-    ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)
+      plus_one, plus_one_name, plus_one_menu,
+      arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size
+    ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19)
   `).bind(
     body.submittedAt || new Date().toISOString(),
     body.language || "",
@@ -64,6 +65,11 @@ async function handleRsvpPost(request, env) {
     body.plusOne || "",
     (body.plusOneName || "").trim(),
     body.plusOneMenu || "",
+    (body.arrivalDateTime || "").trim(),
+    (body.arrivalLocation || "").trim(),
+    (body.returnDateTime || "").trim(),
+    (body.returnLocation || "").trim(),
+    (body.transferPartySize || "").trim(),
   ).run();
 
   return Response.json({ ok: true, id: result.meta.last_row_id }, { status: 201 });
