@@ -1150,10 +1150,10 @@ function App() {
                             {t.rsvp.fields.transferDetails}
                           </h3>
                         </div>
-                        <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="grid gap-4 sm:grid-cols-2 overflow-hidden">
                           <Field label={t.rsvp.fields.arrivalDateTime}>
                             <input
-                              className={fieldClass}
+                              className={`${fieldClass} min-w-0`}
                               name="arrivalDateTime"
                               type="datetime-local"
                               value={arrivalDateTime}
@@ -1173,7 +1173,7 @@ function App() {
                           </Field>
                           <Field label={t.rsvp.fields.returnDateTime}>
                             <input
-                              className={fieldClass}
+                              className={`${fieldClass} min-w-0`}
                               name="returnDateTime"
                               type="datetime-local"
                               value={returnDateTime}
@@ -1237,25 +1237,27 @@ function App() {
                             className="grid gap-3">
                             <p className="text-xs text-[#6a5a51]">{t.rsvp.kids.note}</p>
                             {kids.map((kid, i) => (
-                              <div key={i} className="flex flex-wrap items-start gap-2 sm:flex-nowrap">
+                              <div key={i} className="grid gap-2">
+                                <div className="flex gap-2">
+                                  <input
+                                    className={`${fieldClass} flex-1 min-w-0`}
+                                    placeholder={`${t.rsvp.kids.childLabel} ${i + 1} — ${t.rsvp.kids.namePlaceholder}`}
+                                    value={kid.name}
+                                    onChange={(e) => setKids(k => k.map((c, idx) => idx === i ? { ...c, name: e.target.value } : c))}
+                                    required
+                                  />
+                                  <button type="button"
+                                    onClick={() => setKids(k => k.filter((_, idx) => idx !== i))}
+                                    className="mt-[2px] flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-[rgba(71,46,31,0.18)] text-[#9a7a6a] transition hover:border-[rgba(71,46,31,0.35)] hover:text-[#5d3426]">
+                                    ×
+                                  </button>
+                                </div>
                                 <input
-                                  className={`${fieldClass} flex-1 min-w-[120px]`}
-                                  placeholder={`${t.rsvp.kids.childLabel} ${i + 1} — ${t.rsvp.kids.namePlaceholder}`}
-                                  value={kid.name}
-                                  onChange={(e) => setKids(k => k.map((c, idx) => idx === i ? { ...c, name: e.target.value } : c))}
-                                  required
-                                />
-                                <input
-                                  className={`${fieldClass} flex-1 min-w-[120px]`}
+                                  className={fieldClass}
                                   placeholder={t.rsvp.kids.dietaryPlaceholder}
                                   value={kid.dietary}
                                   onChange={(e) => setKids(k => k.map((c, idx) => idx === i ? { ...c, dietary: e.target.value } : c))}
                                 />
-                                <button type="button"
-                                  onClick={() => setKids(k => k.filter((_, idx) => idx !== i))}
-                                  className="mt-[10px] flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-[rgba(71,46,31,0.18)] text-[#9a7a6a] transition hover:border-[rgba(71,46,31,0.35)] hover:text-[#5d3426]">
-                                  ×
-                                </button>
                               </div>
                             ))}
                             {kids.length < 3 && (
