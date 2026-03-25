@@ -433,7 +433,7 @@ const content = {
     logistics: {
       kicker: "Logistique",
       title: "Informations de trajet et de séjour",
-      note: "Parcourez les informations par thème ci-dessous. Ouvrez une question pour lire le détail, et revérifiez les horaires en temps réel plus près de la date."
+      note: "Tout ce qu'il faut savoir pour le voyage et l'hébergement. Les horaires exacts seront confirmés plus près de la date."
     },
     scheduleItems: [
       {
