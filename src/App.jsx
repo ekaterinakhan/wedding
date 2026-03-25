@@ -638,8 +638,10 @@ const OWN_PHOTOS = [
   { src: "/US/51CDE3DF-1D24-4271-9700-174675341EBE_1_105_c.jpeg", alt: "Amsterdam, Netherlands", caption: "Amsterdam · Mar 2026" },
 ];
 
+const SHUFFLED_PHOTOS = [...OWN_PHOTOS].sort(() => Math.random() - 0.5);
+
 function getPhoto(i) {
-  return OWN_PHOTOS[i % OWN_PHOTOS.length];
+  return SHUFFLED_PHOTOS[i % SHUFFLED_PHOTOS.length];
 }
 
 // Per-slot rotation & offset so the pile looks natural
