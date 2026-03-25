@@ -1281,7 +1281,7 @@ function App() {
         </p>
         <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#576e63]">{t.ui.footerDate}</p>
         <p className="mt-4 font-mono text-[10px] tracking-widest text-[#4a6355]/40">
-          shipped to production · 2026-05-09 · no rollback planned
+          git commit -m "I do" --date="2026-05-09" --author="Ekaterina &amp; Lucas" &amp;&amp; echo "no revert planned"
         </p>
       </footer>
 
