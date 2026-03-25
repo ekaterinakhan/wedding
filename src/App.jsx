@@ -1196,8 +1196,10 @@ function App() {
                               className={fieldClass}
                               name="transferPartySize"
                               type="number"
+                              inputMode="numeric"
                               min="1"
                               step="1"
+                              placeholder="1"
                               value={transferPartySize}
                               onChange={(event) => setTransferPartySize(event.target.value)}
                               required={transfer === "yes"}
@@ -1235,16 +1237,16 @@ function App() {
                             className="grid gap-3">
                             <p className="text-xs text-[#6a5a51]">{t.rsvp.kids.note}</p>
                             {kids.map((kid, i) => (
-                              <div key={i} className="grid grid-cols-[1fr_1fr_auto] items-start gap-2">
+                              <div key={i} className="flex flex-wrap items-start gap-2 sm:flex-nowrap">
                                 <input
-                                  className={fieldClass}
+                                  className={`${fieldClass} flex-1 min-w-[120px]`}
                                   placeholder={`${t.rsvp.kids.childLabel} ${i + 1} — ${t.rsvp.kids.namePlaceholder}`}
                                   value={kid.name}
                                   onChange={(e) => setKids(k => k.map((c, idx) => idx === i ? { ...c, name: e.target.value } : c))}
                                   required
                                 />
                                 <input
-                                  className={fieldClass}
+                                  className={`${fieldClass} flex-1 min-w-[120px]`}
                                   placeholder={t.rsvp.kids.dietaryPlaceholder}
                                   value={kid.dietary}
                                   onChange={(e) => setKids(k => k.map((c, idx) => idx === i ? { ...c, dietary: e.target.value } : c))}
