@@ -97,6 +97,7 @@ const content = {
       successRemote: "Thank you. Your RSVP has been sent.",
       successLocal:
         "RSVP saved in this browser for now. Add a real RSVP endpoint in the app to receive submissions online.",
+      duplicate: "We already have your RSVP. If you need to make a change, please reach out to us directly.",
       error: "Something went wrong while sending the RSVP. Please try again."
     },
     logistics: {
@@ -378,6 +379,7 @@ const content = {
       successRemote: "Merci. Votre reponse a bien ete envoyee.",
       successLocal:
         "Le RSVP est enregistre dans ce navigateur pour le moment. Ajoutez un vrai endpoint dans l'app pour recevoir les reponses en ligne.",
+      duplicate: "Nous avons deja recu votre reponse. Si vous souhaitez la modifier, contactez-nous directement.",
       error: "Une erreur est survenue pendant l'envoi. Merci de reessayer."
     },
     logistics: {
@@ -777,6 +779,11 @@ function App() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
+
+        if (response.status === 409) {
+          setStatus(t.rsvp.duplicate);
+          return;
+        }
 
         if (!response.ok) {
           throw new Error("Submission failed");

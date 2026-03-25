@@ -35,6 +35,14 @@ async function handleRsvpPost(request, env) {
     return Response.json({ error: "Name and email are required." }, { status: 400 });
   }
 
+  const existing = await env.DB.prepare(
+    "SELECT id FROM rsvps WHERE lower(email) = lower(?1) LIMIT 1"
+  ).bind(email).first();
+
+  if (existing) {
+    return Response.json({ duplicate: true }, { status: 409 });
+  }
+
   const result = await env.DB.prepare(`
     INSERT INTO rsvps (
       submitted_at, language, name, email, phone,
