@@ -1065,7 +1065,7 @@ function App() {
 
                       {plusOneEnabled ? (
                         <div className="grid gap-3">
-                          <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.plusOneMenu}</p>
+                          <p className="text-sm font-medium text-[#1e2a22]">{plusOneName.trim() ? `${t.rsvp.fields.menu} — ${plusOneName.trim().split(" ")[0]}` : t.rsvp.fields.plusOneMenu}</p>
                           <input type="hidden" name="plusOneMenu" value={selectedPlusOneMain} />
                           <div className="flex flex-wrap gap-2">
                             {t.menuOptions.map(([value, label]) => (
