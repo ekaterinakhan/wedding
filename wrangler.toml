@@ -4,3 +4,8 @@ main = "src/worker.js"
 
 [assets]
 directory = "./dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "wedding-rsvps"
+database_id = "56972615-11f3-486a-a873-630499c6dfb7"
