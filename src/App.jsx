@@ -118,7 +118,7 @@ const content = {
         namePlaceholder: "First name",
         dietaryPlaceholder: "Dietary restrictions or allergies (optional)",
         note: "Children will have a dedicated kids menu.",
-        max: "Maximum 3 children"
+        max: "Okay that's a lot of kids... (max 3)"
       },
       submit: "Send RSVP",
       successRemote: "Thank you. Your RSVP has been sent.",
@@ -417,7 +417,7 @@ const content = {
         namePlaceholder: "Prenom",
         dietaryPlaceholder: "Allergies ou restrictions alimentaires (optionnel)",
         note: "Les enfants auront un menu enfant dedie.",
-        max: "Maximum 3 enfants"
+        max: "Bon, c'est beaucoup des enfants... (max 3)"
       },
       submit: "Envoyer le RSVP",
       successRemote: "Merci. Votre réponse a bien été envoyée.",
