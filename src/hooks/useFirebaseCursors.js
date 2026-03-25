@@ -46,6 +46,8 @@ export function useFirebaseCursors() {
     // Skip if Firebase isn't configured
     if (!import.meta.env.VITE_FIREBASE_DATABASE_URL) return;
 
+    let mounted = true;
+
     let id = sessionStorage.getItem("cursor-id");
     if (!id) {
       id = Math.random().toString(36).slice(2, 10);
@@ -71,12 +73,15 @@ export function useFirebaseCursors() {
         } catch {
           // fallback to globe
         }
+        if (!mounted) return;
         flag = countryToFlag(countryCode);
         sessionStorage.setItem("cursor-flag", flag);
       }
       flagRef.current = flag;
 
-      onDisconnect(cursorRef).remove();
+      if (!mounted) return;
+      await onDisconnect(cursorRef).remove();
+      if (!mounted) return;
       await set(cursorRef, {
         x: -9999,
         y: -9999,
@@ -85,7 +90,7 @@ export function useFirebaseCursors() {
       });
     };
 
-    initCursor();
+    initCursor().catch(() => {});
 
     const cursorsRef = ref(db, "cursors");
     const unsubscribe = onValue(cursorsRef, (snapshot) => {
@@ -126,6 +131,7 @@ export function useFirebaseCursors() {
     window.addEventListener("mousemove", handleMouseMove);
 
     return () => {
+      mounted = false;
       window.removeEventListener("mousemove", handleMouseMove);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       unsubscribe();
