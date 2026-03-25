@@ -887,7 +887,7 @@ function App() {
     } finally {
       setSubmitting(false);
     }
-  }, [lang, t]);
+  }, [lang, t, phone, kids, attendance, selectedMain, events, transfer, hasPlusOne]);
 
   return (
     <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1100px)] pb-28 sm:w-[min(calc(100%-48px),1100px)]">
