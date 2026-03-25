@@ -60,12 +60,17 @@ function ensureColumn(tableName, columnName, definition) {
 ensureColumn("rsvps", "plus_one", "TEXT");
 ensureColumn("rsvps", "plus_one_name", "TEXT");
 ensureColumn("rsvps", "plus_one_menu", "TEXT");
+ensureColumn("rsvps", "arrival_datetime", "TEXT");
+ensureColumn("rsvps", "arrival_location", "TEXT");
+ensureColumn("rsvps", "return_datetime", "TEXT");
+ensureColumn("rsvps", "return_location", "TEXT");
+ensureColumn("rsvps", "transfer_party_size", "TEXT");
 
 const insertRsvp = db.prepare(`
   INSERT INTO rsvps (
-    submitted_at, language, name, email, phone, attendance, events, menu, transfer, dietary, notes, plus_one, plus_one_name, plus_one_menu
+    submitted_at, language, name, email, phone, attendance, events, menu, transfer, dietary, notes, plus_one, plus_one_name, plus_one_menu, arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size
   ) VALUES (
-    @submittedAt, @language, @name, @email, @phone, @attendance, @events, @menu, @transfer, @dietary, @notes, @plusOne, @plusOneName, @plusOneMenu
+    @submittedAt, @language, @name, @email, @phone, @attendance, @events, @menu, @transfer, @dietary, @notes, @plusOne, @plusOneName, @plusOneMenu, @arrivalDateTime, @arrivalLocation, @returnDateTime, @returnLocation, @transferPartySize
   )
 `);
 
@@ -85,7 +90,12 @@ const selectRsvps = db.prepare(`
     notes,
     plus_one,
     plus_one_name,
-    plus_one_menu
+    plus_one_menu,
+    arrival_datetime,
+    arrival_location,
+    return_datetime,
+    return_location,
+    transfer_party_size
   FROM rsvps
   ORDER BY datetime(submitted_at) DESC, id DESC
 `);
@@ -540,7 +550,12 @@ app.post("/api/rsvps", (req, res) => {
     notes: (req.body.notes || "").trim(),
     plusOne: req.body.plusOne || "",
     plusOneName: (req.body.plusOneName || "").trim(),
-    plusOneMenu: req.body.plusOneMenu || ""
+    plusOneMenu: req.body.plusOneMenu || "",
+    arrivalDateTime: (req.body.arrivalDateTime || "").trim(),
+    arrivalLocation: (req.body.arrivalLocation || "").trim(),
+    returnDateTime: (req.body.returnDateTime || "").trim(),
+    returnLocation: (req.body.returnLocation || "").trim(),
+    transferPartySize: (req.body.transferPartySize || "").trim()
   };
 
   if (!payload.name || !payload.email) {
@@ -586,6 +601,11 @@ app.get("/responses", (_req, res) => {
           <td>${escapeHtml(row.plus_one)}</td>
           <td>${escapeHtml(row.plus_one_name)}</td>
           <td>${escapeHtml(row.plus_one_menu)}</td>
+          <td>${escapeHtml(row.arrival_datetime)}</td>
+          <td>${escapeHtml(row.arrival_location)}</td>
+          <td>${escapeHtml(row.return_datetime)}</td>
+          <td>${escapeHtml(row.return_location)}</td>
+          <td>${escapeHtml(row.transfer_party_size)}</td>
         </tr>
       `
     )
@@ -633,6 +653,11 @@ app.get("/responses", (_req, res) => {
                   <th>+1</th>
                   <th>+1 Name</th>
                   <th>+1 Menu</th>
+                  <th>Paris Arrival</th>
+                  <th>Arrival Airport / Station</th>
+                  <th>Return Time</th>
+                  <th>Return Airport / Station</th>
+                  <th>Transfer Count</th>
                 </tr>
               </thead>
               <tbody>${tableRows}</tbody>

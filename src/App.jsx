@@ -72,7 +72,13 @@ const content = {
         events: "Which moments will you join?",
         menu: "Your main course choice",
         plusOneMenu: "Main course choice for your +1",
-        transfer: "Would you like transfer help?",
+        transfer: "Do you need transfer from Paris to Auxerre and back?",
+        transferDetails: "Transfer details",
+        arrivalDateTime: "When do you arrive in Paris?",
+        arrivalLocation: "Which Paris airport or train station will you arrive at?",
+        returnDateTime: "When is your flight or train back?",
+        returnLocation: "Which airport or train station will you leave from?",
+        transferPartySize: "How many people need transfer?",
         dietary: "Dietary restrictions or allergies",
         notes: "Anything else we should know?"
       },
@@ -273,14 +279,13 @@ const content = {
             links: []
           },
           {
-            title: "Where to go for a walk",
-            text: "A gentle walk through the old town, along the Yonne river quays, and around the Cathedral district is a lovely way to discover Auxerre.",
-            links: [["Things to do in Auxerre", "https://www.ot-auxerre.fr/decouvrir/"]]
-          },
-          {
             title: "What to check",
-            text: "If you have a little extra time, the old town centre, Saint-Etienne Cathedral, the clock tower area, and the riverfront are all worth seeing.",
-            links: [["Explore Auxerre", "https://www.ot-auxerre.fr/decouvrir/"]]
+            text: "If you have a little extra time, the old town centre, Saint-Etienne Cathedral, the clock tower area, and the riverfront are all worth seeing. If you feel like moving, you can also head to the Auxerre swimming pool, the athletics track, or the tennis courts. There is also a nice public workout spot in the city park, just next to the bridge.",
+            links: [
+              ["Auxerre swimming pool", "https://www.google.com/maps/search/?api=1&query=Stade+nautique+83+Avenue+Yver+89000+Auxerre"],
+              ["Athletics track", "https://www.google.com/maps/search/?api=1&query=Stade+Guy+Drut+27+Rue+de+Preuilly+89000+Auxerre"],
+              ["Tennis courts", "https://www.google.com/maps/search/?api=1&query=Stade+Auxerrois+Tennis+27+Rue+de+Preuilly+89000+Auxerre"]
+            ]
           },
           {
             title: "Where to eat",
@@ -357,7 +362,13 @@ const content = {
         events: "A quels moments serez-vous parmi nous ?",
         menu: "Votre choix de plat",
         plusOneMenu: "Choix du plat pour votre +1",
-        transfer: "Avez-vous besoin d'aide pour les transferts ?",
+        transfer: "Avez-vous besoin d'un transfert de Paris a Auxerre puis du retour ?",
+        transferDetails: "Details du transfert",
+        arrivalDateTime: "Quand arrivez-vous a Paris ?",
+        arrivalLocation: "A quel aeroport ou dans quelle gare de Paris arrivez-vous ?",
+        returnDateTime: "Quand est votre vol ou train retour ?",
+        returnLocation: "Depuis quel aeroport ou quelle gare repartez-vous ?",
+        transferPartySize: "Combien de personnes ont besoin du transfert ?",
         dietary: "Allergies ou regime alimentaire",
         notes: "Autre information utile"
       },
@@ -558,14 +569,13 @@ const content = {
             links: []
           },
           {
-            title: "Ou aller se promener ?",
-            text: "Une promenade dans le centre ancien, le long des quais de l'Yonne et autour du quartier de la cathedrale permet de profiter tres facilement du charme d'Auxerre.",
-            links: [["Decouvrir Auxerre", "https://www.ot-auxerre.fr/decouvrir/"]]
-          },
-          {
             title: "Que voir ?",
-            text: "Si vous avez un peu de temps, le centre historique, la cathedrale Saint-Etienne, le quartier de la tour de l'Horloge et les bords de l'Yonne valent le detour.",
-            links: [["Visiter Auxerre", "https://www.ot-auxerre.fr/decouvrir/"]]
+            text: "Si vous avez un peu de temps, le centre historique, la cathedrale Saint-Etienne, le quartier de la tour de l'Horloge et les bords de l'Yonne valent le detour. Si vous avez envie de faire un peu de sport, vous pouvez aussi aller a la piscine d'Auxerre, a la piste d'athletisme ou aux courts de tennis. Il y a egalement un joli espace public de sport dans le parc de la ville, juste a cote du pont.",
+            links: [
+              ["Piscine d'Auxerre", "https://www.google.com/maps/search/?api=1&query=Stade+nautique+83+Avenue+Yver+89000+Auxerre"],
+              ["Piste d'athletisme", "https://www.google.com/maps/search/?api=1&query=Stade+Guy+Drut+27+Rue+de+Preuilly+89000+Auxerre"],
+              ["Courts de tennis", "https://www.google.com/maps/search/?api=1&query=Stade+Auxerrois+Tennis+27+Rue+de+Preuilly+89000+Auxerre"]
+            ]
           },
           {
             title: "Ou manger ?",
@@ -585,17 +595,17 @@ const content = {
 
 // Add your own photos here — picsum fills the rest indefinitely
 const OWN_PHOTOS = [
-  { src: "/us.jpeg",                                                              alt: "Ekaterina and Lucas",       caption: "Sep 2024" },
-  { src: "/254F07A8-FABF-491D-9DB6-1881B81BE9FD.jpeg",                           alt: "Colares, Portugal",         caption: "Colares, Portugal · Nov 2024" },
-  { src: "/80FC166B-DF1A-4BFA-A9EF-5279E290537A_1_102_a.jpeg",                   alt: "Costa da Caparica",         caption: "Portugal · Nov 2024" },
-  { src: "/870A20BA-B97F-4EDF-A30A-5847056A1E5E_1_102_o.jpeg",                   alt: "Bourges, France",           caption: "Bourges, France · Jun 2025" },
-  { src: "/2B1A780B-8A87-4BA3-BB9D-67B9E8A80431_4_5005_c.jpeg",                  alt: "Champagne, France",         caption: "Champagne, France · Jul 2025" },
-  { src: "/BBECA63C-E395-4D88-B611-8CCC5111D512_4_5005_c.jpeg",                  alt: "Paris, France",             caption: "Paris, France · Jul 2025" },
-  { src: "/us2.jpeg",                                                             alt: "Goðafoss, Iceland",         caption: "Goðafoss, Iceland · Aug 2025" },
-  { src: "/2CF40FBA-0244-4D28-A4CF-D4E72139D41D_1_105_c.jpeg",                   alt: "Snæfellsnes, Iceland",      caption: "Snæfellsnes, Iceland · Aug 2025" },
-  { src: "/DC789284-ED0D-45BA-BE57-B0327786908C_1_105_c.jpeg",                   alt: "Merry-sur-Yonne, Burgundy", caption: "Burgundy, France · Dec 2025" },
-  { src: "/FFAC5587-E4E7-4DFA-A31F-7885B94E5D5C_1_105_c.jpeg",                   alt: "New York",                  caption: "New York · Jan 2026" },
-  { src: "/0A1CA3AF-D4A6-4B92-9607-7CFFF21CFB41_1_201_a.jpeg",                   alt: "Saint-Malo, France",        caption: "Saint-Malo, France" },
+  { src: "/US/us.jpeg",                                                           alt: "Ekaterina and Lucas",       caption: "Sep 2024" },
+  { src: "/US/254F07A8-FABF-491D-9DB6-1881B81BE9FD.jpeg",                        alt: "Colares, Portugal",         caption: "Colares, Portugal · Nov 2024" },
+  { src: "/US/80FC166B-DF1A-4BFA-A9EF-5279E290537A_1_102_a.jpeg",                alt: "Costa da Caparica",         caption: "Portugal · Nov 2024" },
+  { src: "/US/870A20BA-B97F-4EDF-A30A-5847056A1E5E_1_102_o.jpeg",                alt: "Bourges, France",           caption: "Bourges, France · Jun 2025" },
+  { src: "/US/2B1A780B-8A87-4BA3-BB9D-67B9E8A80431_4_5005_c.jpeg",               alt: "Champagne, France",         caption: "Champagne, France · Jul 2025" },
+  { src: "/US/BBECA63C-E395-4D88-B611-8CCC5111D512_4_5005_c.jpeg",               alt: "Paris, France",             caption: "Paris, France · Jul 2025" },
+  { src: "/US/us2.jpeg",                                                          alt: "Goðafoss, Iceland",         caption: "Goðafoss, Iceland · Aug 2025" },
+  { src: "/US/2CF40FBA-0244-4D28-A4CF-D4E72139D41D_1_105_c.jpeg",                alt: "Snæfellsnes, Iceland",      caption: "Snæfellsnes, Iceland · Aug 2025" },
+  { src: "/US/DC789284-ED0D-45BA-BE57-B0327786908C_1_105_c.jpeg",                alt: "Merry-sur-Yonne, Burgundy", caption: "Burgundy, France · Dec 2025" },
+  { src: "/US/FFAC5587-E4E7-4DFA-A31F-7885B94E5D5C_1_105_c.jpeg",                alt: "New York",                  caption: "New York · Jan 2026" },
+  { src: "/US/0A1CA3AF-D4A6-4B92-9607-7CFFF21CFB41_1_201_a.jpeg",                alt: "Saint-Malo, France",        caption: "Saint-Malo, France" },
   { src: "/bistro.jpeg",                                                          alt: "Roncemay, Burgundy",        caption: "Roncemay, Burgundy · Mar 2026" },
 ];
 
@@ -762,6 +772,11 @@ function App() {
   const [selectedMain, setSelectedMain] = useState("");
   const [events, setEvents] = useState("");
   const [transfer, setTransfer] = useState("");
+  const [arrivalDateTime, setArrivalDateTime] = useState("");
+  const [arrivalLocation, setArrivalLocation] = useState("");
+  const [returnDateTime, setReturnDateTime] = useState("");
+  const [returnLocation, setReturnLocation] = useState("");
+  const [transferPartySize, setTransferPartySize] = useState("");
   const [hasPlusOne, setHasPlusOne] = useState("");
   const [plusOneName, setPlusOneName] = useState("");
   const [selectedPlusOneMain, setSelectedPlusOneMain] = useState("");
@@ -813,6 +828,11 @@ function App() {
       setSelectedMain("");
       setEvents("");
       setTransfer("");
+      setArrivalDateTime("");
+      setArrivalLocation("");
+      setReturnDateTime("");
+      setReturnLocation("");
+      setTransferPartySize("");
       setHasPlusOne("");
       setPlusOneName("");
       setSelectedPlusOneMain("");
@@ -917,6 +937,11 @@ function App() {
                     if (val === "no") {
                       setEvents("");
                       setTransfer("");
+                      setArrivalDateTime("");
+                      setArrivalLocation("");
+                      setReturnDateTime("");
+                      setReturnLocation("");
+                      setTransferPartySize("");
                       setSelectedMain("");
                       setHasPlusOne("");
                       setPlusOneName("");
@@ -1042,13 +1067,86 @@ function App() {
                     <input type="hidden" name="transfer" value={transfer} />
                     <div className="flex flex-wrap gap-2">
                       {[["yes", t.rsvp.options.transferYes], ["no", t.rsvp.options.transferNo]].map(([val, label]) => (
-                        <button key={val} type="button" onClick={() => setTransfer(val)}
+                        <button key={val} type="button" onClick={() => {
+                          setTransfer(val);
+                          if (val !== "yes") {
+                            setArrivalDateTime("");
+                            setArrivalLocation("");
+                            setReturnDateTime("");
+                            setReturnLocation("");
+                            setTransferPartySize("");
+                          }
+                        }}
                           className={`rounded-full px-6 py-3 text-sm font-semibold transition ${transfer === val ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
                           {label}
                         </button>
                       ))}
                     </div>
                   </div>
+
+                  {transfer === "yes" ? (
+                    <div className="grid gap-4 rounded-[24px] border border-[rgba(53,75,62,0.12)] bg-[#f7f9f6] p-5">
+                      <div className="grid gap-2">
+                        <h3 className="font-serif text-[clamp(1.5rem,2.5vw,2rem)] leading-[0.95] text-[#1e2a22]">
+                          {t.rsvp.fields.transferDetails}
+                        </h3>
+                      </div>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <Field label={t.rsvp.fields.arrivalDateTime}>
+                          <input
+                            className={fieldClass}
+                            name="arrivalDateTime"
+                            type="datetime-local"
+                            value={arrivalDateTime}
+                            onChange={(event) => setArrivalDateTime(event.target.value)}
+                            required={transfer === "yes"}
+                          />
+                        </Field>
+                        <Field label={t.rsvp.fields.arrivalLocation}>
+                          <input
+                            className={fieldClass}
+                            name="arrivalLocation"
+                            value={arrivalLocation}
+                            onChange={(event) => setArrivalLocation(event.target.value)}
+                            placeholder="CDG, Orly, Gare de Lyon..."
+                            required={transfer === "yes"}
+                          />
+                        </Field>
+                        <Field label={t.rsvp.fields.returnDateTime}>
+                          <input
+                            className={fieldClass}
+                            name="returnDateTime"
+                            type="datetime-local"
+                            value={returnDateTime}
+                            onChange={(event) => setReturnDateTime(event.target.value)}
+                            required={transfer === "yes"}
+                          />
+                        </Field>
+                        <Field label={t.rsvp.fields.returnLocation}>
+                          <input
+                            className={fieldClass}
+                            name="returnLocation"
+                            value={returnLocation}
+                            onChange={(event) => setReturnLocation(event.target.value)}
+                            placeholder="CDG, Orly, Gare de Lyon..."
+                            required={transfer === "yes"}
+                          />
+                        </Field>
+                        <Field label={t.rsvp.fields.transferPartySize}>
+                          <input
+                            className={fieldClass}
+                            name="transferPartySize"
+                            type="number"
+                            min="1"
+                            step="1"
+                            value={transferPartySize}
+                            onChange={(event) => setTransferPartySize(event.target.value)}
+                            required={transfer === "yes"}
+                          />
+                        </Field>
+                      </div>
+                    </div>
+                  ) : null}
 
                   {/* Dietary */}
                   <Field label={t.rsvp.fields.dietary}>
