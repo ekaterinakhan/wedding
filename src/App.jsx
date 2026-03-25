@@ -238,7 +238,7 @@ const content = {
         items: [
           {
             title: "How to get to Auxerre",
-            text: "Auxerre is easiest to reach by train from Paris Bercy Bourgogne. Direct trips commonly run in about 1h37 to 1h39.",
+            text: "Auxerre is easiest to reach by train from Paris Bercy Bourgogne. A direct trip takes roughly 2 hours.",
             links: [["Paris > Auxerre trains", "https://www.sncf-connect.com/en-en/train/timetables/paris/auxerre"]]
           },
           {
@@ -537,7 +537,7 @@ const content = {
         items: [
           {
             title: "Comment venir à Auxerre",
-            text: "Auxerre est très facilement accessible en train depuis Paris Bercy Bourgogne. Les trajets directs durent souvent autour de 1 h 37 à 1 h 39.",
+            text: "Auxerre est très facilement accessible en train depuis Paris Bercy Bourgogne. Un trajet direct dure environ 2 heures.",
             links: [["Trains Paris > Auxerre", "https://www.sncf-connect.com/fr-fr/train/horaires/paris/auxerre"]]
           },
           {
