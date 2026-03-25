@@ -623,7 +623,7 @@ const OWN_PHOTOS = [
   { src: "/US/482F6450-1CAF-4AA6-B1AD-FCD22353ED55_1_105_c.jpeg", alt: "Paris, France", caption: "Paris, France · Nov 2024" },
   { src: "/US/B3D5FAF4-DC07-4A70-9851-07A33C3457F0_1_105_c.jpeg", alt: "Alps, France", caption: "Alps, France · Dec 2024" },
   { src: "/US/DD117C22-4102-47D8-B34D-AEE20D1B441E_1_105_c.jpeg", alt: "Paris, France", caption: "Paris, France · Feb 2025" },
-  { src: "/US/5CB92410-2691-4E79-AA10-AE6874815518_1_105_c.jpeg", alt: "Bourges cathedral", caption: "Barcelona, Spain · Feb 2025" },
+  { src: "/US/5CB92410-2691-4E79-AA10-AE6874815518_1_105_c.jpeg", alt: "Barcelona, Spain", caption: "Barcelona, Spain · Feb 2025" },
   { src: "/US/870A20BA-B97F-4EDF-A30A-5847056A1E5E_1_102_o.jpeg", alt: "Bourges, France", caption: "Bourges, France · Jun 2025" },
   { src: "/US/43435194-C570-4508-9E88-9C99271C5769_1_105_c.jpeg", alt: "Champagne", caption: "Champagne, France · Jul 2025" },
   { src: "/US/4FFF7C9B-0B4A-4D4E-839B-A9E72AB1CCEE_4_5005_c.jpeg", alt: "Rouen , France", caption: "Rouen, France · Sept 2025" },
