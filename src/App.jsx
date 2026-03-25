@@ -1280,6 +1280,9 @@ function App() {
           Ekaterina &amp; Lucas
         </p>
         <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#576e63]">{t.ui.footerDate}</p>
+        <p className="mt-4 font-mono text-[10px] tracking-widest text-[#4a6355]/40">
+          v2026.05.09 · build love · deployed to burgundy
+        </p>
       </footer>
 
       <StickyBar t={t} />
