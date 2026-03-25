@@ -128,7 +128,8 @@ const content = {
       error: "Something went wrong while sending the RSVP. Please try again.",
       confirmedTitle: "See you in Burgundy",
       confirmedNote: "Your RSVP is confirmed. We can't wait to celebrate with you.",
-      confirmedAlreadyNote: "We already had your RSVP on file. We can't wait to celebrate with you."
+      confirmedAlreadyNote: "We already had your RSVP on file. We can't wait to celebrate with you.",
+      confirmedKidsNote: "We're counting on"
     },
     logistics: {
       kicker: "Logistics",
@@ -426,7 +427,8 @@ const content = {
       error: "Une erreur est survenue pendant l'envoi. Merci de réessayer.",
       confirmedTitle: "À bientôt en Bourgogne",
       confirmedNote: "Votre réponse est bien enregistrée. On a hâte de fêter ça avec vous.",
-      confirmedAlreadyNote: "Nous avions déjà votre réponse. On a hâte de fêter ça avec vous."
+      confirmedAlreadyNote: "Nous avions déjà votre réponse. On a hâte de fêter ça avec vous.",
+      confirmedKidsNote: "On compte sur"
     },
     logistics: {
       kicker: "Logistique",
@@ -838,7 +840,7 @@ function App() {
 
         if (response.status === 409) {
           const data = await response.json();
-          const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", already: true, token: data.token || null };
+          const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", kids: payload.kids || [], already: true, token: data.token || null };
           localStorage.setItem(RSVP_LS_KEY, JSON.stringify(confirmed));
           setRsvpConfirmed(confirmed);
           return;
@@ -849,7 +851,7 @@ function App() {
         }
 
         const data = await response.json();
-        const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", already: false, token: data.token || null };
+        const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", kids: payload.kids || [], already: false, token: data.token || null };
         localStorage.setItem(RSVP_LS_KEY, JSON.stringify(confirmed));
         setRsvpConfirmed(confirmed);
       } else {
@@ -945,7 +947,7 @@ function App() {
         <SectionCard id="rsvp">
           <SectionHeading kicker={t.rsvp.kicker} title={t.rsvp.title} note={t.rsvp.note} />
           {rsvpConfirmed ? (
-            <RsvpConfirmed name={rsvpConfirmed.name} plusOneName={rsvpConfirmed.plusOneName} already={rsvpConfirmed.already} t={t} />
+            <RsvpConfirmed name={rsvpConfirmed.name} plusOneName={rsvpConfirmed.plusOneName} kids={rsvpConfirmed.kids || []} already={rsvpConfirmed.already} t={t} />
           ) : (
           <form className="grid gap-8" onSubmit={handleSubmit}>
 
@@ -1286,9 +1288,17 @@ function App() {
   );
 }
 
-function RsvpConfirmed({ name, plusOneName, already, t }) {
+function RsvpConfirmed({ name, plusOneName, kids, already, t }) {
   const firstName = name ? name.trim().split(" ")[0] : "";
   const plusOneFirst = plusOneName ? plusOneName.trim().split(" ")[0] : "";
+  const kidNames = (kids || []).map((k) => k.name.trim().split(" ")[0]).filter(Boolean);
+
+  const kidsLine = kidNames.length > 0
+    ? kidNames.length === 1
+      ? `${t.rsvp.confirmedKidsNote} ${kidNames[0]} to bring lots of fun!`
+      : `${t.rsvp.confirmedKidsNote} ${kidNames.slice(0, -1).join(", ")} & ${kidNames.at(-1)} to bring lots of fun!`
+    : null;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -1307,6 +1317,11 @@ function RsvpConfirmed({ name, plusOneName, already, t }) {
         <p className="mx-auto max-w-[42ch] text-base leading-7 text-[#576e63]">
           {already ? t.rsvp.confirmedAlreadyNote : t.rsvp.confirmedNote}
         </p>
+        {kidsLine && (
+          <p className="mx-auto mt-1 max-w-[42ch] text-sm italic leading-6 text-[#9a7a6a]">
+            {kidsLine}
+          </p>
+        )}
       </div>
       <div className="flex items-center gap-3 text-[#c4a06e]">
         <div className="h-px w-12 bg-[rgba(196,160,110,0.4)]" />
