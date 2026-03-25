@@ -795,7 +795,9 @@ const fieldClass =
   "w-full rounded-2xl border border-[rgba(74,99,85,0.16)] bg-[#fffdf9] px-4 py-3 text-sm text-[#1e2a22] outline-none transition focus:border-[rgba(74,99,85,0.3)] focus:ring-2 focus:ring-[rgba(196,160,110,0.45)]";
 
 function App() {
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState(() => {
+    try { return localStorage.getItem("wedding_lang") || null; } catch { return null; }
+  });
   const [status, setStatus] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [attendance, setAttendance] = useState("");
@@ -817,16 +819,19 @@ function App() {
   const [rsvpConfirmed, setRsvpConfirmed] = useState(() => {
     try { return JSON.parse(localStorage.getItem(RSVP_LS_KEY)) || null; } catch { return null; }
   });
-  const t = content[lang];
+  const t = content[lang] ?? content["en"];
   const menuRequired = attendance !== "no";
   const plusOneEnabled = menuRequired && hasPlusOne === "yes";
 
   useEffect(() => {
     fetch("/api/country")
       .then((r) => r.json())
-      .then((data) => { if (data.country && data.country !== "XX") setPhoneCountry(data.country); })
-      .catch(() => { });
-  }, []);
+      .then((data) => {
+        if (data.country && data.country !== "XX") setPhoneCountry(data.country);
+        if (!lang) setLang(data.country === "FR" ? "fr" : "en");
+      })
+      .catch(() => { if (!lang) setLang("en"); });
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = useCallback(async function handleSubmit(event) {
     event.preventDefault();
@@ -902,7 +907,7 @@ function App() {
               <button
                 key={code}
                 type="button"
-                onClick={() => setLang(code)}
+                onClick={() => { setLang(code); try { localStorage.setItem("wedding_lang", code); } catch {} }}
                 className={`rounded-full px-4 py-2.5 text-sm font-medium transition ${lang === code ? "bg-[#4a6355] text-[#fffaf3]" : "text-[#576e63]"
                   }`}
               >
