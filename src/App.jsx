@@ -6,6 +6,8 @@ import {
   LuHeart, LuCar, LuWine, LuUtensils, LuFlag,
   LuMail, LuMap, LuCalendarDays, LuSunrise, LuCircleCheck,
 } from "react-icons/lu";
+import PhoneInput, { parsePhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 const RSVP_ENDPOINT = import.meta.env.VITE_RSVP_ENDPOINT || "/api/rsvps";
 const RSVP_LS_KEY = "wedding_rsvp_confirmed";
@@ -780,6 +782,7 @@ function App() {
   const [hasPlusOne, setHasPlusOne] = useState("");
   const [plusOneName, setPlusOneName] = useState("");
   const [selectedPlusOneMain, setSelectedPlusOneMain] = useState("");
+  const [phone, setPhone] = useState("");
   const [rsvpConfirmed, setRsvpConfirmed] = useState(() => {
     try { return JSON.parse(localStorage.getItem(RSVP_LS_KEY)) || null; } catch { return null; }
   });
@@ -794,6 +797,7 @@ function App() {
     const payload = Object.fromEntries(formData.entries());
     payload.language = lang;
     payload.submittedAt = new Date().toISOString();
+    payload.phone = phone || "";
 
     setSubmitting(true);
     setStatus("");
@@ -836,6 +840,7 @@ function App() {
       setHasPlusOne("");
       setPlusOneName("");
       setSelectedPlusOneMain("");
+      setPhone("");
     } catch {
       setStatus(t.rsvp.error);
     } finally {
@@ -922,7 +927,13 @@ function App() {
                 <input className={fieldClass} name="email" type="email" required />
               </Field>
               <Field label={t.rsvp.fields.phone}>
-                <input className={fieldClass} name="phone" type="tel" />
+                <PhoneInput
+                  international
+                  defaultCountry="FR"
+                  value={phone}
+                  onChange={setPhone}
+                  className="phone-input"
+                />
               </Field>
             </div>
 
