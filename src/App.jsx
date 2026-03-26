@@ -617,6 +617,7 @@ const content = {
 const OWN_PHOTOS = [
   { src: "/US/us.jpeg", alt: "Ekaterina and Lucas", caption: "Paris, France · Sep 2024" },
   { src: "/US/FD496A6E-2160-4C7D-BE51-261A4C8F4CD5_1_105_c.jpeg", alt: "Saint Malo, France", caption: "Saint Malo, France · October 2024" },
+  { src: "/US/0A1CA3AF-D4A6-4B92-9607-7CFFF21CFB41_1_201_a.jpeg", alt: "Saint-Malo, France", caption: "Saint-Malo, France · October 2024" },
   { src: "/US/254F07A8-FABF-491D-9DB6-1881B81BE9FD.jpeg", alt: "Cabo da Roca, Portugal", caption: "Cabo da Roca, Portugal · Nov 2024" },
   { src: "/US/1BDDC947-11B0-4884-A3F1-C8E572157DE6_1_105_c.jpeg", alt: "Algarve, Portugal", caption: "Algarve, Portugal · Nov 2024" },
   { src: "/US/80FC166B-DF1A-4BFA-A9EF-5279E290537A_1_102_a.jpeg", alt: "Costa da Caparica", caption: "Costa da Caparica, Portugal · Nov 2024" },
@@ -634,7 +635,6 @@ const OWN_PHOTOS = [
   { src: "/US/2CF40FBA-0244-4D28-A4CF-D4E72139D41D_1_105_c.jpeg", alt: "Snæfellsnes, Iceland", caption: "Snæfellsnes, Iceland · Aug 2025" },
   { src: "/US/DC789284-ED0D-45BA-BE57-B0327786908C_1_105_c.jpeg", alt: "Merry-sur-Yonne, Burgundy", caption: "Burgundy, France · Dec 2025" },
   { src: "/US/FFAC5587-E4E7-4DFA-A31F-7885B94E5D5C_1_105_c.jpeg", alt: "New York", caption: "New York · Jan 2026" },
-  { src: "/US/0A1CA3AF-D4A6-4B92-9607-7CFFF21CFB41_1_201_a.jpeg", alt: "Saint-Malo, France", caption: "Saint-Malo, France · Feb 2026" },
   { src: "/US/51CDE3DF-1D24-4271-9700-174675341EBE_1_105_c.jpeg", alt: "Amsterdam, Netherlands", caption: "Amsterdam · Mar 2026" },
 ];
 
@@ -907,7 +907,7 @@ function App() {
               <button
                 key={code}
                 type="button"
-                onClick={() => { setLang(code); try { localStorage.setItem("wedding_lang", code); } catch {} }}
+                onClick={() => { setLang(code); try { localStorage.setItem("wedding_lang", code); } catch { } }}
                 className={`rounded-full px-4 py-2.5 text-sm font-medium transition ${lang === code ? "bg-[#4a6355] text-[#fffaf3]" : "text-[#576e63]"
                   }`}
               >

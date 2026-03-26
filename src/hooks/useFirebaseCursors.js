@@ -34,11 +34,17 @@ export function countryToFlag(code) {
   }
 }
 
+export function normalizeCountryCode(code) {
+  if (!code || code.length !== 2 || code === "XX") return null;
+  return code.toLowerCase();
+}
+
 export function useFirebaseCursors() {
   const [cursors, setCursors] = useState({});
   const myIdRef = useRef(null);
   const cursorDbRef = useRef(null);
   const flagRef = useRef("🌍");
+  const ccRef = useRef(null);
   const lastWriteRef = useRef(0);
   const rafRef = useRef(null);
 
@@ -78,8 +84,9 @@ export function useFirebaseCursors() {
     cursorDbRef.current = cursorRef;
 
     const initCursor = async () => {
+      let cc = sessionStorage.getItem("cursor-cc");
       let flag = sessionStorage.getItem("cursor-flag");
-      if (!flag) {
+      if (!cc && !flag) {
         let countryCode = "XX";
         try {
           const res = await fetch("/api/country");
@@ -91,10 +98,13 @@ export function useFirebaseCursors() {
           // fallback to globe
         }
         if (!mounted) return;
+        cc = normalizeCountryCode(countryCode);
         flag = countryToFlag(countryCode);
+        sessionStorage.setItem("cursor-cc", cc || "");
         sessionStorage.setItem("cursor-flag", flag);
       }
-      flagRef.current = flag;
+      ccRef.current = cc || null;
+      flagRef.current = flag || "🌍";
 
       if (!mounted) return;
       await onDisconnect(cursorRef).remove();
@@ -103,6 +113,7 @@ export function useFirebaseCursors() {
         x: -9999,
         y: -9999,
         flag: flagRef.current,
+        cc: ccRef.current,
         t: Date.now(),
       });
     };
@@ -139,6 +150,7 @@ export function useFirebaseCursors() {
             x: e.pageX,
             y: e.pageY,
             flag: flagRef.current,
+            cc: ccRef.current,
             t: Date.now(),
           });
         });
@@ -150,6 +162,7 @@ export function useFirebaseCursors() {
         x: e.pageX,
         y: e.pageY,
         flag: flagRef.current,
+        cc: ccRef.current,
         t: now,
       });
     };

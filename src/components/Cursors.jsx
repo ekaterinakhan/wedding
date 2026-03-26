@@ -46,22 +46,38 @@ const OtherCursor = memo(function OtherCursor({ id, cursor }) {
             transform: "translate(-50%, -50%)",
           }}
         />
-        {/* Flag emoji */}
-        <span
-          style={{
-            fontSize: 22,
-            lineHeight: 1,
-            display: "block",
-            filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.2))",
-            transform: "translate(6px, -10px)",
-          }}
-        >
-          {cursor.flag}
-        </span>
+        {/* Country flag */}
+        {cursor.cc ? (
+          <img
+            src={`https://flagcdn.com/24x18/${cursor.cc}.png`}
+            srcSet={`https://flagcdn.com/48x36/${cursor.cc}.png 2x`}
+            alt=""
+            width={24}
+            height={18}
+            style={{
+              display: "block",
+              filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.2))",
+              transform: "translate(6px, -10px)",
+              pointerEvents: "none",
+            }}
+          />
+        ) : (
+          <span
+            style={{
+              fontSize: 22,
+              lineHeight: 1,
+              display: "block",
+              filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.2))",
+              transform: "translate(6px, -10px)",
+            }}
+          >
+            🌍
+          </span>
+        )}
       </div>
     </motion.div>
   );
-}, (prev, next) => prev.cursor.x === next.cursor.x && prev.cursor.y === next.cursor.y && prev.cursor.flag === next.cursor.flag);
+}, (prev, next) => prev.cursor.x === next.cursor.x && prev.cursor.y === next.cursor.y && prev.cursor.cc === next.cursor.cc);
 
 export function Cursors() {
   const cursors = useFirebaseCursors();
