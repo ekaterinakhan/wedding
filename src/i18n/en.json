@@ -1,0 +1,296 @@
+{
+  "ui": {
+    "siteLabel": "Wedding Weekend",
+    "day1Label": "9 May",
+    "day2Label": "10 May",
+    "footerDate": "9-10 May 2026 · Burgundy",
+    "transferLocationPlaceholder": "CDG, Orly, Gare de Lyon..."
+  },
+  "hero": {
+    "eyebrow": "9-10 May 2026 • Burgundy",
+    "title": "A weekend to celebrate with us",
+    "text": "Everything you need for the wedding day, the next-day brunch, RSVP, dinner menu, and practical travel details.",
+    "primary": "RSVP now",
+    "secondary": "Plan your trip"
+  },
+  "welcome": {
+    "kicker": "Wedding day",
+    "title": "Saturday, 9 May 2026",
+    "text": "We begin in Auxerre for the civil ceremony and continue at Domaine du Roncemay for an afternoon and evening in Burgundy."
+  },
+  "schedule": {
+    "kicker": "Day plan",
+    "title": "Timeline for 9 May",
+    "note": "Times are indicative and may shift slightly on the day."
+  },
+  "nextDay": {
+    "kicker": "Next day",
+    "title": "Sunday, 10 May 2026",
+    "note": "A relaxed Sunday plan at Domaine du Roncemay, with transfers back in the afternoon."
+  },
+  "menu": {
+    "kicker": "Dinner at Roncemay",
+    "title": "Our wedding dinner menu",
+    "note": "We picked one starter and one dessert from the current Roncemay menu for everyone, and each guest can choose a main course below.",
+    "shared": "Shared for everyone",
+    "choice": "Your choice",
+    "starterTitle": "Starter",
+    "starterDish": "Farm egg cocotte with Soumaintrain cheese, poultry confit, and sourdough bread",
+    "mainTitle": "Main course",
+    "dessertTitle": "Dessert",
+    "dessertDish": "Gianduja profiterole with ice cream, cocoa craquelin, gianduja sauce, and toasted hazelnuts",
+    "dietaryTitle": "Dietary note",
+    "dietaryText": "Vegetarian and vegan alternatives will be prepared on request. Please mention any dietary restrictions or allergies in the RSVP form.",
+    "selectedLabel": "Selected main",
+    "selectionHint": "Tap a main course card to prefill your RSVP choice.",
+    "upcoming": "Coming soon",
+    "upcomingNote": "The menu details will be shared closer to the date."
+  },
+  "rsvp": {
+    "kicker": "RSVP",
+    "title": "Reply with your menu choice",
+    "note": "Please reply by 15 April 2026. If you are coming with a +1, you can optionally add their name and choose a second main course below.",
+    "menuGroupTitleSingle": "Your menu choice",
+    "menuGroupTitlePair": "Menu choices for both of you",
+    "menuGroupNoteSingle": "Please choose your preferred main course below.",
+    "menuGroupNotePair": "Please choose one main course for yourself and one for your guest.",
+    "fields": {
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "attendance": "Will you attend?",
+      "plusOne": "Will you bring a +1?",
+      "plusOneName": "Full name of your +1 for place cards",
+      "events": "Which moments will you join?",
+      "menu": "Your main course choice",
+      "plusOneMenu": "Main course choice for your +1",
+      "plusOneMenuFor": "Main course choice for",
+      "transfer": "Do you need a transfer from Paris to Auxerre and back?",
+      "transferDetails": "Transfer details",
+      "arrivalDateTime": "When do you arrive in Paris?",
+      "arrivalLocation": "Which Paris airport or train station will you arrive at?",
+      "returnDateTime": "When is your flight or train back?",
+      "returnLocation": "Which airport or train station will you leave from?",
+      "transferPartySize": "How many people need a transfer?",
+      "dietary": "Dietary restrictions or allergies",
+      "notes": "Anything else we should know?"
+    },
+    "options": {
+      "choose": "Please choose",
+      "yes": "Yes, with pleasure",
+      "no": "Sadly, no",
+      "plusOneYes": "Yes, I will bring a +1",
+      "plusOneNo": "No, just me",
+      "weddingAndBrunch": "Wedding day + brunch",
+      "weddingOnly": "Wedding day only",
+      "brunchOnly": "Brunch only",
+      "meat": "Meat",
+      "fish": "Fish",
+      "poultry": "Poultry",
+      "vegetarian": "Vegetarian",
+      "vegan": "Vegan",
+      "transferYes": "Yes",
+      "transferNo": "No"
+    },
+    "kids": {
+      "question": "Are children joining?",
+      "yes": "Yes",
+      "no": "No",
+      "addChild": "+ Add a child",
+      "childLabel": "Child",
+      "namePlaceholder": "First name",
+      "dietaryPlaceholder": "Dietary restrictions or allergies (optional)",
+      "note": "Children will have a dedicated kids menu.",
+      "max": "Okay that's a lot of kids... (max 3)"
+    },
+    "submit": "Send RSVP",
+    "successRemote": "Thank you. Your RSVP has been sent.",
+    "successLocal": "RSVP saved in this browser for now. Add a real RSVP endpoint in the app to receive submissions online.",
+    "duplicate": "We already have your RSVP. If you need to make a change, please reach out to us directly.",
+    "error": "Something went wrong while sending the RSVP. Please try again.",
+    "menuMissing": "Please select your main course.",
+    "plusOneMenuMissing": "Please select a main course for your +1.",
+    "confirmedTitle": "See you in Burgundy",
+    "confirmedNote": "Your RSVP is confirmed. We can't wait to celebrate with you.",
+    "confirmedAlreadyNote": "We already had your RSVP on file. We can't wait to celebrate with you.",
+    "confirmedKidsNote": "We're counting on"
+  },
+  "logistics": {
+    "kicker": "Logistics",
+    "title": "Travel and stay details",
+    "note": "Browse by topic below. Open any question to read the details, and still double-check live transport schedules closer to the date."
+  },
+  "scheduleItems": [
+    {
+      "time": "13:30",
+      "title": "Guests gather at Mairie d'Auxerre",
+      "description": "Please arrive from 13:30 so we can all be ready for the ceremony.",
+      "location": "Mairie d'Auxerre",
+      "url": "https://maps.app.goo.gl/wDfwtcaomWeJhkoi6"
+    },
+    {
+      "time": "14:00",
+      "title": "Civil ceremony at Mairie d'Auxerre",
+      "description": "The official ceremony begins at 14:00.",
+      "location": "Mairie d'Auxerre",
+      "url": "https://maps.app.goo.gl/wDfwtcaomWeJhkoi6"
+    },
+    {
+      "time": "After the ceremony",
+      "title": "Sparkling toast",
+      "description": "A celebratory glass together just after the ceremony.",
+      "location": "Mairie d'Auxerre",
+      "url": "https://maps.app.goo.gl/wDfwtcaomWeJhkoi6"
+    },
+    {
+      "time": "15:15-15:45",
+      "title": "Transfer to Domaine du Roncemay",
+      "description": "Planned transfer window from Auxerre to the reception venue.",
+      "location": "Place de l'Arquebuse",
+      "url": "https://maps.app.goo.gl/kAozCZSt48x1raUN7"
+    },
+    {
+      "time": "16:00",
+      "title": "Afternoon tea on the bistro terrace",
+      "description": "A relaxed afternoon pause on the terrace.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    },
+    {
+      "time": "18:00",
+      "title": "Apero",
+      "description": "Drinks, conversation, and golden hour.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    },
+    {
+      "time": "19:00-00:00",
+      "title": "Dinner and evening celebration",
+      "description": "Dinner begins at 19:00 and the evening continues until midnight.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    }
+  ],
+  "nextDayItems": [
+    {
+      "time": "09:30",
+      "title": "Transfer from Auxerre",
+      "description": "Departure from the same meeting point in Auxerre for guests returning to Domaine du Roncemay.",
+      "location": "Place de l'Arquebuse",
+      "url": "https://maps.app.goo.gl/kAozCZSt48x1raUN7"
+    },
+    {
+      "time": "10:00-12:00",
+      "title": "Brunch at Domaine du Roncemay",
+      "description": "A relaxed brunch together at the Domaine.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    },
+    {
+      "time": "12:00-14:00",
+      "title": "Golf introduction session",
+      "description": "If you would rather skip golf, you can enjoy a bike ride, petanque, a walk around the domain, or simply chat with the other guests.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    },
+    {
+      "time": "16:00",
+      "title": "Transfer back to Auxerre",
+      "description": "Return transfer for guests heading back to Auxerre.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    },
+    {
+      "time": "16:00",
+      "title": "Transfer to Paris",
+      "description": "Direct transfer departure for guests continuing on to Paris.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    }
+  ],
+  "menuOptions": [
+    ["meat", "Meat", "Chef's meat main course selection."],
+    ["fish", "Fish", "Market fish with bouillabaisse jus, aioli espuma, and fennel variations"],
+    ["poultry", "Poultry", "Chef's poultry main course selection."],
+    ["vegetarian", "Vegetarian", "A seasonal vegetarian plate will be prepared on request."],
+    ["vegan", "Vegan", "A seasonal vegan plate will be prepared on request."]
+  ],
+  "logisticsSections": [
+    {
+      "title": "Transportation",
+      "items": [
+        {
+          "title": "How to get to Auxerre",
+          "text": "Auxerre is easiest to reach by train from Paris Bercy Bourgogne. A direct trip takes roughly 2 hours.",
+          "links": [["Paris > Auxerre trains", "https://www.sncf-connect.com/en-en/train/timetables/paris/auxerre"]]
+        },
+        {
+          "title": "From Auxerre-Saint-Gervais station to the Mairie",
+          "text": "The station is a short taxi ride from the town centre. On foot, allow roughly 20 to 25 minutes to Place de l'Hotel de Ville.",
+          "links": [["Tourist office", "https://www.ot-auxerre.fr/espace-pro/contacts/"]]
+        },
+        {
+          "title": "Reception venue: Domaine du Roncemay",
+          "text": "The reception takes place at Domaine du Roncemay in Chassy. Auxerre is about 22 km away, roughly 25 minutes by road.",
+          "links": [
+            ["Venue information", "https://roncemay.com/en/informations-pratiques.html"],
+            ["Venue website", "https://roncemay.com/fr/"]
+          ]
+        },
+        {
+          "title": "Transfer on Saturday morning: Paris to Auxerre",
+          "text": "The easiest plan is usually an early TER from Paris Bercy Bourgogne to Auxerre-Saint-Gervais, arriving no later than early afternoon.",
+          "links": [["Check SNCF timetable", "https://www.sncf-connect.com/en-en/train/timetables/paris/auxerre"]]
+        },
+        {
+          "title": "Transfer on Sunday afternoon: Auxerre to Paris",
+          "text": "Regular return departures typically run back to Paris in about 1h44. An afternoon train is likely the most comfortable option.",
+          "links": [["Auxerre > Paris trains", "https://www.sncf-connect.com/en-en/train/timetables/auxerre/paris"]]
+        }
+      ]
+    },
+    {
+      "title": "Accommodation",
+      "items": [
+        {
+          "title": "Where to stay in Auxerre",
+          "text": "A few reliable options nearby include ibis Auxerre Centre, ibis budget Auxerre Centre, and Mercure Auxerre Autoroute du Soleil. Booking early is strongly recommended.",
+          "links": [
+            ["ibis Auxerre Centre", "https://www.booking.com/hotel/fr/ibis-auxerre-centre.html"],
+            ["ibis budget Auxerre Centre", "https://www.booking.com/hotel/fr/ibis-budget-auxerre-centre.html"],
+            ["Mercure Auxerre", "https://www.booking.com/hotel/fr/auxerre-nord.html"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Auxerre",
+      "items": [
+        {
+          "title": "Why we are here",
+          "text": "Auxerre was Lucas' home from the age of 12 to 19, just before he moved to Paris to study at Ecole 42 a few days before his birthday that year.\n\nAuxerre is still home to Valerie and Franck, who have explored every tiny corner of the city and the nearby vineyards during their long bike rides on summer days.\n\nAuxerre is a city Lucas told me so much about even before we started dating, describing how peaceful, green, easy, and calm life in this old Burgundy city is.\n\nAuxerre now holds a piece of mine and Phoebe's hearts, as we have spent so many great days and nights here, running and biking along the Yonne, watching AJA play at the home stadium, and sharing many good laughs over dinners at Lucas' parents'.\n\nWe have prepared a few tips to share with you, so maybe you will like it too and keep great memories of the city and of the couple of days we will spend together.",
+          "links": []
+        },
+        {
+          "title": "What to check",
+          "text": "If you have a little extra time, the old town centre, Saint-Etienne Cathedral, the clock tower area, and the riverfront are all worth seeing. If you feel like moving, you can also head to the Auxerre swimming pool, the athletics track, or the tennis courts. There is also a nice public workout spot in the city park, just next to the bridge.",
+          "links": [
+            ["Auxerre swimming pool", "https://www.google.com/maps/search/?api=1&query=Stade+nautique+83+Avenue+Yver+89000+Auxerre"],
+            ["Athletics track", "https://www.google.com/maps/search/?api=1&query=Stade+Guy+Drut+27+Rue+de+Preuilly+89000+Auxerre"],
+            ["Tennis courts", "https://www.google.com/maps/search/?api=1&query=Stade+Auxerrois+Tennis+27+Rue+de+Preuilly+89000+Auxerre"]
+          ]
+        },
+        {
+          "title": "Where to eat",
+          "text": "Good local picks include Le Goût des Autres, Mamma Giulia, and L'Asperule for lunch or dinner, plus Cannelle for coffee and breakfast.",
+          "links": [
+            ["Le Gout des Autres", "https://www.google.com/maps/search/?api=1&query=Le+Gout+des+Autres+4+Place+du+Marechal+Leclerc+89000+Auxerre"],
+            ["Mama Giulia", "https://www.google.com/maps/search/?api=1&query=Mamma+Giulia+3+Place+des+Cordeliers+89000+Auxerre"],
+            ["L'Asperule", "https://www.google.com/maps/search/?api=1&query=L%27Asperule+34+Rue+du+Pont+89000+Auxerre"],
+            ["Cannelle - coffee & breakfast", "https://www.google.com/maps/search/?api=1&query=Cannelle+12+Rue+Fecauderie+89000+Auxerre"]
+          ]
+        }
+      ]
+    }
+  ]
+}

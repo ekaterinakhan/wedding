@@ -1,0 +1,296 @@
+{
+  "ui": {
+    "siteLabel": "Week-end de mariage",
+    "day1Label": "9 mai",
+    "day2Label": "10 mai",
+    "footerDate": "9-10 mai 2026 · Bourgogne",
+    "transferLocationPlaceholder": "CDG, Orly, Gare de Lyon..."
+  },
+  "hero": {
+    "eyebrow": "9-10 mai 2026 • Bourgogne",
+    "title": "Un week-end pour célébrer avec nous",
+    "text": "Toutes les informations utiles pour le mariage, le brunch du lendemain, le RSVP, le dîner et l'organisation pratique du voyage.",
+    "primary": "RSVP",
+    "secondary": "Organiser son trajet"
+  },
+  "welcome": {
+    "kicker": "Jour du mariage",
+    "title": "Samedi 9 mai 2026",
+    "text": "Nous commencerons à Auxerre pour la cérémonie civile, puis nous poursuivrons au Domaine du Roncemay pour l'après-midi et la soirée."
+  },
+  "schedule": {
+    "kicker": "Programme",
+    "title": "Déroulé du 9 mai",
+    "note": "Les horaires sont indicatifs et pourront légèrement évoluer le jour J."
+  },
+  "nextDay": {
+    "kicker": "Le lendemain",
+    "title": "Dimanche 10 mai 2026",
+    "note": "Un programme tranquille au Domaine du Roncemay, avec les transferts de retour dans l'après-midi."
+  },
+  "menu": {
+    "kicker": "Dîner au Roncemay",
+    "title": "Le menu de notre dîner",
+    "note": "Nous avons choisi une entrée et un dessert dans la carte actuelle du Roncemay pour tout le monde, et chaque invité peut sélectionner son plat principal ci-dessous.",
+    "shared": "Pour tout le monde",
+    "choice": "À choisir",
+    "starterTitle": "Entrée",
+    "starterDish": "Œuf cocotte fermier au soumaintrain, confit de volaille et pain au levain",
+    "mainTitle": "Plat principal",
+    "dessertTitle": "Dessert",
+    "dessertDish": "La profiterole au gianduja, crème glacée, craquelin cacao et sauce gianduja avec quelques noisettes torréfiées",
+    "dietaryTitle": "Note alimentaire",
+    "dietaryText": "Des alternatives végétariennes et vegan pourront être préparées sur demande. Merci d'indiquer toute allergie ou restriction alimentaire dans le formulaire RSVP.",
+    "selectedLabel": "Plat sélectionné",
+    "selectionHint": "Touchez une carte pour préremplir votre choix dans le RSVP.",
+    "upcoming": "Bientôt disponible",
+    "upcomingNote": "Le menu sera partagé prochainement."
+  },
+  "rsvp": {
+    "kicker": "RSVP",
+    "title": "Confirmez votre venue et votre menu",
+    "note": "Merci de répondre avant le 15 avril 2026. Si vous venez avec un +1, vous pouvez ajouter son nom et choisir un second plat principal ci-dessous.",
+    "menuGroupTitleSingle": "Votre choix de menu",
+    "menuGroupTitlePair": "Les choix de menu pour vous deux",
+    "menuGroupNoteSingle": "Merci de choisir votre plat principal ci-dessous.",
+    "menuGroupNotePair": "Merci de choisir un plat principal pour vous et un autre pour votre invite(e).",
+    "fields": {
+      "name": "Nom complet",
+      "email": "Email",
+      "phone": "Téléphone",
+      "attendance": "Serez-vous présent(e) ?",
+      "plusOne": "Viendrez-vous avec un +1 ?",
+      "plusOneName": "Nom complet de votre +1 pour les marque-places",
+      "events": "À quels moments serez-vous parmi nous ?",
+      "menu": "Votre choix de plat",
+      "plusOneMenu": "Choix du plat pour votre +1",
+      "plusOneMenuFor": "Choix du plat pour",
+      "transfer": "Avez-vous besoin d'un transfert de Paris à Auxerre puis du retour ?",
+      "transferDetails": "Détails du transfert",
+      "arrivalDateTime": "Quand arrivez-vous à Paris ?",
+      "arrivalLocation": "À quel aéroport ou dans quelle gare de Paris arrivez-vous ?",
+      "returnDateTime": "Quand est votre vol ou train retour ?",
+      "returnLocation": "Depuis quel aéroport ou quelle gare repartez-vous ?",
+      "transferPartySize": "Combien de personnes ont besoin du transfert ?",
+      "dietary": "Allergies ou régime alimentaire",
+      "notes": "Autre information utile"
+    },
+    "options": {
+      "choose": "Merci de choisir",
+      "yes": "Oui, avec joie",
+      "no": "Malheureusement non",
+      "plusOneYes": "Oui, je viendrai avec un +1",
+      "plusOneNo": "Non, je viendrai seul(e)",
+      "weddingAndBrunch": "Mariage + brunch",
+      "weddingOnly": "Mariage uniquement",
+      "brunchOnly": "Brunch uniquement",
+      "meat": "Viande",
+      "fish": "Poisson",
+      "poultry": "Volaille",
+      "vegetarian": "Végétarien",
+      "vegan": "Vegan",
+      "transferYes": "Oui",
+      "transferNo": "Non"
+    },
+    "kids": {
+      "question": "Des enfants seront-ils presents ?",
+      "yes": "Oui",
+      "no": "Non",
+      "addChild": "+ Ajouter un enfant",
+      "childLabel": "Enfant",
+      "namePlaceholder": "Prenom",
+      "dietaryPlaceholder": "Allergies ou restrictions alimentaires (optionnel)",
+      "note": "Les enfants auront un menu enfant dedie.",
+      "max": "Bon, c'est beaucoup des enfants... (max 3)"
+    },
+    "submit": "Envoyer le RSVP",
+    "successRemote": "Merci. Votre réponse a bien été envoyée.",
+    "successLocal": "Le RSVP est enregistré dans ce navigateur pour le moment. Ajoutez un vrai endpoint dans l'app pour recevoir les réponses en ligne.",
+    "duplicate": "Nous avons déjà reçu votre réponse. Si vous souhaitez la modifier, contactez-nous directement.",
+    "error": "Une erreur est survenue pendant l'envoi. Merci de réessayer.",
+    "menuMissing": "Merci de choisir votre plat principal.",
+    "plusOneMenuMissing": "Merci de choisir un plat principal pour votre +1.",
+    "confirmedTitle": "À bientôt en Bourgogne",
+    "confirmedNote": "Votre réponse est bien enregistrée. On a hâte de fêter ça avec vous.",
+    "confirmedAlreadyNote": "Nous avions déjà votre réponse. On a hâte de fêter ça avec vous.",
+    "confirmedKidsNote": "On compte sur"
+  },
+  "logistics": {
+    "kicker": "Logistique",
+    "title": "Informations de trajet et de séjour",
+    "note": "Tout ce qu'il faut savoir pour le voyage et l'hébergement. Les horaires exacts seront confirmés plus près de la date."
+  },
+  "scheduleItems": [
+    {
+      "time": "13:30",
+      "title": "Accueil des invités à la Mairie d'Auxerre",
+      "description": "Merci d'arriver à partir de 13:30 afin que tout le monde soit installé avant la cérémonie.",
+      "location": "Mairie d'Auxerre",
+      "url": "https://maps.app.goo.gl/wDfwtcaomWeJhkoi6"
+    },
+    {
+      "time": "14:00",
+      "title": "Cérémonie civile à la Mairie d'Auxerre",
+      "description": "La cérémonie officielle commence à 14:00.",
+      "location": "Mairie d'Auxerre",
+      "url": "https://maps.app.goo.gl/wDfwtcaomWeJhkoi6"
+    },
+    {
+      "time": "Après la cérémonie",
+      "title": "Coupe de crémant",
+      "description": "Un verre pour célébrer ensemble juste après la cérémonie.",
+      "location": "Mairie d'Auxerre",
+      "url": "https://maps.app.goo.gl/wDfwtcaomWeJhkoi6"
+    },
+    {
+      "time": "15:15-15:45",
+      "title": "Transfert vers le Domaine du Roncemay",
+      "description": "Plage de transfert prévue entre Auxerre et le lieu de réception.",
+      "location": "Place de l'Arquebuse",
+      "url": "https://maps.app.goo.gl/kAozCZSt48x1raUN7"
+    },
+    {
+      "time": "16:00",
+      "title": "Goûter sur la terrasse du bistrot",
+      "description": "Une pause gourmande et détendue dans l'après-midi.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    },
+    {
+      "time": "18:00",
+      "title": "Apéro",
+      "description": "Verres, discussions et jolie lumière de fin de journée.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    },
+    {
+      "time": "19:00-00:00",
+      "title": "Dîner et soirée",
+      "description": "Le dîner commence à 19:00 et la fête se poursuit jusqu'à minuit.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    }
+  ],
+  "nextDayItems": [
+    {
+      "time": "09:30",
+      "title": "Transfert depuis Auxerre",
+      "description": "Départ depuis le même point de rendez-vous à Auxerre pour les invités qui rejoignent le Domaine du Roncemay.",
+      "location": "Place de l'Arquebuse",
+      "url": "https://maps.app.goo.gl/kAozCZSt48x1raUN7"
+    },
+    {
+      "time": "10:00-12:00",
+      "title": "Brunch au Domaine du Roncemay",
+      "description": "Un brunch détendu tous ensemble au Domaine.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    },
+    {
+      "time": "12:00-14:00",
+      "title": "Initiation au golf",
+      "description": "Si vous préférez ne pas participer, vous pourrez profiter d'une balade à vélo, d'une partie de pétanque, d'une promenade dans le domaine ou simplement discuter avec les autres invités.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    },
+    {
+      "time": "16:00",
+      "title": "Transfert retour vers Auxerre",
+      "description": "Transfert de retour pour les invités qui repartent vers Auxerre.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    },
+    {
+      "time": "16:00",
+      "title": "Transfert vers Paris",
+      "description": "Départ du transfert direct pour les invités qui poursuivent ensuite vers Paris.",
+      "location": "Domaine du Roncemay",
+      "url": "https://maps.app.goo.gl/VFZitv9ZWvbp24r16"
+    }
+  ],
+  "menuOptions": [
+    ["meat", "Viande", "Suggestion de plat de viande du chef."],
+    ["fish", "Poisson", "Poisson du marché, jus bouillabaisse, espuma aïoli et déclinaison autour du fenouil"],
+    ["poultry", "Volaille", "Suggestion de plat de volaille du chef."],
+    ["vegetarian", "Végétarien", "Une assiette végétarienne de saison pourra être préparée sur demande."],
+    ["vegan", "Vegan", "Une assiette vegan de saison pourra être préparée sur demande."]
+  ],
+  "logisticsSections": [
+    {
+      "title": "Transport",
+      "items": [
+        {
+          "title": "Comment venir à Auxerre",
+          "text": "Auxerre est très facilement accessible en train depuis Paris Bercy Bourgogne. Un trajet direct dure environ 2 heures.",
+          "links": [["Trains Paris > Auxerre", "https://www.sncf-connect.com/fr-fr/train/horaires/paris/auxerre"]]
+        },
+        {
+          "title": "De la gare d'Auxerre-Saint-Gervais à la Mairie",
+          "text": "La gare se trouve à une courte distance en taxi du centre-ville. À pied, comptez environ 20 à 25 minutes jusqu'à la Place de l'Hôtel de Ville.",
+          "links": [["Office de tourisme", "https://www.ot-auxerre.fr/espace-pro/contacts/"]]
+        },
+        {
+          "title": "Lieu de réception : Domaine du Roncemay",
+          "text": "La réception aura lieu au Domaine du Roncemay à Chassy. Auxerre se trouve à environ 22 km, soit environ 25 minutes de route.",
+          "links": [
+            ["Infos pratiques du Domaine", "https://roncemay.com/fr/informations-pratiques.html"],
+            ["Site du Domaine", "https://roncemay.com/fr/"]
+          ]
+        },
+        {
+          "title": "Transfert du samedi matin : Paris vers Auxerre",
+          "text": "Le plus simple sera généralement de prendre un TER tôt le matin depuis Paris Bercy Bourgogne vers Auxerre-Saint-Gervais.",
+          "links": [["Vérifier les horaires SNCF", "https://www.sncf-connect.com/fr-fr/train/horaires/paris/auxerre"]]
+        },
+        {
+          "title": "Transfert du dimanche après-midi : Auxerre vers Paris",
+          "text": "Les retours vers Paris durent souvent autour de 1 h 44. Un train l'après-midi sera probablement le plus confortable.",
+          "links": [["Trains Auxerre > Paris", "https://www.sncf-connect.com/fr-ch/train/trajet/auxerre/paris"]]
+        }
+      ]
+    },
+    {
+      "title": "Hébergement",
+      "items": [
+        {
+          "title": "Où loger à Auxerre",
+          "text": "Quelques options fiables à proximité incluent ibis Auxerre Centre, ibis budget Auxerre Centre et Mercure Auxerre Autoroute du Soleil. Nous recommandons de réserver tôt.",
+          "links": [
+            ["ibis Auxerre Centre", "https://www.booking.com/hotel/fr/ibis-auxerre-centre.fr.html"],
+            ["ibis budget Auxerre Centre", "https://www.booking.com/hotel/fr/ibis-budget-auxerre-centre.fr.html"],
+            ["Mercure Auxerre", "https://www.booking.com/hotel/fr/auxerre-nord.fr.html"]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Auxerre",
+      "items": [
+        {
+          "title": "Pourquoi sommes-nous ici ?",
+          "text": "Auxerre a été la maison de Lucas de ses 12 ans à ses 19 ans, juste avant qu'il parte à Paris pour étudier à l'École 42, quelques jours avant son anniversaire cette année-là.\n\nAuxerre est toujours la maison de Valérie et Franck, qui ont exploré chaque petit coin de la ville et les vignobles voisins lors de leurs longues balades à vélo pendant les journées d'été.\n\nAuxerre est une ville dont Lucas m'a beaucoup parlé avant même que nous commencions à sortir ensemble, en me racontant à quel point la vie y est paisible, verte, simple et calme dans cette ancienne ville de Bourgogne.\n\nAuxerre garde maintenant un morceau de mon cœur et de celui de Phoebe, car nous y avons passé tant de belles journées et de belles soirées, à courir et faire du vélo le long de l'Yonne, à regarder jouer l'AJA dans son stade, et à partager beaucoup de rires autour de dîners chez les parents de Lucas.\n\nNous vous avons préparé quelques suggestions à partager avec vous, et nous espérons que vous aimerez vous aussi cette ville et que vous en garderez de beaux souvenirs, ainsi que des quelques jours que nous passerons ensemble.",
+          "links": []
+        },
+        {
+          "title": "Que voir ?",
+          "text": "Si vous avez un peu de temps, le centre historique, la cathédrale Saint-Étienne, le quartier de la tour de l'Horloge et les bords de l'Yonne valent le détour. Si vous avez envie de faire un peu de sport, vous pouvez aussi aller à la piscine d'Auxerre, à la piste d'athlétisme ou aux courts de tennis. Il y a également un joli espace public de sport dans le parc de la ville, juste à côté du pont.",
+          "links": [
+            ["Piscine d'Auxerre", "https://www.google.com/maps/search/?api=1&query=Stade+nautique+83+Avenue+Yver+89000+Auxerre"],
+            ["Piste d'athlétisme", "https://www.google.com/maps/search/?api=1&query=Stade+Guy+Drut+27+Rue+de+Preuilly+89000+Auxerre"],
+            ["Courts de tennis", "https://www.google.com/maps/search/?api=1&query=Stade+Auxerrois+Tennis+27+Rue+de+Preuilly+89000+Auxerre"]
+          ]
+        },
+        {
+          "title": "Où manger ?",
+          "text": "Pour les invités qui arrivent en avance, Le Goût des Autres, Mamma Giulia et L'Asperule sont de bonnes adresses pour déjeuner ou dîner, et Cannelle est parfait pour un café et un petit-déjeuner.",
+          "links": [
+            ["Le Goût des Autres", "https://www.google.com/maps/search/?api=1&query=Le+Gout+des+Autres+4+Place+du+Marechal+Leclerc+89000+Auxerre"],
+            ["Mamma Giulia", "https://www.google.com/maps/search/?api=1&query=Mamma+Giulia+3+Place+des+Cordeliers+89000+Auxerre"],
+            ["L'Asperule", "https://www.google.com/maps/search/?api=1&query=L%27Asperule+34+Rue+du+Pont+89000+Auxerre"],
+            ["Cannelle - café & petit-déjeuner", "https://www.google.com/maps/search/?api=1&query=Cannelle+12+Rue+Fecauderie+89000+Auxerre"]
+          ]
+        }
+      ]
+    }
+  ]
+}

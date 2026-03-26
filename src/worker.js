@@ -108,6 +108,16 @@ async function handleRsvpPost(request, env) {
     return Response.json({ error: "Name and email are required." }, { status: 400 });
   }
 
+  const attendance = body.attendance || "";
+  if (attendance !== "no") {
+    if (!body.menu) {
+      return Response.json({ error: "Menu choice is required." }, { status: 400 });
+    }
+    if (body.plusOne === "yes" && !body.plusOneMenu) {
+      return Response.json({ error: "Menu choice for +1 is required." }, { status: 400 });
+    }
+  }
+
   // Duplicate check
   const existing = await env.DB.prepare(
     "SELECT id, token FROM guests WHERE lower(email) = lower(?1) LIMIT 1"

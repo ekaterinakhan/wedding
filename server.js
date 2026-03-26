@@ -635,6 +635,17 @@ app.post("/api/rsvps", (req, res) => {
     return;
   }
 
+  if (payload.attendance !== "no") {
+    if (!payload.menu) {
+      res.status(400).json({ error: "Menu choice is required." });
+      return;
+    }
+    if (payload.plusOne === "yes" && !payload.plusOneMenu) {
+      res.status(400).json({ error: "Menu choice for +1 is required." });
+      return;
+    }
+  }
+
   const result = insertRsvp.run(payload);
   res.status(201).json({ ok: true, id: result.lastInsertRowid });
 });
