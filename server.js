@@ -65,6 +65,8 @@ ensureColumn("rsvps", "arrival_location", "TEXT");
 ensureColumn("rsvps", "return_datetime", "TEXT");
 ensureColumn("rsvps", "return_location", "TEXT");
 ensureColumn("rsvps", "transfer_party_size", "TEXT");
+ensureColumn("rsvps", "kids", "TEXT");
+ensureColumn("rsvps", "token", "TEXT");
 
 const insertRsvp = db.prepare(`
   INSERT INTO rsvps (
@@ -95,7 +97,8 @@ const selectRsvps = db.prepare(`
     arrival_location,
     return_datetime,
     return_location,
-    transfer_party_size
+    transfer_party_size,
+    kids
   FROM rsvps
   ORDER BY datetime(submitted_at) DESC, id DESC
 `);
@@ -492,6 +495,10 @@ app.get("/api/private/session", (req, res) => {
   res.json({ authenticated: cookies[SESSION_COOKIE] === "1" });
 });
 
+app.get("/api/private/rsvps", requireBoardAuth, (_req, res) => {
+  res.json(selectRsvps.all());
+});
+
 app.get("/api/private/boards/:boardId", requireBoardAuth, (req, res) => {
   const board = loadBoard(req.params.boardId);
 
@@ -672,5 +679,6 @@ app.get("/responses", (_req, res) => {
 app.listen(port, () => {
   console.log(`RSVP server running at http://127.0.0.1:${port}`);
   console.log(`Responses table available at http://127.0.0.1:${port}/responses`);
+  console.log(`Admin panel available at http://127.0.0.1:4175/#/private/guests`);
   console.log(`Private boards available at http://127.0.0.1:4175/#/private/wedding and http://127.0.0.1:4175/#/private/admin`);
 });

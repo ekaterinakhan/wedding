@@ -2,6 +2,7 @@ import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import PrivateBoards from "./PrivateBoards";
+import AdminGuests from "./AdminGuests";
 import "./index.css";
 
 function Root() {
@@ -13,7 +14,9 @@ function Root() {
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
 
-  return hash.startsWith("#/private/") ? <PrivateBoards /> : <App />;
+  if (hash.startsWith("#/private/guests")) return <AdminGuests />;
+  if (hash.startsWith("#/private/")) return <PrivateBoards />;
+  return <App />;
 }
 
 createRoot(document.getElementById("root")).render(
