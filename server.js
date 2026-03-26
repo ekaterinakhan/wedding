@@ -755,6 +755,6 @@ app.get("/responses", (_req, res) => {
 app.listen(port, () => {
   console.log(`RSVP server running at http://127.0.0.1:${port}`);
   console.log(`Responses table available at http://127.0.0.1:${port}/responses`);
-  console.log(`Admin panel available at http://127.0.0.1:4175/#/private/guests`);
-  console.log(`Private boards available at http://127.0.0.1:4175/#/private/wedding and http://127.0.0.1:4175/#/private/admin`);
+  console.log(`Admin panel: open /admin on your Vite dev server (default http://localhost:5173/admin)`);
+  console.log(`Private boards: open #/private/wedding or #/private/admin on your Vite dev server`);
 });
