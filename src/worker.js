@@ -89,6 +89,10 @@ export default {
       return handlePrivateRsvps(env);
     }
 
+    if (url.pathname === "/admin" || url.pathname.startsWith("/admin/")) {
+      return env.ASSETS.fetch(new Request(new URL("/", request.url), request));
+    }
+
     return env.ASSETS.fetch(request);
   },
 };
