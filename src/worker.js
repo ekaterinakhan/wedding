@@ -247,13 +247,29 @@ async function handleRsvpGet(env) {
 async function handlePrivateRsvps(env) {
   const { results } = await env.DB.prepare(`
     SELECT
-      id, submitted_at, language, name, email, phone,
-      attendance, events, menu, transfer, dietary, notes,
-      plus_one, plus_one_name, plus_one_menu,
-      arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size,
-      kids
-    FROM rsvps
-    ORDER BY submitted_at DESC, id DESC
+      g.id,
+      g.submitted_at,
+      g.name,
+      g.email,
+      g.phone,
+      g.attendance,
+      g.events,
+      g.dietary,
+      g.notes,
+      g.guest_type,
+      g.primary_guest_id,
+      g.rsvp_id,
+      gm.menu,
+      gt.needs_transfer AS transfer,
+      gt.arrival_datetime,
+      gt.arrival_location,
+      gt.return_datetime,
+      gt.return_location,
+      gt.party_size AS transfer_party_size
+    FROM guests g
+    LEFT JOIN guest_menus gm ON gm.guest_id = g.id
+    LEFT JOIN guest_transfers gt ON gt.guest_id = g.id
+    ORDER BY COALESCE(g.primary_guest_id, g.id), g.primary_guest_id IS NOT NULL, g.id
   `).all();
   return Response.json(results);
 }

@@ -496,7 +496,72 @@ app.get("/api/private/session", (req, res) => {
 });
 
 app.get("/api/private/rsvps", requireBoardAuth, (_req, res) => {
-  res.json(selectRsvps.all());
+  const rsvps = selectRsvps.all();
+  const people = [];
+  let vid = 100000;
+
+  for (const r of rsvps) {
+    const attending = r.attendance !== "no";
+    people.push({
+      id: r.id,
+      submitted_at: r.submitted_at,
+      name: r.name,
+      email: r.email,
+      phone: r.phone,
+      attendance: r.attendance,
+      events: r.events,
+      guest_type: "primary",
+      primary_guest_id: null,
+      rsvp_id: r.id,
+      menu: r.menu,
+      dietary: r.dietary,
+      notes: r.notes,
+      transfer: r.transfer,
+      arrival_datetime: r.arrival_datetime,
+      arrival_location: r.arrival_location,
+      return_datetime: r.return_datetime,
+      return_location: r.return_location,
+      transfer_party_size: r.transfer_party_size,
+    });
+
+    if (!attending) continue;
+
+    if (r.plus_one === "yes" && r.plus_one_name) {
+      people.push({
+        id: vid++,
+        submitted_at: r.submitted_at,
+        name: r.plus_one_name,
+        guest_type: "plus_one",
+        primary_guest_id: r.id,
+        rsvp_id: r.id,
+        menu: r.plus_one_menu,
+        dietary: null,
+        notes: null,
+        events: r.events,
+        attendance: "yes",
+      });
+    }
+
+    let kids = [];
+    try { kids = JSON.parse(r.kids || "[]"); } catch { /* empty */ }
+    for (const kid of kids) {
+      people.push({
+        id: vid++,
+        submitted_at: r.submitted_at,
+        name: kid.name,
+        guest_type: "child",
+        primary_guest_id: r.id,
+        rsvp_id: r.id,
+        menu: "kids",
+        dietary: kid.dietary,
+        notes: null,
+        events: r.events,
+        attendance: "yes",
+      });
+    }
+  }
+
+  res.json(people);
 });
 
 app.get("/api/private/boards/:boardId", requireBoardAuth, (req, res) => {

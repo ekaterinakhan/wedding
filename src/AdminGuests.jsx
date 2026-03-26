@@ -16,8 +16,12 @@ const MENU_COLORS = {
   vegan: "bg-emerald-100 text-emerald-800",
 };
 
+function isAttending(person) {
+  return person.guest_type !== "primary" || person.attendance !== "no";
+}
+
 function Badge({ value, className = "" }) {
-  if (!value) return <span className="text-gray-400 text-xs">—</span>;
+  if (!value) return <span className="text-gray-300 text-xs">—</span>;
   return (
     <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${className}`}>
       {value}
@@ -25,37 +29,20 @@ function Badge({ value, className = "" }) {
   );
 }
 
+function TypeBadge({ type }) {
+  const map = {
+    primary: ["Guest", "bg-sage-500/10 text-sage-700"],
+    plus_one: ["+1", "bg-mist-600/10 text-mist-600"],
+    child: ["Child", "bg-amber-100 text-amber-700"],
+  };
+  const [label, cls] = map[type] || [type, "bg-gray-100 text-gray-600"];
+  return <Badge value={label} className={cls} />;
+}
+
 function MenuBadge({ choice }) {
-  if (!choice) return <span className="text-gray-400 text-xs">—</span>;
-  const label = MENU_LABELS[choice] || choice;
-  const color = MENU_COLORS[choice] || "bg-gray-100 text-gray-700";
-  return <Badge value={label} className={color} />;
-}
-
-function AttendanceBadge({ value }) {
-  if (!value || value === "no") {
-    return <Badge value="No" className="bg-red-100 text-red-700" />;
-  }
-  return <Badge value="Yes" className="bg-green-100 text-green-800" />;
-}
-
-function formatDate(raw) {
-  if (!raw) return "—";
-  const d = new Date(raw);
-  if (Number.isNaN(d.getTime())) return raw;
-  return d.toLocaleString("en-GB", {
-    day: "numeric", month: "short", year: "numeric",
-    hour: "2-digit", minute: "2-digit",
-  });
-}
-
-function parseKids(raw) {
-  if (!raw) return [];
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
+  if (!choice) return <span className="text-gray-300 text-xs">—</span>;
+  if (choice === "kids") return <Badge value="Kids menu" className="bg-amber-50 text-amber-600 border border-amber-200" />;
+  return <Badge value={MENU_LABELS[choice] || choice} className={MENU_COLORS[choice] || "bg-gray-100 text-gray-700"} />;
 }
 
 function StatCard({ label, value, sub }) {
@@ -66,6 +53,27 @@ function StatCard({ label, value, sub }) {
       {sub && <span className="text-xs text-mist-600">{sub}</span>}
     </div>
   );
+}
+
+function Th({ children }) {
+  return (
+    <th className="px-4 py-3 text-left text-xs uppercase tracking-widest text-mist-600 font-medium whitespace-nowrap">
+      {children}
+    </th>
+  );
+}
+
+/** Alternating shade per party (rsvp_id group) */
+function usePartyShades(people) {
+  return useMemo(() => {
+    const seen = new Map();
+    let counter = 0;
+    for (const p of people) {
+      const key = p.rsvp_id ?? p.id;
+      if (!seen.has(key)) seen.set(key, counter++);
+    }
+    return (rsvpId) => (seen.get(rsvpId ?? 0) ?? 0) % 2 === 0 ? "" : "bg-cream-50/50";
+  }, [people]);
 }
 
 function LoginForm({ onLogin }) {
@@ -85,11 +93,8 @@ function LoginForm({ onLogin }) {
         body: JSON.stringify({ password }),
       });
       const json = await res.json();
-      if (res.ok) {
-        onLogin();
-      } else {
-        setError(json.error || "Invalid password.");
-      }
+      if (res.ok) onLogin();
+      else setError(json.error || "Invalid password.");
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -137,7 +142,7 @@ const TABS = [
 export default function AdminGuests() {
   const [authenticated, setAuthenticated] = useState(false);
   const [sessionLoading, setSessionLoading] = useState(true);
-  const [rsvps, setRsvps] = useState([]);
+  const [people, setPeople] = useState([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [tab, setTab] = useState("guests");
 
@@ -154,36 +159,32 @@ export default function AdminGuests() {
     setDataLoading(true);
     fetch("/api/private/rsvps", { credentials: "include" })
       .then(r => r.json())
-      .then(data => setRsvps(Array.isArray(data) ? data : []))
-      .catch(() => setRsvps([]))
+      .then(data => setPeople(Array.isArray(data) ? data : []))
+      .catch(() => setPeople([]))
       .finally(() => setDataLoading(false));
   }, [authenticated]);
 
   async function handleLogout() {
     await fetch("/api/private/logout", { method: "POST", credentials: "include" });
     setAuthenticated(false);
-    setRsvps([]);
+    setPeople([]);
   }
 
   const stats = useMemo(() => {
-    const attending = rsvps.filter(r => r.attendance === "yes" || r.attendance === "yes-all" || r.attendance?.startsWith("yes"));
-    const notAttending = rsvps.filter(r => r.attendance === "no");
-    const withPlusOne = attending.filter(r => r.plus_one === "yes");
-    const kids = rsvps.flatMap(r => parseKids(r.kids));
-    const needsTransfer = attending.filter(r => r.transfer === "yes");
-
+    const attending = people.filter(isAttending);
+    const notAttending = people.filter(p => p.guest_type === "primary" && p.attendance === "no");
     const menuCounts = {};
-    for (const r of attending) {
-      if (r.menu) menuCounts[r.menu] = (menuCounts[r.menu] || 0) + 1;
-      if (r.plus_one === "yes" && r.plus_one_menu) {
-        menuCounts[r.plus_one_menu] = (menuCounts[r.plus_one_menu] || 0) + 1;
+    for (const p of attending) {
+      if (p.menu && p.menu !== "kids") {
+        menuCounts[p.menu] = (menuCounts[p.menu] || 0) + 1;
       }
     }
-
-    const totalPeople = attending.length + withPlusOne.length + kids.length;
-
-    return { attending, notAttending, withPlusOne, kids, needsTransfer, menuCounts, totalPeople };
-  }, [rsvps]);
+    // Transfer info lives on primary guest rows
+    const primaryAttending = attending.filter(p => p.guest_type === "primary");
+    const needsTransfer = primaryAttending.filter(p => p.transfer === "yes");
+    const transferPeople = needsTransfer.reduce((s, p) => s + (parseInt(p.transfer_party_size) || 1), 0);
+    return { attending, notAttending, menuCounts, needsTransfer, transferPeople, primaryAttending };
+  }, [people]);
 
   if (sessionLoading) {
     return (
@@ -193,13 +194,10 @@ export default function AdminGuests() {
     );
   }
 
-  if (!authenticated) {
-    return <LoginForm onLogin={() => setAuthenticated(true)} />;
-  }
+  if (!authenticated) return <LoginForm onLogin={() => setAuthenticated(true)} />;
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
       <header className="border-b border-sage-500/10 bg-cream-50/80 backdrop-blur sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-6">
@@ -210,9 +208,7 @@ export default function AdminGuests() {
                   key={t.id}
                   onClick={() => setTab(t.id)}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    tab === t.id
-                      ? "bg-sage-700 text-white"
-                      : "text-mist-600 hover:bg-sage-500/10"
+                    tab === t.id ? "bg-sage-700 text-white" : "text-mist-600 hover:bg-sage-500/10"
                   }`}
                 >
                   {t.label}
@@ -221,16 +217,10 @@ export default function AdminGuests() {
             </nav>
           </div>
           <div className="flex items-center gap-3">
-            <a
-              href="#/"
-              className="text-xs text-mist-600 hover:text-ink-900 transition-colors hidden sm:block"
-            >
+            <a href="#/" className="text-xs text-mist-600 hover:text-ink-900 transition-colors hidden sm:block">
               ← Back to site
             </a>
-            <button
-              onClick={handleLogout}
-              className="text-xs text-mist-600 hover:text-ink-900 transition-colors"
-            >
+            <button onClick={handleLogout} className="text-xs text-mist-600 hover:text-ink-900 transition-colors">
               Sign out
             </button>
           </div>
@@ -240,13 +230,13 @@ export default function AdminGuests() {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         {dataLoading ? (
           <div className="flex items-center justify-center py-20">
-            <span className="text-mist-600 text-sm">Loading data…</span>
+            <span className="text-mist-600 text-sm">Loading…</span>
           </div>
         ) : (
           <>
-            {tab === "guests" && <GuestsTab rsvps={rsvps} stats={stats} />}
-            {tab === "menu" && <MenuTab rsvps={rsvps} stats={stats} />}
-            {tab === "transfer" && <TransferTab rsvps={rsvps} stats={stats} />}
+            {tab === "guests" && <GuestsTab people={people} stats={stats} />}
+            {tab === "menu" && <MenuTab people={people} stats={stats} />}
+            {tab === "transfer" && <TransferTab stats={stats} />}
           </>
         )}
       </main>
@@ -254,58 +244,70 @@ export default function AdminGuests() {
   );
 }
 
-function GuestsTab({ rsvps, stats }) {
+function GuestsTab({ people, stats }) {
+  const attending = people.filter(isAttending);
+  const notAttending = people.filter(p => p.guest_type === "primary" && p.attendance === "no");
+  const shade = usePartyShades(attending);
+  const guests = stats.attending.filter(p => p.guest_type === "primary").length;
+  const plusOnes = stats.attending.filter(p => p.guest_type === "plus_one").length;
+  const kids = stats.attending.filter(p => p.guest_type === "child").length;
+
   return (
     <div className="flex flex-col gap-6">
-      {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatCard label="Total RSVPs" value={rsvps.length} />
-        <StatCard label="Attending" value={stats.attending.length} sub={`+${stats.withPlusOne.length} plus-ones · ${stats.kids.length} kids`} />
-        <StatCard label="Not attending" value={stats.notAttending.length} />
-        <StatCard label="Total people" value={stats.totalPeople} />
+        <StatCard label="Total attending" value={stats.attending.length} />
+        <StatCard label="Guests" value={guests} />
+        <StatCard label="Plus-ones" value={plusOnes} />
+        <StatCard label="Kids" value={kids} />
       </div>
 
-      {/* Table */}
       <div className="bg-white/70 border border-sage-200/40 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[700px]">
+          <table className="w-full text-sm min-w-[680px]">
             <thead>
               <tr className="border-b border-sage-200/40">
-                {["Name", "Email", "Attending", "Events", "+1 Name", "Kids", "Dietary / Notes", "Submitted"].map(h => (
-                  <th key={h} className="px-4 py-3 text-left text-xs uppercase tracking-widest text-mist-600 font-medium whitespace-nowrap">{h}</th>
-                ))}
+                <Th>Name</Th>
+                <Th>Type</Th>
+                <Th>Menu</Th>
+                <Th>Dietary / Notes</Th>
+                <Th>Events</Th>
+                <Th>Contact</Th>
+                <Th>Date</Th>
               </tr>
             </thead>
             <tbody>
-              {rsvps.map((r, i) => {
-                const kids = parseKids(r.kids);
-                return (
-                  <tr key={r.id} className={`border-b border-sage-200/20 ${i % 2 === 0 ? "" : "bg-cream-50/40"}`}>
-                    <td className="px-4 py-3 font-medium text-ink-900 whitespace-nowrap">{r.name}</td>
-                    <td className="px-4 py-3 text-mist-600 text-xs">{r.email || "—"}</td>
-                    <td className="px-4 py-3"><AttendanceBadge value={r.attendance} /></td>
-                    <td className="px-4 py-3 text-xs text-mist-600">{r.events || "—"}</td>
-                    <td className="px-4 py-3 text-xs text-ink-900">{r.plus_one === "yes" ? (r.plus_one_name || "yes (unnamed)") : "—"}</td>
-                    <td className="px-4 py-3 text-xs">
-                      {kids.length === 0 ? (
-                        <span className="text-gray-400">—</span>
-                      ) : (
-                        <div className="flex flex-col gap-0.5">
-                          {kids.map((k, j) => (
-                            <span key={j} className="text-ink-900">{k.name || `Child ${j + 1}`}{k.dietary ? <span className="text-mist-600"> ({k.dietary})</span> : ""}</span>
-                          ))}
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-mist-600 max-w-[200px]">
-                      {[r.dietary, r.notes].filter(Boolean).join(" · ") || "—"}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-mist-600 whitespace-nowrap">
-                      {r.submitted_at ? new Date(r.submitted_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "—"}
+              {attending.map(p => (
+                <tr key={p.id} className={`border-b border-sage-200/20 ${shade(p.rsvp_id ?? p.id)}`}>
+                  <td className="px-4 py-3 font-medium text-ink-900 whitespace-nowrap">{p.name}</td>
+                  <td className="px-4 py-3"><TypeBadge type={p.guest_type} /></td>
+                  <td className="px-4 py-3"><MenuBadge choice={p.menu} /></td>
+                  <td className="px-4 py-3 text-xs text-mist-600 max-w-[180px]">
+                    {[p.dietary, p.notes].filter(Boolean).join(" · ") || <span className="text-gray-300">—</span>}
+                  </td>
+                  <td className="px-4 py-3 text-xs text-mist-600">{p.events || <span className="text-gray-300">—</span>}</td>
+                  <td className="px-4 py-3 text-xs text-mist-600">{p.email || <span className="text-gray-300">—</span>}</td>
+                  <td className="px-4 py-3 text-xs text-mist-600 whitespace-nowrap">
+                    {p.submitted_at ? new Date(p.submitted_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "—"}
+                  </td>
+                </tr>
+              ))}
+
+              {notAttending.length > 0 && (
+                <>
+                  <tr>
+                    <td colSpan={7} className="px-4 py-2 text-xs uppercase tracking-widest text-mist-600/60 bg-cream-100/60 font-medium">
+                      Not attending ({notAttending.length})
                     </td>
                   </tr>
-                );
-              })}
+                  {notAttending.map(p => (
+                    <tr key={p.id} className="border-b border-sage-200/10 opacity-50">
+                      <td className="px-4 py-2.5 font-medium text-ink-900">{p.name}</td>
+                      <td className="px-4 py-2.5"><TypeBadge type={p.guest_type} /></td>
+                      <td colSpan={5} className="px-4 py-2.5 text-xs text-mist-600">{p.email}</td>
+                    </tr>
+                  ))}
+                </>
+              )}
             </tbody>
           </table>
         </div>
@@ -314,38 +316,37 @@ function GuestsTab({ rsvps, stats }) {
   );
 }
 
-function MenuTab({ rsvps, stats }) {
-  const attending = rsvps.filter(r => r.attendance !== "no");
+function MenuTab({ people, stats }) {
+  const attending = people.filter(isAttending);
   const { menuCounts } = stats;
+  const shade = usePartyShades(attending);
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {Object.entries(MENU_LABELS).map(([key, label]) => (
           <StatCard key={key} label={label} value={menuCounts[key] || 0} />
         ))}
       </div>
 
-      {/* Table */}
       <div className="bg-white/70 border border-sage-200/40 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[500px]">
+          <table className="w-full text-sm min-w-[480px]">
             <thead>
               <tr className="border-b border-sage-200/40">
-                {["Name", "Menu choice", "+1 Name", "+1 Menu", "Dietary restrictions"].map(h => (
-                  <th key={h} className="px-4 py-3 text-left text-xs uppercase tracking-widest text-mist-600 font-medium whitespace-nowrap">{h}</th>
-                ))}
+                <Th>Name</Th>
+                <Th>Type</Th>
+                <Th>Menu</Th>
+                <Th>Dietary restrictions</Th>
               </tr>
             </thead>
             <tbody>
-              {attending.map((r, i) => (
-                <tr key={r.id} className={`border-b border-sage-200/20 ${i % 2 === 0 ? "" : "bg-cream-50/40"}`}>
-                  <td className="px-4 py-3 font-medium text-ink-900">{r.name}</td>
-                  <td className="px-4 py-3"><MenuBadge choice={r.menu} /></td>
-                  <td className="px-4 py-3 text-xs text-ink-900">{r.plus_one === "yes" ? (r.plus_one_name || "Yes (unnamed)") : "—"}</td>
-                  <td className="px-4 py-3">{r.plus_one === "yes" ? <MenuBadge choice={r.plus_one_menu} /> : <span className="text-gray-400 text-xs">—</span>}</td>
-                  <td className="px-4 py-3 text-xs text-mist-600">{r.dietary || "—"}</td>
+              {attending.map(p => (
+                <tr key={p.id} className={`border-b border-sage-200/20 ${shade(p.rsvp_id ?? p.id)}`}>
+                  <td className="px-4 py-3 font-medium text-ink-900">{p.name}</td>
+                  <td className="px-4 py-3"><TypeBadge type={p.guest_type} /></td>
+                  <td className="px-4 py-3"><MenuBadge choice={p.menu} /></td>
+                  <td className="px-4 py-3 text-xs text-mist-600">{p.dietary || <span className="text-gray-300">—</span>}</td>
                 </tr>
               ))}
             </tbody>
@@ -356,50 +357,77 @@ function MenuTab({ rsvps, stats }) {
   );
 }
 
-function TransferTab({ rsvps, stats }) {
-  const attending = rsvps.filter(r => r.attendance !== "no");
-  const needsTransfer = attending.filter(r => r.transfer === "yes");
-  const noTransfer = attending.filter(r => r.transfer === "no");
-  const unknown = attending.filter(r => !r.transfer);
+function TransferTab({ stats }) {
+  // Transfer info lives on primary guest rows only
+  const { primaryAttending } = stats;
+  const needsTransfer = primaryAttending.filter(p => p.transfer === "yes");
+  const noTransfer = primaryAttending.filter(p => p.transfer === "no");
+  const notAnswered = primaryAttending.filter(p => !p.transfer);
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <StatCard label="Needs transfer" value={needsTransfer.length} sub={`${needsTransfer.reduce((s, r) => s + (parseInt(r.transfer_party_size) || 1), 0)} people total`} />
-        <StatCard label="No transfer needed" value={noTransfer.length} />
-        <StatCard label="Not answered" value={unknown.length} />
+        <StatCard label="Need transfer" value={needsTransfer.length} sub={`${stats.transferPeople} people total`} />
+        <StatCard label="No transfer" value={noTransfer.length} />
+        <StatCard label="Not answered" value={notAnswered.length} />
       </div>
 
-      {/* Table */}
       <div className="bg-white/70 border border-sage-200/40 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm min-w-[700px]">
             <thead>
               <tr className="border-b border-sage-200/40">
-                {["Name", "Transfer", "Arrival date/time", "Arrival location", "Return date/time", "Return location", "Party size"].map(h => (
-                  <th key={h} className="px-4 py-3 text-left text-xs uppercase tracking-widest text-mist-600 font-medium whitespace-nowrap">{h}</th>
-                ))}
+                <Th>Name</Th>
+                <Th>Arrival</Th>
+                <Th>Arrival location</Th>
+                <Th>Return</Th>
+                <Th>Return location</Th>
+                <Th>Party size</Th>
               </tr>
             </thead>
             <tbody>
-              {attending.map((r, i) => (
-                <tr key={r.id} className={`border-b border-sage-200/20 ${i % 2 === 0 ? "" : "bg-cream-50/40"}`}>
-                  <td className="px-4 py-3 font-medium text-ink-900 whitespace-nowrap">{r.name}</td>
-                  <td className="px-4 py-3">
-                    {r.transfer === "yes"
-                      ? <Badge value="Yes" className="bg-green-100 text-green-800" />
-                      : r.transfer === "no"
-                      ? <Badge value="No" className="bg-gray-100 text-gray-600" />
-                      : <span className="text-gray-400 text-xs">—</span>}
-                  </td>
-                  <td className="px-4 py-3 text-xs text-ink-900">{r.arrival_datetime || "—"}</td>
-                  <td className="px-4 py-3 text-xs text-ink-900">{r.arrival_location || "—"}</td>
-                  <td className="px-4 py-3 text-xs text-ink-900">{r.return_datetime || "—"}</td>
-                  <td className="px-4 py-3 text-xs text-ink-900">{r.return_location || "—"}</td>
-                  <td className="px-4 py-3 text-xs text-center">{r.transfer_party_size || "—"}</td>
+              {needsTransfer.map((p, i) => (
+                <tr key={p.id} className={`border-b border-sage-200/20 ${i % 2 === 0 ? "" : "bg-cream-50/50"}`}>
+                  <td className="px-4 py-3 font-medium text-ink-900 whitespace-nowrap">{p.name}</td>
+                  <td className="px-4 py-3 text-xs text-ink-900">{p.arrival_datetime || "—"}</td>
+                  <td className="px-4 py-3 text-xs text-ink-900">{p.arrival_location || "—"}</td>
+                  <td className="px-4 py-3 text-xs text-ink-900">{p.return_datetime || "—"}</td>
+                  <td className="px-4 py-3 text-xs text-ink-900">{p.return_location || "—"}</td>
+                  <td className="px-4 py-3 text-xs text-center font-medium">{p.transfer_party_size || "—"}</td>
                 </tr>
               ))}
+
+              {noTransfer.length > 0 && (
+                <>
+                  <tr>
+                    <td colSpan={6} className="px-4 py-2 text-xs uppercase tracking-widest text-mist-600/60 bg-cream-100/60 font-medium">
+                      No transfer needed
+                    </td>
+                  </tr>
+                  {noTransfer.map(p => (
+                    <tr key={p.id} className="border-b border-sage-200/10 opacity-50">
+                      <td className="px-4 py-2.5 text-ink-900">{p.name}</td>
+                      <td colSpan={5} />
+                    </tr>
+                  ))}
+                </>
+              )}
+
+              {notAnswered.length > 0 && (
+                <>
+                  <tr>
+                    <td colSpan={6} className="px-4 py-2 text-xs uppercase tracking-widest text-mist-600/60 bg-cream-100/60 font-medium">
+                      Not answered
+                    </td>
+                  </tr>
+                  {notAnswered.map(p => (
+                    <tr key={p.id} className="border-b border-sage-200/10 opacity-50">
+                      <td className="px-4 py-2.5 text-ink-900">{p.name}</td>
+                      <td colSpan={5} />
+                    </tr>
+                  ))}
+                </>
+              )}
             </tbody>
           </table>
         </div>
