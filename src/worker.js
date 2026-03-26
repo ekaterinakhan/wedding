@@ -1,3 +1,41 @@
+const SESSION_COOKIE = "private_board_auth";
+
+async function sessionToken(password) {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(password),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const sig = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    new TextEncoder().encode("admin-session"),
+  );
+  return btoa(String.fromCharCode(...new Uint8Array(sig)));
+}
+
+function parseCookies(header) {
+  return Object.fromEntries(
+    String(header || "")
+      .split(";")
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .map((p) => {
+        const [k, ...rest] = p.split("=");
+        return [k, decodeURIComponent(rest.join("="))];
+      }),
+  );
+}
+
+async function isAuthenticated(request, env) {
+  if (!env.ADMIN_PASSWORD) return false;
+  const cookies = parseCookies(request.headers.get("Cookie"));
+  const expected = await sessionToken(env.ADMIN_PASSWORD);
+  return cookies[SESSION_COOKIE] === expected;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -10,6 +48,45 @@ export default {
     if (url.pathname === "/api/rsvps") {
       if (request.method === "POST") return handleRsvpPost(request, env);
       if (request.method === "GET") return handleRsvpGet(env);
+    }
+
+    if (url.pathname === "/api/private/session") {
+      const authenticated = await isAuthenticated(request, env);
+      return Response.json({ authenticated });
+    }
+
+    if (url.pathname === "/api/private/login" && request.method === "POST") {
+      if (!env.ADMIN_PASSWORD) {
+        return Response.json({ error: "Admin not configured." }, { status: 503 });
+      }
+      let body;
+      try { body = await request.json(); } catch { return Response.json({ error: "Invalid JSON." }, { status: 400 }); }
+      if ((body.password || "") !== env.ADMIN_PASSWORD) {
+        return Response.json({ error: "Invalid password." }, { status: 401 });
+      }
+      const token = await sessionToken(env.ADMIN_PASSWORD);
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: {
+          "Content-Type": "application/json",
+          "Set-Cookie": `${SESSION_COOKIE}=${encodeURIComponent(token)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}; Secure`,
+        },
+      });
+    }
+
+    if (url.pathname === "/api/private/logout" && request.method === "POST") {
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: {
+          "Content-Type": "application/json",
+          "Set-Cookie": `${SESSION_COOKIE}=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0; Secure`,
+        },
+      });
+    }
+
+    if (url.pathname === "/api/private/rsvps") {
+      if (!(await isAuthenticated(request, env))) {
+        return Response.json({ error: "Authentication required." }, { status: 401 });
+      }
+      return handlePrivateRsvps(env);
     }
 
     return env.ASSETS.fetch(request);
@@ -163,6 +240,20 @@ async function handleRsvpGet(env) {
     LEFT JOIN guest_menus gm ON gm.guest_id = g.id
     LEFT JOIN guest_transfers gt ON gt.guest_id = g.id
     ORDER BY COALESCE(g.primary_guest_id, g.id), g.primary_guest_id IS NOT NULL, g.id
+  `).all();
+  return Response.json(results);
+}
+
+async function handlePrivateRsvps(env) {
+  const { results } = await env.DB.prepare(`
+    SELECT
+      id, submitted_at, language, name, email, phone,
+      attendance, events, menu, transfer, dietary, notes,
+      plus_one, plus_one_name, plus_one_menu,
+      arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size,
+      kids
+    FROM rsvps
+    ORDER BY submitted_at DESC, id DESC
   `).all();
   return Response.json(results);
 }
