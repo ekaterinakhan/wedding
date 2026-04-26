@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 
 const MENU_LABELS = { meat: "Meat", fish: "Fish", poultry: "Poultry", vegetarian: "Vegetarian", vegan: "Vegan" };
 const MENU_EMOJI = { meat: "🥩", fish: "🐟", poultry: "🍗", vegetarian: "🥬", vegan: "🌱" };
@@ -74,6 +74,241 @@ function EmptyState({ text }) {
   return <div className="text-center py-16 text-mist-600 text-sm">{text}</div>;
 }
 
+/* ── Edit / Delete modals ── */
+
+const MENU_OPTIONS = [
+  ["", "— No choice —"],
+  ["meat", "🥩 Meat"],
+  ["fish", "🐟 Fish"],
+  ["poultry", "🍗 Poultry"],
+  ["vegetarian", "🥬 Vegetarian"],
+  ["vegan", "🌱 Vegan"],
+];
+
+function ModalField({ label, children }) {
+  return (
+    <label className="flex flex-col gap-1.5">
+      <span className="text-[11px] uppercase tracking-widest text-mist-600 font-semibold">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+function ModalInput({ ...props }) {
+  return (
+    <input className="border border-sage-200/60 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-sage-500/30 bg-[#fafbf9]" {...props} />
+  );
+}
+
+function ModalSelect({ value, onChange, options }) {
+  return (
+    <select value={value} onChange={onChange}
+      className="border border-sage-200/60 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-sage-500/30 bg-[#fafbf9]">
+      {options.map(([val, label]) => <option key={val} value={val}>{label}</option>)}
+    </select>
+  );
+}
+
+function PillGroup({ value, onChange, options }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {options.map(([val, label]) => (
+        <button key={val} type="button" onClick={() => onChange(val)}
+          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition ${value === val ? "bg-sage-700 text-white" : "border border-sage-200/60 text-mist-600 hover:bg-sage-500/10"}`}>
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function EditModal({ family, onClose, onSave }) {
+  const { primary, plusOne, children } = family;
+  const [form, setForm] = useState({
+    name: primary.name || "",
+    email: primary.email || "",
+    phone: primary.phone || "",
+    attendance: primary.attendance || "",
+    events: primary.events || "",
+    menu: primary.menu || "",
+    dietary: primary.dietary || "",
+    notes: primary.notes || "",
+    transfer: primary.transfer || "",
+    arrival_datetime: primary.arrival_datetime || "",
+    arrival_location: primary.arrival_location || "",
+    return_datetime: primary.return_datetime || "",
+    return_location: primary.return_location || "",
+    transfer_party_size: primary.transfer_party_size || "",
+    plus_one_name: plusOne?.name || "",
+    plus_one_menu: plusOne?.menu || "",
+    children: children.map(c => ({ id: c.id, name: c.name || "", dietary: c.dietary || "" })),
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  function set(field) { return e => setForm(f => ({ ...f, [field]: e.target.value })); }
+  function setChild(i, field) {
+    return e => setForm(f => ({ ...f, children: f.children.map((c, j) => j === i ? { ...c, [field]: e.target.value } : c) }));
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/private/rsvps/${primary.rsvp_id}`, {
+        method: "PUT", credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) { onSave(); }
+      else { const json = await res.json().catch(() => ({})); setError(json.error || "Failed to save."); }
+    } catch { setError("Network error."); }
+    finally { setSaving(false); }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="px-6 py-4 border-b border-sage-200/20 flex items-center justify-between shrink-0">
+          <h2 className="font-serif text-xl text-ink-900">Edit {primary.name}</h2>
+          <button onClick={onClose} className="text-mist-600 hover:text-ink-900 transition text-2xl leading-none">&times;</button>
+        </div>
+
+        <div className="overflow-y-auto flex-1 px-6 py-5 flex flex-col gap-6">
+          {/* Primary guest */}
+          <section className="flex flex-col gap-4">
+            <h3 className="text-[11px] uppercase tracking-widest text-mist-600 font-semibold border-b border-sage-200/20 pb-2">Primary guest</h3>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <ModalField label="Name"><ModalInput value={form.name} onChange={set("name")} /></ModalField>
+              <ModalField label="Email"><ModalInput type="email" value={form.email} onChange={set("email")} /></ModalField>
+            </div>
+            <ModalField label="Phone"><ModalInput value={form.phone} onChange={set("phone")} /></ModalField>
+            <ModalField label="Attendance">
+              <PillGroup value={form.attendance} onChange={v => setForm(f => ({ ...f, attendance: v }))}
+                options={[["yes", "Attending"], ["no", "Declined"]]} />
+            </ModalField>
+            {form.attendance !== "no" && (
+              <>
+                <ModalField label="Events">
+                  <PillGroup value={form.events} onChange={v => setForm(f => ({ ...f, events: v }))}
+                    options={[["weddingAndBrunch", "Wedding + Brunch"], ["weddingOnly", "Wedding only"], ["brunchOnly", "Brunch only"]]} />
+                </ModalField>
+                <ModalField label="Menu">
+                  <ModalSelect value={form.menu} onChange={set("menu")} options={MENU_OPTIONS} />
+                </ModalField>
+              </>
+            )}
+            <ModalField label="Dietary restrictions">
+              <ModalInput value={form.dietary} onChange={set("dietary")} placeholder="None" />
+            </ModalField>
+            <ModalField label="Notes">
+              <textarea value={form.notes} onChange={set("notes")} rows={2} placeholder="None"
+                className="border border-sage-200/60 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-sage-500/30 bg-[#fafbf9] resize-none" />
+            </ModalField>
+          </section>
+
+          {/* Transfer */}
+          <section className="flex flex-col gap-4">
+            <h3 className="text-[11px] uppercase tracking-widest text-mist-600 font-semibold border-b border-sage-200/20 pb-2">Transfer</h3>
+            <ModalField label="Needs transfer?">
+              <PillGroup value={form.transfer} onChange={v => setForm(f => ({ ...f, transfer: v }))}
+                options={[["yes", "Yes"], ["no", "No"], ["", "Not answered"]]} />
+            </ModalField>
+            {form.transfer === "yes" && (
+              <div className="grid sm:grid-cols-2 gap-4">
+                <ModalField label="Arrival date/time"><ModalInput value={form.arrival_datetime} onChange={set("arrival_datetime")} placeholder="e.g. 9 May 10:00" /></ModalField>
+                <ModalField label="Arrival location"><ModalInput value={form.arrival_location} onChange={set("arrival_location")} placeholder="CDG, Orly..." /></ModalField>
+                <ModalField label="Return date/time"><ModalInput value={form.return_datetime} onChange={set("return_datetime")} placeholder="e.g. 10 May 17:00" /></ModalField>
+                <ModalField label="Return location"><ModalInput value={form.return_location} onChange={set("return_location")} placeholder="CDG, Orly..." /></ModalField>
+                <ModalField label="Party size"><ModalInput type="number" min="1" max="20" value={form.transfer_party_size} onChange={set("transfer_party_size")} /></ModalField>
+              </div>
+            )}
+          </section>
+
+          {/* Plus-one */}
+          {plusOne && (
+            <section className="flex flex-col gap-4">
+              <h3 className="text-[11px] uppercase tracking-widest text-mist-600 font-semibold border-b border-sage-200/20 pb-2">+1</h3>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <ModalField label="Name"><ModalInput value={form.plus_one_name} onChange={set("plus_one_name")} /></ModalField>
+                <ModalField label="Menu"><ModalSelect value={form.plus_one_menu} onChange={set("plus_one_menu")} options={MENU_OPTIONS} /></ModalField>
+              </div>
+            </section>
+          )}
+
+          {/* Children */}
+          {form.children.length > 0 && (
+            <section className="flex flex-col gap-4">
+              <h3 className="text-[11px] uppercase tracking-widest text-mist-600 font-semibold border-b border-sage-200/20 pb-2">Children</h3>
+              {form.children.map((child, i) => (
+                <div key={child.id} className="grid sm:grid-cols-2 gap-4">
+                  <ModalField label={`Child ${i + 1} name`}><ModalInput value={child.name} onChange={setChild(i, "name")} /></ModalField>
+                  <ModalField label="Dietary"><ModalInput value={child.dietary} onChange={setChild(i, "dietary")} placeholder="None" /></ModalField>
+                </div>
+              ))}
+            </section>
+          )}
+
+          {error && <p className="text-red-600 text-sm">{error}</p>}
+        </div>
+
+        <div className="px-6 py-4 border-t border-sage-200/20 flex justify-end gap-3 shrink-0">
+          <button type="button" onClick={onClose}
+            className="px-4 py-2 rounded-xl text-sm font-medium text-mist-600 hover:text-ink-900 hover:bg-sage-500/10 transition">
+            Cancel
+          </button>
+          <button type="button" onClick={handleSave} disabled={saving}
+            className="px-5 py-2 rounded-xl bg-sage-700 hover:bg-sage-600 text-white text-sm font-semibold transition disabled:opacity-60">
+            {saving ? "Saving..." : "Save changes"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DeleteModal({ family, onClose, onConfirm }) {
+  const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleDelete() {
+    setDeleting(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/private/rsvps/${family.primary.rsvp_id}`, {
+        method: "DELETE", credentials: "include",
+      });
+      if (res.ok) { onConfirm(); }
+      else { const json = await res.json().catch(() => ({})); setError(json.error || "Failed to delete."); }
+    } catch { setError("Network error."); }
+    finally { setDeleting(false); }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 flex flex-col gap-5">
+        <div>
+          <h2 className="font-serif text-xl text-ink-900 mb-1">Delete RSVP?</h2>
+          <p className="text-sm text-mist-600">
+            This will permanently remove <strong className="text-ink-900">{family.primary.name}</strong> and all their associated guest data.
+          </p>
+        </div>
+        {error && <p className="text-red-600 text-sm">{error}</p>}
+        <div className="flex justify-end gap-3">
+          <button onClick={onClose}
+            className="px-4 py-2 rounded-xl text-sm font-medium text-mist-600 hover:text-ink-900 hover:bg-sage-500/10 transition">
+            Cancel
+          </button>
+          <button onClick={handleDelete} disabled={deleting}
+            className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition disabled:opacity-60">
+            {deleting ? "Deleting..." : "Delete"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Login ── */
 
 function LoginForm({ onLogin }) {
@@ -147,15 +382,19 @@ export default function AdminGuests() {
       .finally(() => setSessionLoading(false));
   }, []);
 
-  useEffect(() => {
-    if (!authenticated) return;
+  const fetchPeople = useCallback(() => {
     setDataLoading(true);
     fetch("/api/private/rsvps", { credentials: "include" })
       .then(r => r.json())
       .then(data => setPeople(Array.isArray(data) ? data : []))
       .catch(() => setPeople([]))
       .finally(() => setDataLoading(false));
-  }, [authenticated]);
+  }, []);
+
+  useEffect(() => {
+    if (!authenticated) return;
+    fetchPeople();
+  }, [authenticated, fetchPeople]);
 
   async function handleLogout() {
     await fetch("/api/private/logout", { method: "POST", credentials: "include" });
@@ -217,7 +456,7 @@ export default function AdminGuests() {
         ) : (
           <>
             {tab === "overview" && <OverviewTab stats={stats} families={families} />}
-            {tab === "guests" && <FamiliesTab families={families} />}
+            {tab === "guests" && <FamiliesTab families={families} refresh={fetchPeople} />}
             {tab === "menu" && <MenuTab stats={stats} people={people} />}
             {tab === "transport" && <TransportTab stats={stats} />}
           </>
@@ -325,7 +564,7 @@ function OverviewTab({ stats, families }) {
    FAMILIES TAB
    ═══════════════════════════════════════════════════ */
 
-function FamilyCard({ family }) {
+function FamilyCard({ family, onEdit, onDelete }) {
   const { primary, plusOne, children } = family;
   const allMembers = [primary, plusOne, ...children].filter(Boolean);
   const attending = family.attending;
@@ -344,11 +583,23 @@ function FamilyCard({ family }) {
             {primary.phone && <><span className="text-mist-600/30">|</span><span>{primary.phone}</span></>}
           </div>
         </div>
-        <div className="text-right shrink-0">
-          <div className="text-xs text-mist-600">
-            {primary.submitted_at ? new Date(primary.submitted_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : ""}
+        <div className="flex flex-col items-end gap-2 shrink-0">
+          <div className="text-right">
+            <div className="text-xs text-mist-600">
+              {primary.submitted_at ? new Date(primary.submitted_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : ""}
+            </div>
+            {attending && <div className="text-xs text-mist-600 mt-0.5">{primary.events || "Events not specified"}</div>}
           </div>
-          {attending && <div className="text-xs text-mist-600 mt-0.5">{primary.events || "Events not specified"}</div>}
+          <div className="flex gap-1.5">
+            <button onClick={() => onEdit(family)}
+              className="text-xs text-mist-600 hover:text-ink-900 px-2.5 py-1 rounded-lg border border-sage-200/40 hover:bg-sage-500/10 transition">
+              Edit
+            </button>
+            <button onClick={() => onDelete(family)}
+              className="text-xs text-red-500 hover:text-red-700 px-2.5 py-1 rounded-lg border border-red-200/40 hover:bg-red-50 transition">
+              Delete
+            </button>
+          </div>
         </div>
       </div>
 
@@ -407,16 +658,30 @@ function FamilyCard({ family }) {
   );
 }
 
-function FamiliesTab({ families }) {
+function FamiliesTab({ families, refresh }) {
   const attending = families.filter(f => f.attending);
   const declined = families.filter(f => !f.attending);
+  const [editingFamily, setEditingFamily] = useState(null);
+  const [deletingFamily, setDeletingFamily] = useState(null);
 
   return (
     <div className="flex flex-col gap-6">
+      {editingFamily && (
+        <EditModal family={editingFamily} onClose={() => setEditingFamily(null)}
+          onSave={() => { setEditingFamily(null); refresh(); }} />
+      )}
+      {deletingFamily && (
+        <DeleteModal family={deletingFamily} onClose={() => setDeletingFamily(null)}
+          onConfirm={() => { setDeletingFamily(null); refresh(); }} />
+      )}
+
       <SectionHeader title="Attending families" count={attending.length} />
       {attending.length === 0 ? <EmptyState text="No RSVPs yet." /> : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {attending.map(f => <FamilyCard key={f.primary.id} family={f} />)}
+          {attending.map(f => (
+            <FamilyCard key={f.primary.id} family={f}
+              onEdit={setEditingFamily} onDelete={setDeletingFamily} />
+          ))}
         </div>
       )}
 
@@ -424,7 +689,10 @@ function FamiliesTab({ families }) {
         <>
           <SectionHeader title="Declined" count={declined.length} />
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {declined.map(f => <FamilyCard key={f.primary.id} family={f} />)}
+            {declined.map(f => (
+              <FamilyCard key={f.primary.id} family={f}
+                onEdit={setEditingFamily} onDelete={setDeletingFamily} />
+            ))}
           </div>
         </>
       )}
