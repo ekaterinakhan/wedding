@@ -102,7 +102,7 @@ export default {
 
     if (url.pathname === "/admin" || url.pathname.startsWith("/admin/")) {
       url.pathname = "/index.html";
-      return env.ASSETS.fetch(new Request(url, request));
+      return env.ASSETS.fetch(url.toString());
     }
 
     return env.ASSETS.fetch(request);
