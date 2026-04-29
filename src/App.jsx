@@ -174,28 +174,106 @@ function ScheduleSection({ t }) {
 const fieldClass =
   "w-full rounded-2xl border border-[rgba(74,99,85,0.16)] bg-[#fffdf9] px-4 py-3 text-sm text-[#1e2a22] outline-none transition focus:border-[rgba(74,99,85,0.3)] focus:ring-2 focus:ring-[rgba(196,160,110,0.45)]";
 
+function FishGlyph({ className = "h-[11px] w-[11px]" }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M6 12c3.2-4 8-5.5 12-5 0 2.4-1 4-2.5 5 1.5 1 2.5 2.6 2.5 5-4 .5-8.8-1-12-5Z" />
+      <path d="M6 12 3.5 9.5M6 12l-2.5 2.5M14.5 10.5h.01" />
+    </svg>
+  );
+}
+
+function LeafGlyph({ className = "h-[11px] w-[11px]" }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M19 5c-6.5.2-11 3.6-13 9 3.8 1.6 8.6.4 11.3-3.1C18.8 9 19.4 7 19 5Z" />
+      <path d="M7 17c2.5-3.4 5.7-5.8 9.5-7.3" />
+    </svg>
+  );
+}
+
+function PoultryGlyph({ className = "h-[11px] w-[11px]" }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M7.5 14.5c0-3.7 2.8-6.5 6.4-6.5 2.6 0 4.7 2.1 4.7 4.7 0 2-.9 3.8-2.6 5.2-2 1.6-4.2 2.1-6.7 1.6-1.2-.2-1.8-1.7-1-2.7l1.6-2.3Z" />
+      <path d="M6.4 14.8 5 13.4a1.7 1.7 0 0 0-2.4 2.4l1.4 1.4a1.7 1.7 0 1 0 2.4-2.4Z" />
+    </svg>
+  );
+}
+
+function DessertGlyph({ className = "h-[11px] w-[11px]" }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M5 18h14" />
+      <path d="M7 18c.4-4.6 2.2-7 5-7s4.6 2.4 5 7" />
+      <path d="M9.2 8.5c0-1.5 1.2-2.7 2.8-2.7 1.5 0 2.8 1.2 2.8 2.7" />
+    </svg>
+  );
+}
+
+function getMenuOptionVisual(sectionId, optionId) {
+  const tone = {
+    fish: {
+      color: "text-[#6a7f7a]",
+      bg: "bg-[rgba(106,127,122,0.10)]",
+      border: "border-[rgba(106,127,122,0.16)]"
+    },
+    vegetarian: {
+      color: "text-[#6c8a5d]",
+      bg: "bg-[rgba(108,138,93,0.11)]",
+      border: "border-[rgba(108,138,93,0.16)]"
+    },
+    poultry: {
+      color: "text-[#9b7658]",
+      bg: "bg-[rgba(155,118,88,0.10)]",
+      border: "border-[rgba(155,118,88,0.16)]"
+    },
+    dessert: {
+      color: "text-[#b08a4a]",
+      bg: "bg-[rgba(196,160,110,0.12)]",
+      border: "border-[rgba(196,160,110,0.16)]"
+    }
+  };
+
+  if (sectionId === "dessert") return { glyph: DessertGlyph, ...tone.dessert };
+  if (optionId.includes("fish") || optionId.includes("trout")) return { glyph: FishGlyph, ...tone.fish };
+  if (optionId.includes("chicken")) return { glyph: PoultryGlyph, ...tone.poultry };
+  return { glyph: LeafGlyph, ...tone.vegetarian };
+}
+
 function formatMenuSummary(selection) {
   return [selection.starter, selection.main, selection.dessert].filter(Boolean).join(" | ");
 }
 
-function CourseChoiceField({ title, options, value, onChange }) {
+function CourseChoiceField({ sectionId, title, options, value, onChange }) {
   return (
     <div className="grid gap-3">
       <p className="text-sm font-medium uppercase tracking-[0.12em] text-[#4d6858]">{title}</p>
       <div className="grid gap-2">
         {options.map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            onClick={() => onChange(option.label)}
-            className={`rounded-[16px] border px-4 py-3 text-left text-sm leading-6 transition ${
-              value === option.label
-                ? "border-[rgba(74,99,85,0.45)] bg-[rgba(74,99,85,0.08)] text-[#1e2a22]"
-                : "border-[rgba(53,75,62,0.12)] bg-white/80 text-[#354b3e] hover:border-[rgba(53,75,62,0.25)] hover:bg-white"
-            }`}
-          >
-            <span className="font-semibold">{option.label}</span>
-          </button>
+          (() => {
+            const visual = getMenuOptionVisual(sectionId, option.id);
+            const Glyph = visual.glyph;
+            return (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => onChange(option.label)}
+                className={`rounded-[16px] border px-4 py-3 text-left text-sm leading-6 transition ${
+                  value === option.label
+                    ? "border-[rgba(74,99,85,0.28)] bg-[rgba(255,255,255,0.96)] text-[#1e2a22] shadow-[0_10px_24px_rgba(72,40,23,0.04)]"
+                    : "border-[rgba(53,75,62,0.10)] bg-white/75 text-[#354b3e] hover:border-[rgba(53,75,62,0.22)] hover:bg-white"
+                }`}
+              >
+                <span className="flex items-start gap-3">
+                  <span className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${visual.bg} ${visual.border} ${visual.color}`}>
+                    <Glyph />
+                  </span>
+                  <span className="font-medium">{option.label}</span>
+                </span>
+              </button>
+            );
+          })()
         ))}
       </div>
     </div>
@@ -209,6 +287,7 @@ function GuestMenuChoices({ title, fields, sections, selection, onSelectionChang
       {sections.map((section) => (
         <CourseChoiceField
           key={section.id}
+          sectionId={section.id}
           title={fields[section.id]}
           options={section.options}
           value={selection[section.id]}
@@ -529,11 +608,18 @@ function App() {
                   >
                     <h3 className="font-serif text-[1.45rem] leading-none text-[#1e2a22]">{section.title}</h3>
                     <div className="grid gap-1.5">
-                      {section.options.map((option) => (
-                        <div key={option.id} className="border-b border-[rgba(53,75,62,0.08)] py-2.5 text-sm leading-6 text-[#354b3e] last:border-b-0 last:pb-0">
-                          {option.label}
-                        </div>
-                      ))}
+                      {section.options.map((option) => {
+                        const visual = getMenuOptionVisual(section.id, option.id);
+                        const Glyph = visual.glyph;
+                        return (
+                          <div key={option.id} className="flex items-start gap-3 border-b border-[rgba(53,75,62,0.08)] py-2.5 text-sm leading-6 text-[#354b3e] last:border-b-0 last:pb-0">
+                            <span className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${visual.bg} ${visual.color}`}>
+                              <Glyph className="h-[10px] w-[10px]" />
+                            </span>
+                            <span>{option.label}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
