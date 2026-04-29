@@ -181,23 +181,20 @@ function formatMenuSummary(selection) {
 function CourseChoiceField({ title, options, value, onChange }) {
   return (
     <div className="grid gap-3">
-      <p className="text-sm font-medium text-[#1e2a22]">{title}</p>
+      <p className="text-sm font-medium uppercase tracking-[0.12em] text-[#4d6858]">{title}</p>
       <div className="grid gap-2">
         {options.map((option) => (
           <button
             key={option.id}
             type="button"
             onClick={() => onChange(option.label)}
-            className={`grid gap-1 rounded-[20px] border px-4 py-3 text-left transition ${
+            className={`rounded-[16px] border px-4 py-3 text-left text-sm leading-6 transition ${
               value === option.label
-                ? "border-[rgba(74,99,85,0.5)] bg-[#4a6355] text-white shadow-sm"
-                : "border-[rgba(53,75,62,0.12)] bg-white/70 text-[#354b3e] hover:border-[rgba(53,75,62,0.28)] hover:bg-white"
+                ? "border-[rgba(74,99,85,0.45)] bg-[rgba(74,99,85,0.08)] text-[#1e2a22]"
+                : "border-[rgba(53,75,62,0.12)] bg-white/80 text-[#354b3e] hover:border-[rgba(53,75,62,0.25)] hover:bg-white"
             }`}
           >
-            <span className="text-sm font-semibold">{option.label}</span>
-            <span className={`text-sm leading-6 ${value === option.label ? "text-white/85" : "text-[#576e63]"}`}>
-              {option.description}
-            </span>
+            <span className="font-semibold">{option.label}</span>
           </button>
         ))}
       </div>
@@ -207,7 +204,7 @@ function CourseChoiceField({ title, options, value, onChange }) {
 
 function GuestMenuChoices({ title, fields, sections, selection, onSelectionChange }) {
   return (
-    <div className="grid gap-5 rounded-[24px] border border-[rgba(53,75,62,0.12)] bg-white/60 p-5">
+    <div className="grid gap-5 rounded-[24px] border border-[rgba(53,75,62,0.1)] bg-white/70 p-5">
       <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#4d6858]">{title}</p>
       {sections.map((section) => (
         <CourseChoiceField
@@ -249,6 +246,11 @@ function App() {
   const [kids, setKids] = useState([]);
   const [hasKids, setHasKids] = useState("");
   const [menuError, setMenuError] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(false);
+  const [formSeed, setFormSeed] = useState(0);
+  const [formDefaults, setFormDefaults] = useState({ name: "", email: "", dietary: "" });
+  const [recoverEmail, setRecoverEmail] = useState("");
   const [rsvpConfirmed, setRsvpConfirmed] = useState(() => {
     try { return JSON.parse(localStorage.getItem(RSVP_LS_KEY)) || null; } catch { return null; }
   });
@@ -257,6 +259,7 @@ function App() {
   const plusOneEnabled = menuRequired && hasPlusOne === "yes";
   const primarySelection = { starter: selectedStarter, main: selectedMain, dessert: selectedDessert };
   const plusOneSelection = { starter: selectedPlusOneStarter, main: selectedPlusOneMain, dessert: selectedPlusOneDessert };
+  const currentToken = rsvpConfirmed?.token || null;
 
   useEffect(() => {
     fetch("/api/country")
@@ -267,6 +270,97 @@ function App() {
       })
       .catch(() => { if (!lang) setLang("en"); });
   }, []);  // eslint-disable-line react-hooks/exhaustive-deps
+
+  const hydrateForm = useCallback((payload) => {
+    const nextKids = Array.isArray(payload.kids) ? payload.kids : [];
+    setFormDefaults({
+      name: payload.name || "",
+      email: payload.email || "",
+      dietary: payload.dietary || "",
+    });
+    setPhone(payload.phone || "");
+    setAttendance(payload.attendance || "");
+    setEvents(payload.events || "");
+    setSelectedStarter(payload.starter || "");
+    setSelectedMain(payload.main || "");
+    setSelectedDessert(payload.dessert || "");
+    setTransfer(payload.transfer || "");
+    setArrivalDateTime(payload.arrivalDateTime || "");
+    setArrivalLocation(payload.arrivalLocation || "");
+    setReturnDateTime(payload.returnDateTime || "");
+    setReturnLocation(payload.returnLocation || "");
+    setTransferPartySize(payload.transferPartySize || "");
+    setHasPlusOne(payload.plusOne || "");
+    setPlusOneName(payload.plusOneName || "");
+    setSelectedPlusOneStarter(payload.plusOneStarter || "");
+    setSelectedPlusOneMain(payload.plusOneMain || "");
+    setSelectedPlusOneDessert(payload.plusOneDessert || "");
+    setKids(nextKids);
+    setHasKids(nextKids.length > 0 ? "yes" : "no");
+    setMenuError("");
+    setStatus("");
+    setFormSeed((value) => value + 1);
+  }, []);
+
+  const handleEditRequest = useCallback(async () => {
+    if (!currentToken) return;
+    setLoadingEdit(true);
+    setStatus(t.rsvp.editLoading);
+    try {
+      const response = await fetch(`${RSVP_ENDPOINT}/${encodeURIComponent(currentToken)}`);
+      if (!response.ok) {
+        throw new Error("Failed to load RSVP");
+      }
+      const payload = await response.json();
+      hydrateForm(payload);
+      setIsEditing(true);
+      setStatus("");
+    } catch {
+      setStatus(t.rsvp.error);
+    } finally {
+      setLoadingEdit(false);
+    }
+  }, [currentToken, hydrateForm, t]);
+
+  const handleRecoverRequest = useCallback(async () => {
+    if (!recoverEmail.trim()) {
+      setStatus(t.rsvp.recoverError);
+      return;
+    }
+
+    setLoadingEdit(true);
+    setStatus(t.rsvp.editLoading);
+    try {
+      const response = await fetch(`${RSVP_ENDPOINT}/recover`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: recoverEmail.trim() })
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to recover RSVP");
+      }
+
+      const payload = await response.json();
+      const confirmed = {
+        name: payload.name,
+        plusOneName: payload.plusOneName || "",
+        kids: payload.kids || [],
+        already: true,
+        updated: false,
+        token: payload.token || null
+      };
+      localStorage.setItem(RSVP_LS_KEY, JSON.stringify(confirmed));
+      setRsvpConfirmed(confirmed);
+      hydrateForm(payload);
+      setIsEditing(true);
+      setStatus("");
+    } catch {
+      setStatus(t.rsvp.recoverError);
+    } finally {
+      setLoadingEdit(false);
+    }
+  }, [hydrateForm, recoverEmail, t]);
 
   const handleSubmit = useCallback(async function handleSubmit(event) {
     event.preventDefault();
@@ -303,15 +397,17 @@ function App() {
     setStatus("");
     try {
       if (RSVP_ENDPOINT) {
-        const response = await fetch(RSVP_ENDPOINT, {
-          method: "POST",
+        const response = await fetch(
+          isEditing && currentToken ? `${RSVP_ENDPOINT}/${encodeURIComponent(currentToken)}` : RSVP_ENDPOINT,
+          {
+          method: isEditing ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
 
-        if (response.status === 409) {
+        if (!isEditing && response.status === 409) {
           const data = await response.json();
-          const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", kids: payload.kids || [], already: true, token: data.token || null };
+          const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", kids: payload.kids || [], already: true, updated: false, token: data.token || null };
           localStorage.setItem(RSVP_LS_KEY, JSON.stringify(confirmed));
           setRsvpConfirmed(confirmed);
           return;
@@ -322,9 +418,18 @@ function App() {
         }
 
         const data = await response.json();
-        const confirmed = { name: payload.name, plusOneName: payload.plusOneName || "", kids: payload.kids || [], already: false, token: data.token || null };
+        const confirmed = {
+          name: payload.name,
+          plusOneName: payload.plusOneName || "",
+          kids: payload.kids || [],
+          already: false,
+          updated: isEditing,
+          token: data.token || currentToken || null
+        };
         localStorage.setItem(RSVP_LS_KEY, JSON.stringify(confirmed));
         setRsvpConfirmed(confirmed);
+        setIsEditing(false);
+        setStatus(isEditing ? t.rsvp.updatedRemote : t.rsvp.successRemote);
       } else {
         setStatus(t.rsvp.successLocal);
       }
@@ -349,12 +454,14 @@ function App() {
       setPhone("");
       setKids([]);
       setHasKids("");
+      setFormDefaults({ name: "", email: "", dietary: "" });
+      setFormSeed((value) => value + 1);
     } catch {
       setStatus(t.rsvp.error);
     } finally {
       setSubmitting(false);
     }
-  }, [lang, t, phone, kids, menuRequired, plusOneEnabled, primarySelection, plusOneSelection, selectedDessert, selectedMain, selectedPlusOneDessert, selectedPlusOneMain, selectedPlusOneStarter, selectedStarter]);
+  }, [currentToken, isEditing, lang, t, phone, kids, menuRequired, plusOneEnabled, primarySelection, plusOneSelection, selectedDessert, selectedMain, selectedPlusOneDessert, selectedPlusOneMain, selectedPlusOneStarter, selectedStarter]);
 
   return (
     <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1100px)] pb-28 sm:w-[min(calc(100%-48px),1100px)]">
@@ -412,21 +519,25 @@ function App() {
         <SectionCard id="menu">
           <SectionHeading kicker={t.menu.kicker} title={t.menu.title} note={t.menu.note} />
           <div className="grid gap-5">
-            <p className="text-sm leading-6 text-[#354b3e]">{t.menu.intro}</p>
-            <div className="grid gap-4 lg:grid-cols-3">
-              {t.menu.sections.map((section) => (
-                <div key={section.id} className="grid gap-4 rounded-[24px] border border-[rgba(53,75,62,0.12)] bg-[#f7f9f6] p-5">
-                  <h3 className="font-serif text-[1.5rem] leading-none text-[#1e2a22]">{section.title}</h3>
-                  <div className="grid gap-3">
-                    {section.options.map((option) => (
-                      <div key={option.id} className="rounded-[20px] border border-[rgba(53,75,62,0.1)] bg-white/75 px-4 py-3">
-                        <p className="text-sm font-semibold text-[#1e2a22]">{option.label}</p>
-                        <p className="mt-1 text-sm leading-6 text-[#576e63]">{option.description}</p>
-                      </div>
-                    ))}
+            <div className="rounded-[26px] border border-[rgba(53,75,62,0.12)] bg-[linear-gradient(180deg,rgba(255,252,246,0.72),rgba(247,249,246,0.92))] p-5 md:p-6">
+              <p className="text-sm leading-6 text-[#354b3e]">{t.menu.intro}</p>
+              <div className="mt-5 grid gap-6 md:grid-cols-3 md:gap-0">
+                {t.menu.sections.map((section, index) => (
+                  <div
+                    key={section.id}
+                    className={`grid gap-3 ${index > 0 ? "md:border-l md:border-[rgba(53,75,62,0.1)] md:pl-6" : ""} ${index < t.menu.sections.length - 1 ? "md:pr-6" : ""}`}
+                  >
+                    <h3 className="font-serif text-[1.45rem] leading-none text-[#1e2a22]">{section.title}</h3>
+                    <div className="grid gap-1.5">
+                      {section.options.map((option) => (
+                        <div key={option.id} className="border-b border-[rgba(53,75,62,0.08)] py-2.5 text-sm leading-6 text-[#354b3e] last:border-b-0 last:pb-0">
+                          {option.label}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
             <div className="rounded-[24px] border border-[rgba(196,160,110,0.22)] bg-[rgba(255,250,242,0.75)] p-5">
               <p className="text-sm font-semibold text-[#5d3426]">{t.menu.dietaryTitle}</p>
@@ -437,18 +548,32 @@ function App() {
 
         <SectionCard id="rsvp">
           <SectionHeading kicker={t.rsvp.kicker} title={t.rsvp.title} note={t.rsvp.note} />
-          {rsvpConfirmed ? (
-            <RsvpConfirmed name={rsvpConfirmed.name} plusOneName={rsvpConfirmed.plusOneName} kids={rsvpConfirmed.kids || []} already={rsvpConfirmed.already} t={t} />
+          {rsvpConfirmed && !isEditing ? (
+            <RsvpConfirmed
+              name={rsvpConfirmed.name}
+              plusOneName={rsvpConfirmed.plusOneName}
+              kids={rsvpConfirmed.kids || []}
+              already={rsvpConfirmed.already}
+              updated={rsvpConfirmed.updated}
+              canEdit={Boolean(rsvpConfirmed.token)}
+              editing={loadingEdit}
+              onEdit={handleEditRequest}
+              recoverEmail={recoverEmail}
+              onRecoverEmailChange={setRecoverEmail}
+              onRecover={handleRecoverRequest}
+              status={status}
+              t={t}
+            />
           ) : (
-            <form className="grid gap-8" onSubmit={handleSubmit}>
+            <form key={formSeed} className="grid gap-8" onSubmit={handleSubmit}>
 
               {/* Contact */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label={t.rsvp.fields.name}>
-                  <input className={fieldClass} name="name" required />
+                  <input className={fieldClass} name="name" defaultValue={formDefaults.name} required />
                 </Field>
                 <Field label={t.rsvp.fields.email}>
-                  <input className={fieldClass} name="email" type="email" required />
+                  <input className={fieldClass} name="email" type="email" defaultValue={formDefaults.email} required />
                 </Field>
                 <Field label={t.rsvp.fields.phone}>
                   <PhoneInput
@@ -710,7 +835,7 @@ function App() {
 
                     {/* Dietary */}
                     <Field label={t.rsvp.fields.dietary}>
-                      <textarea className={fieldClass} name="dietary" rows="3" placeholder={t.rsvp.fields.notes} />
+                      <textarea className={fieldClass} name="dietary" rows="3" defaultValue={formDefaults.dietary} placeholder={t.rsvp.fields.notes} />
                     </Field>
 
                     {/* Kids */}
@@ -807,7 +932,7 @@ function App() {
   );
 }
 
-function RsvpConfirmed({ name, plusOneName, kids, already, t }) {
+function RsvpConfirmed({ name, plusOneName, kids, already, updated, canEdit, editing, onEdit, recoverEmail, onRecoverEmailChange, onRecover, status, t }) {
   const firstName = name ? name.trim().split(" ")[0] : "";
   const plusOneFirst = plusOneName ? plusOneName.trim().split(" ")[0] : "";
   const kidNames = (kids || []).map((k) => k.name.trim().split(" ")[0]).filter(Boolean);
@@ -834,7 +959,7 @@ function RsvpConfirmed({ name, plusOneName, kids, already, t }) {
           {firstName ? `, ${firstName}${plusOneFirst ? ` & ${plusOneFirst}` : ""}` : ""}.
         </h3>
         <p className="mx-auto max-w-[42ch] text-base leading-7 text-[#576e63]">
-          {already ? t.rsvp.confirmedAlreadyNote : t.rsvp.confirmedNote}
+          {updated ? t.rsvp.confirmedUpdatedNote : already ? t.rsvp.confirmedAlreadyNote : t.rsvp.confirmedNote}
         </p>
         {kidsLine && (
           <p className="mx-auto mt-1 max-w-[42ch] text-sm italic leading-6 text-[#9a7a6a]">
@@ -842,6 +967,39 @@ function RsvpConfirmed({ name, plusOneName, kids, already, t }) {
           </p>
         )}
       </div>
+      {canEdit ? (
+        <div className="grid gap-2">
+          <button
+            type="button"
+            onClick={onEdit}
+            disabled={editing}
+            className="rounded-full border border-[rgba(53,75,62,0.16)] bg-white/80 px-5 py-3 text-sm font-semibold text-[#4a6355] transition hover:bg-white disabled:opacity-60"
+          >
+            {editing ? t.rsvp.editLoading : t.rsvp.editCta}
+          </button>
+          {status && !editing ? <p className="text-sm text-[#9a7a6a]">{status}</p> : null}
+        </div>
+      ) : (
+        <div className="grid w-full max-w-[26rem] gap-3">
+          <p className="text-sm leading-6 text-[#6a5a51]">{t.rsvp.recoverPrompt}</p>
+          <input
+            className={fieldClass}
+            type="email"
+            value={recoverEmail}
+            onChange={(event) => onRecoverEmailChange(event.target.value)}
+            placeholder={t.rsvp.recoverEmail}
+          />
+          <button
+            type="button"
+            onClick={onRecover}
+            disabled={editing}
+            className="rounded-full border border-[rgba(53,75,62,0.16)] bg-white/80 px-5 py-3 text-sm font-semibold text-[#4a6355] transition hover:bg-white disabled:opacity-60"
+          >
+            {editing ? t.rsvp.editLoading : t.rsvp.recoverCta}
+          </button>
+          {status && !editing ? <p className="text-sm text-[#9a7a6a]">{status}</p> : null}
+        </div>
+      )}
       <div className="flex items-center gap-3 text-[#c4a06e]">
         <div className="h-px w-12 bg-[rgba(196,160,110,0.4)]" />
         <LuHeart size={14} />

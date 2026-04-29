@@ -76,12 +76,163 @@ export async function onRequestPost(context) {
 
 export async function onRequestGet(context) {
   const { DB } = context.env;
+  const url = new URL(context.request.url);
+  const token = url.pathname.split("/").filter(Boolean).at(-1);
+
+  if (token && token !== "rsvps") {
+    const row = await DB.prepare("SELECT * FROM rsvps WHERE token = ?1 LIMIT 1").bind(token).first();
+    if (!row) {
+      return jsonResponse({ error: "RSVP not found." }, 404);
+    }
+
+    let kids = [];
+    try { kids = JSON.parse(row.kids || "[]"); } catch { kids = []; }
+
+    return jsonResponse({
+      name: row.name || "",
+      email: row.email || "",
+      phone: row.phone || "",
+      language: row.language || "",
+      attendance: row.attendance || "",
+      events: row.events || "",
+      menu: row.menu || "",
+      starter: row.starter || "",
+      main: row.main || "",
+      dessert: row.dessert || "",
+      transfer: row.transfer || "",
+      dietary: row.dietary || "",
+      notes: row.notes || "",
+      plusOne: row.plus_one || "",
+      plusOneName: row.plus_one_name || "",
+      plusOneMenu: row.plus_one_menu || "",
+      plusOneStarter: row.plus_one_starter || "",
+      plusOneMain: row.plus_one_main || "",
+      plusOneDessert: row.plus_one_dessert || "",
+      arrivalDateTime: row.arrival_datetime || "",
+      arrivalLocation: row.arrival_location || "",
+      returnDateTime: row.return_datetime || "",
+      returnLocation: row.return_location || "",
+      transferPartySize: row.transfer_party_size || "",
+      kids,
+      token: row.token || ""
+    });
+  }
 
   const { results } = await DB.prepare(`
     SELECT * FROM rsvps ORDER BY submitted_at DESC, id DESC
   `).all();
 
   return jsonResponse(results);
+}
+
+export async function onRequestPut(context) {
+  const { DB } = context.env;
+  const url = new URL(context.request.url);
+  const token = url.pathname.split("/").filter(Boolean).at(-1);
+
+  if (!token || token === "rsvps") {
+    return jsonResponse({ error: "RSVP not found." }, 404);
+  }
+
+  let body;
+  try {
+    body = await context.request.json();
+  } catch {
+    return jsonResponse({ error: "Invalid JSON." }, 400);
+  }
+
+  const row = await DB.prepare("SELECT * FROM rsvps WHERE token = ?1 LIMIT 1").bind(token).first();
+  if (!row) {
+    return jsonResponse({ error: "RSVP not found." }, 404);
+  }
+
+  const payload = {
+    language: body.language || row.language || "",
+    name: (body.name || row.name || "").trim(),
+    email: (body.email || row.email || "").trim(),
+    phone: (body.phone || row.phone || "").trim(),
+    attendance: body.attendance || row.attendance || "",
+    events: body.events || row.events || "",
+    menu: body.menu || "",
+    starter: body.starter || "",
+    main: body.main || "",
+    dessert: body.dessert || "",
+    transfer: body.transfer || "",
+    dietary: (body.dietary || "").trim(),
+    notes: (body.notes || row.notes || "").trim(),
+    plus_one: body.plusOne || "",
+    plus_one_name: (body.plusOneName || row.plus_one_name || "").trim(),
+    plus_one_menu: body.plusOneMenu || "",
+    plus_one_starter: body.plusOneStarter || "",
+    plus_one_main: body.plusOneMain || "",
+    plus_one_dessert: body.plusOneDessert || "",
+    arrival_datetime: (body.arrivalDateTime || "").trim(),
+    arrival_location: (body.arrivalLocation || "").trim(),
+    return_datetime: (body.returnDateTime || "").trim(),
+    return_location: (body.returnLocation || "").trim(),
+    transfer_party_size: (body.transferPartySize || "").trim(),
+    kids: JSON.stringify(Array.isArray(body.kids) ? body.kids.slice(0, 3).filter((kid) => (kid?.name || "").trim()) : [])
+  };
+
+  await DB.prepare(`
+    UPDATE rsvps
+    SET
+      language = ?2,
+      name = ?3,
+      email = ?4,
+      phone = ?5,
+      attendance = ?6,
+      events = ?7,
+      menu = ?8,
+      starter = ?9,
+      main = ?10,
+      dessert = ?11,
+      transfer = ?12,
+      dietary = ?13,
+      notes = ?14,
+      plus_one = ?15,
+      plus_one_name = ?16,
+      plus_one_menu = ?17,
+      plus_one_starter = ?18,
+      plus_one_main = ?19,
+      plus_one_dessert = ?20,
+      arrival_datetime = ?21,
+      arrival_location = ?22,
+      return_datetime = ?23,
+      return_location = ?24,
+      transfer_party_size = ?25,
+      kids = ?26
+    WHERE token = ?1
+  `).bind(
+    token,
+    payload.language,
+    payload.name,
+    payload.email,
+    payload.phone,
+    payload.attendance,
+    payload.events,
+    payload.menu,
+    payload.starter,
+    payload.main,
+    payload.dessert,
+    payload.transfer,
+    payload.dietary,
+    payload.notes,
+    payload.plus_one,
+    payload.plus_one_name,
+    payload.plus_one_menu,
+    payload.plus_one_starter,
+    payload.plus_one_main,
+    payload.plus_one_dessert,
+    payload.arrival_datetime,
+    payload.arrival_location,
+    payload.return_datetime,
+    payload.return_location,
+    payload.transfer_party_size,
+    payload.kids
+  ).run();
+
+  return jsonResponse({ ok: true, token });
 }
 
 function jsonResponse(data, status = 200) {

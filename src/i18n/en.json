@@ -40,18 +40,15 @@
         "options": [
           {
             "id": "mesclun-lardons",
-            "label": "Mesclun salad with lardons and jus vinaigrette",
-            "description": "A fresh green salad with crispy lardons and a savoury jus-based vinaigrette."
+            "label": "Mesclun de salades, lardons, vinaigrette au jus"
           },
           {
             "id": "fish-tartare",
-            "label": "Mediterranean fish tartare with citrus ravigote and peas",
-            "description": "A bright fish tartare finished with citrus and spring peas."
+            "label": "Tartare de poisson méditerranéen, ravigote aux agrumes et petits pois"
           },
           {
             "id": "spring-vegetable-salad",
-            "label": "Mesclun salad with spring vegetables",
-            "description": "Mesclun with peas, green and white asparagus, and peppers."
+            "label": "Salade de mesclun, légumes de printemps (petits pois, asperges vertes et blanches, poivrons)"
           }
         ]
       },
@@ -61,18 +58,15 @@
         "options": [
           {
             "id": "trout-cuttlefish",
-            "label": "Trout and cuttlefish with olive sauce and rice",
-            "description": "Fish and seiche served with olive sauce and rice."
+            "label": "Truite / seiche / sauce olives / riz"
           },
           {
             "id": "chicken-poulette",
-            "label": "Chicken supreme with poulette sauce and vegetables",
-            "description": "Suprême de volaille with a classic poulette sauce and seasonal vegetables."
+            "label": "Suprême de volaille / sauce poulette / légumes"
           },
           {
             "id": "quinoa-roasted-vegetables",
-            "label": "Quinoa salad with roasted vegetables and ravigote",
-            "description": "A vegetarian plate with roasted vegetables and a lively ravigote dressing."
+            "label": "Salade de quinoa, légumes rôtis, ravigote"
           }
         ]
       },
@@ -82,13 +76,11 @@
         "options": [
           {
             "id": "ile-flottante",
-            "label": "Floating island with vanilla custard and caramel sauce",
-            "description": "A soft meringue dessert with vanilla creme anglaise and caramel."
+            "label": "Île flottante, crème anglaise vanille, sauce caramel"
           },
           {
             "id": "millefeuille-fruits",
-            "label": "Fruit mille-feuille",
-            "description": "Layers of crisp pastry and fruit."
+            "label": "Mille-feuille aux fruits"
           }
         ]
       }
@@ -154,15 +146,23 @@
       "max": "Okay that's a lot of kids... (max 3)"
     },
     "submit": "Send RSVP",
+    "editCta": "Edit menu choices",
+    "editLoading": "Loading your menu choices...",
+    "recoverPrompt": "If this RSVP was saved before editing was enabled, enter your email to reopen it.",
+    "recoverEmail": "Email used for RSVP",
+    "recoverCta": "Find my RSVP",
+    "recoverError": "We couldn't find your RSVP with that email on this device.",
     "successRemote": "Thank you. Your RSVP has been sent.",
+    "updatedRemote": "Your menu choices have been updated.",
     "successLocal": "RSVP saved in this browser for now. Add a real RSVP endpoint in the app to receive submissions online.",
-    "duplicate": "We already have your RSVP. If you need to make a change, please reach out to us directly.",
+    "duplicate": "We already have your RSVP. You can still edit your menu choices from this device.",
     "error": "Something went wrong while sending the RSVP. Please try again.",
     "menuMissing": "Please choose one starter, one main course, and one dessert.",
     "plusOneMenuMissing": "Please choose one starter, one main course, and one dessert for your +1.",
     "confirmedTitle": "See you in Burgundy",
     "confirmedNote": "Your RSVP is confirmed. We can't wait to celebrate with you.",
-    "confirmedAlreadyNote": "We already had your RSVP on file. We can't wait to celebrate with you.",
+    "confirmedAlreadyNote": "We already had your RSVP on file. You can still update your menu choices from this device.",
+    "confirmedUpdatedNote": "Your menu choices are updated. We can't wait to celebrate with you.",
     "confirmedKidsNote": "We're counting on"
   },
   "logistics": {

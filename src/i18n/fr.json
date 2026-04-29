@@ -40,18 +40,15 @@
         "options": [
           {
             "id": "mesclun-lardons",
-            "label": "Mesclun de salades, lardons, vinaigrette au jus",
-            "description": "Une salade verte relevée par des lardons et une vinaigrette au jus."
+            "label": "Mesclun de salades, lardons, vinaigrette au jus"
           },
           {
             "id": "fish-tartare",
-            "label": "Tartare de poisson méditerranéen, ravigote aux agrumes et petits pois",
-            "description": "Un tartare frais et acidulé, accompagné de petits pois."
+            "label": "Tartare de poisson méditerranéen, ravigote aux agrumes et petits pois"
           },
           {
             "id": "spring-vegetable-salad",
-            "label": "Salade de mesclun, légumes de printemps",
-            "description": "Petits pois, asperges vertes et blanches, poivrons."
+            "label": "Salade de mesclun, légumes de printemps (petits pois, asperges vertes et blanches, poivrons)"
           }
         ]
       },
@@ -61,18 +58,15 @@
         "options": [
           {
             "id": "trout-cuttlefish",
-            "label": "Truite, seiche, sauce olives, riz",
-            "description": "Une assiette autour de la truite et de la seiche, servie avec riz et sauce olives."
+            "label": "Truite / seiche / sauce olives / riz"
           },
           {
             "id": "chicken-poulette",
-            "label": "Suprême de volaille, sauce poulette, légumes",
-            "description": "Une volaille servie avec sauce poulette et légumes."
+            "label": "Suprême de volaille / sauce poulette / légumes"
           },
           {
             "id": "quinoa-roasted-vegetables",
-            "label": "Salade de quinoa, légumes rôtis, ravigote",
-            "description": "Une option végétarienne autour du quinoa et des légumes rôtis."
+            "label": "Salade de quinoa, légumes rôtis, ravigote"
           }
         ]
       },
@@ -82,13 +76,11 @@
         "options": [
           {
             "id": "ile-flottante",
-            "label": "Île flottante, crème anglaise vanille, sauce caramel",
-            "description": "Un grand classique avec crème anglaise vanille et caramel."
+            "label": "Île flottante, crème anglaise vanille, sauce caramel"
           },
           {
             "id": "millefeuille-fruits",
-            "label": "Mille-feuille aux fruits",
-            "description": "Un dessert feuilleté aux fruits."
+            "label": "Mille-feuille aux fruits"
           }
         ]
       }
@@ -154,15 +146,23 @@
       "max": "Bon, c'est beaucoup des enfants... (max 3)"
     },
     "submit": "Envoyer le RSVP",
+    "editCta": "Modifier le menu",
+    "editLoading": "Chargement de vos choix de menu...",
+    "recoverPrompt": "Si ce RSVP a été enregistré avant l'activation des modifications, entrez votre email pour le rouvrir.",
+    "recoverEmail": "Email utilisé pour le RSVP",
+    "recoverCta": "Retrouver mon RSVP",
+    "recoverError": "Nous n'avons pas retrouvé votre RSVP avec cet email sur cet appareil.",
     "successRemote": "Merci. Votre réponse a bien été envoyée.",
+    "updatedRemote": "Vos choix de menu ont bien été mis à jour.",
     "successLocal": "Le RSVP est enregistré dans ce navigateur pour le moment. Ajoutez un vrai endpoint dans l'app pour recevoir les réponses en ligne.",
-    "duplicate": "Nous avons déjà reçu votre réponse. Si vous souhaitez la modifier, contactez-nous directement.",
+    "duplicate": "Nous avons déjà reçu votre réponse. Vous pouvez encore modifier vos choix de menu depuis cet appareil.",
     "error": "Une erreur est survenue pendant l'envoi. Merci de réessayer.",
     "menuMissing": "Merci de choisir une entrée, un plat et un dessert.",
     "plusOneMenuMissing": "Merci de choisir une entrée, un plat et un dessert pour votre +1.",
     "confirmedTitle": "À bientôt en Bourgogne",
     "confirmedNote": "Votre réponse est bien enregistrée. On a hâte de fêter ça avec vous.",
-    "confirmedAlreadyNote": "Nous avions déjà votre réponse. On a hâte de fêter ça avec vous.",
+    "confirmedAlreadyNote": "Nous avions déjà votre réponse. Vous pouvez encore modifier vos choix de menu depuis cet appareil.",
+    "confirmedUpdatedNote": "Vos choix de menu ont bien été mis à jour. On a hâte de fêter ça avec vous.",
     "confirmedKidsNote": "On compte sur"
   },
   "logistics": {

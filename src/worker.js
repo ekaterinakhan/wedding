@@ -50,6 +50,17 @@ export default {
       if (request.method === "GET") return handleRsvpGet(env);
     }
 
+    const publicRsvpMatch = url.pathname.match(/^\/api\/rsvps\/([^/]+)$/);
+    if (publicRsvpMatch) {
+      const [, token] = publicRsvpMatch;
+      if (request.method === "GET") return handlePublicRsvpGet(env, token);
+      if (request.method === "PUT") return handlePublicRsvpPut(request, env, token);
+    }
+
+    if (url.pathname === "/api/rsvps/recover" && request.method === "POST") {
+      return handlePublicRsvpRecover(request, env);
+    }
+
     if (url.pathname === "/api/private/session") {
       const authenticated = await isAuthenticated(request, env);
       return Response.json({ authenticated });
@@ -279,6 +290,274 @@ async function handleRsvpGet(env) {
     ORDER BY COALESCE(g.primary_guest_id, g.id), g.primary_guest_id IS NOT NULL, g.id
   `).all();
   return Response.json(results);
+}
+
+function normalizeKids(kids) {
+  return Array.isArray(kids)
+    ? kids.slice(0, 3).filter((kid) => (kid?.name || "").trim()).map((kid) => ({
+        name: String(kid.name || "").trim(),
+        dietary: String(kid.dietary || "").trim(),
+      }))
+    : [];
+}
+
+function publicRsvpPayloadFromRow(row) {
+  let kids = [];
+  try {
+    kids = JSON.parse(row.kids || "[]");
+  } catch {
+    kids = [];
+  }
+
+  return {
+    name: row.name || "",
+    email: row.email || "",
+    phone: row.phone || "",
+    language: row.language || "",
+    attendance: row.attendance || "",
+    events: row.events || "",
+    menu: row.menu || "",
+    starter: row.starter || "",
+    main: row.main || "",
+    dessert: row.dessert || "",
+    transfer: row.transfer || "",
+    dietary: row.dietary || "",
+    notes: row.notes || "",
+    plusOne: row.plus_one || "",
+    plusOneName: row.plus_one_name || "",
+    plusOneMenu: row.plus_one_menu || "",
+    plusOneStarter: row.plus_one_starter || "",
+    plusOneMain: row.plus_one_main || "",
+    plusOneDessert: row.plus_one_dessert || "",
+    arrivalDateTime: row.arrival_datetime || "",
+    arrivalLocation: row.arrival_location || "",
+    returnDateTime: row.return_datetime || "",
+    returnLocation: row.return_location || "",
+    transferPartySize: row.transfer_party_size || "",
+    kids,
+    token: row.token || "",
+  };
+}
+
+async function handlePublicRsvpGet(env, token) {
+  const row = await env.DB.prepare("SELECT * FROM rsvps WHERE token = ?1 LIMIT 1").bind(token).first();
+  if (!row) {
+    return Response.json({ error: "RSVP not found." }, { status: 404 });
+  }
+  return Response.json(publicRsvpPayloadFromRow(row));
+}
+
+async function handlePublicRsvpRecover(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "Invalid JSON." }, { status: 400 });
+  }
+
+  const email = (body.email || "").trim();
+  if (!email) {
+    return Response.json({ error: "Email is required." }, { status: 400 });
+  }
+
+  const row = await env.DB.prepare(
+    "SELECT * FROM rsvps WHERE lower(email) = lower(?1) ORDER BY submitted_at DESC LIMIT 1"
+  ).bind(email).first();
+
+  if (!row || !row.token) {
+    return Response.json({ error: "RSVP not found." }, { status: 404 });
+  }
+
+  return Response.json(publicRsvpPayloadFromRow(row));
+}
+
+async function handlePublicRsvpPut(request, env, token) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "Invalid JSON." }, { status: 400 });
+  }
+
+  const row = await env.DB.prepare("SELECT * FROM rsvps WHERE token = ?1 LIMIT 1").bind(token).first();
+  if (!row) {
+    return Response.json({ error: "RSVP not found." }, { status: 404 });
+  }
+
+  const name = (body.name || row.name || "").trim();
+  const email = (body.email || row.email || "").trim();
+  const plusOneName = (body.plusOneName || row.plus_one_name || "").trim();
+  const attendance = body.attendance || row.attendance || "";
+  const kids = normalizeKids(body.kids);
+
+  if (!name || !email) {
+    return Response.json({ error: "Name and email are required." }, { status: 400 });
+  }
+
+  if (attendance !== "no") {
+    if (!body.starter || !body.main || !body.dessert) {
+      return Response.json({ error: "Menu choice is required." }, { status: 400 });
+    }
+    if (body.plusOne === "yes" && (!body.plusOneStarter || !body.plusOneMain || !body.plusOneDessert)) {
+      return Response.json({ error: "Menu choice for +1 is required." }, { status: 400 });
+    }
+  }
+
+  await env.DB.prepare(`
+    UPDATE rsvps
+    SET
+      language = ?2,
+      name = ?3,
+      email = ?4,
+      phone = ?5,
+      attendance = ?6,
+      events = ?7,
+      menu = ?8,
+      starter = ?9,
+      main = ?10,
+      dessert = ?11,
+      transfer = ?12,
+      dietary = ?13,
+      notes = ?14,
+      plus_one = ?15,
+      plus_one_name = ?16,
+      plus_one_menu = ?17,
+      plus_one_starter = ?18,
+      plus_one_main = ?19,
+      plus_one_dessert = ?20,
+      arrival_datetime = ?21,
+      arrival_location = ?22,
+      return_datetime = ?23,
+      return_location = ?24,
+      transfer_party_size = ?25,
+      kids = ?26
+    WHERE token = ?1
+  `).bind(
+    token,
+    body.language || row.language || "",
+    name,
+    email,
+    (body.phone || row.phone || "").trim(),
+    attendance,
+    body.events || row.events || "",
+    body.menu || "",
+    body.starter || "",
+    body.main || "",
+    body.dessert || "",
+    body.transfer || "",
+    (body.dietary || "").trim(),
+    (body.notes || row.notes || "").trim(),
+    body.plusOne || "",
+    plusOneName,
+    body.plusOneMenu || "",
+    body.plusOneStarter || "",
+    body.plusOneMain || "",
+    body.plusOneDessert || "",
+    (body.arrivalDateTime || "").trim(),
+    (body.arrivalLocation || "").trim(),
+    (body.returnDateTime || "").trim(),
+    (body.returnLocation || "").trim(),
+    (body.transferPartySize || "").trim(),
+    JSON.stringify(kids),
+  ).run();
+
+  const primaryGuest = await env.DB.prepare(
+    "SELECT id, rsvp_id FROM guests WHERE token = ?1 AND guest_type = 'primary' LIMIT 1"
+  ).bind(token).first();
+
+  if (primaryGuest) {
+    await env.DB.prepare(`
+      UPDATE guests
+      SET name = ?1, email = ?2, phone = ?3, attendance = ?4, events = ?5, plus_one = ?6, plus_one_name = ?7, dietary = ?8, notes = ?9
+      WHERE id = ?10
+    `).bind(
+      name,
+      email,
+      (body.phone || row.phone || "").trim(),
+      attendance,
+      body.events || row.events || "",
+      body.plusOne || "",
+      plusOneName,
+      (body.dietary || "").trim(),
+      (body.notes || row.notes || "").trim(),
+      primaryGuest.id,
+    ).run();
+
+    await env.DB.prepare(`
+      UPDATE guest_menus
+      SET menu = ?1, starter = ?2, main = ?3, dessert = ?4
+      WHERE guest_id = ?5
+    `).bind(body.menu || "", body.starter || "", body.main || "", body.dessert || "", primaryGuest.id).run();
+
+    await env.DB.prepare("DELETE FROM guest_transfers WHERE guest_id = ?1").bind(primaryGuest.id).run();
+    await env.DB.prepare(`
+      INSERT INTO guest_transfers (guest_id, needs_transfer, arrival_datetime, arrival_location, return_datetime, return_location, party_size)
+      VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+    `).bind(
+      primaryGuest.id,
+      body.transfer || "",
+      (body.arrivalDateTime || "").trim(),
+      (body.arrivalLocation || "").trim(),
+      (body.returnDateTime || "").trim(),
+      (body.returnLocation || "").trim(),
+      (body.transferPartySize || "").trim(),
+    ).run();
+
+    const existingPlusOne = await env.DB.prepare(
+      "SELECT id FROM guests WHERE rsvp_id = ?1 AND guest_type = 'plus_one' LIMIT 1"
+    ).bind(primaryGuest.rsvp_id).first();
+
+    if (body.plusOne === "yes" && plusOneName) {
+      if (existingPlusOne) {
+        await env.DB.prepare("UPDATE guests SET name = ?1 WHERE id = ?2").bind(plusOneName, existingPlusOne.id).run();
+        await env.DB.prepare(`
+          UPDATE guest_menus
+          SET menu = ?1, starter = ?2, main = ?3, dessert = ?4
+          WHERE guest_id = ?5
+        `).bind(body.plusOneMenu || "", body.plusOneStarter || "", body.plusOneMain || "", body.plusOneDessert || "", existingPlusOne.id).run();
+      } else {
+        const plusOneInsert = await env.DB.prepare(`
+          INSERT INTO guests (submitted_at, language, name, primary_guest_id, guest_type, rsvp_id)
+          VALUES (?1, ?2, ?3, ?4, 'plus_one', ?5)
+          RETURNING id
+        `).bind(row.submitted_at, body.language || row.language || "", plusOneName, primaryGuest.id, primaryGuest.rsvp_id).first();
+        await env.DB.prepare(`
+          INSERT INTO guest_menus (guest_id, menu, starter, main, dessert)
+          VALUES (?1, ?2, ?3, ?4, ?5)
+        `).bind(plusOneInsert.id, body.plusOneMenu || "", body.plusOneStarter || "", body.plusOneMain || "", body.plusOneDessert || "").run();
+      }
+    } else if (existingPlusOne) {
+      await env.DB.prepare("DELETE FROM guest_menus WHERE guest_id = ?1").bind(existingPlusOne.id).run();
+      await env.DB.prepare("DELETE FROM guests WHERE id = ?1").bind(existingPlusOne.id).run();
+    }
+
+    const { results: childGuests } = await env.DB.prepare(
+      "SELECT id FROM guests WHERE rsvp_id = ?1 AND guest_type = 'child'"
+    ).bind(primaryGuest.rsvp_id).all();
+
+    if (childGuests.length > 0) {
+      await env.DB.batch(
+        childGuests.flatMap((child) => [
+          env.DB.prepare("DELETE FROM guest_menus WHERE guest_id = ?1").bind(child.id),
+          env.DB.prepare("DELETE FROM guest_transfers WHERE guest_id = ?1").bind(child.id),
+          env.DB.prepare("DELETE FROM guests WHERE id = ?1").bind(child.id),
+        ])
+      );
+    }
+
+    if (kids.length > 0) {
+      await env.DB.batch(
+        kids.map((kid) =>
+          env.DB.prepare(`
+            INSERT INTO guests (submitted_at, language, name, dietary, primary_guest_id, guest_type, rsvp_id)
+            VALUES (?1, ?2, ?3, ?4, ?5, 'child', ?6)
+          `).bind(row.submitted_at, body.language || row.language || "", kid.name, kid.dietary, primaryGuest.id, primaryGuest.rsvp_id)
+        )
+      );
+    }
+  }
+
+  return Response.json({ ok: true, token });
 }
 
 async function handleDeleteFamily(env, rsvpId) {

@@ -76,9 +76,9 @@ ensureColumn("rsvps", "token", "TEXT");
 
 const insertRsvp = db.prepare(`
   INSERT INTO rsvps (
-    submitted_at, language, name, email, phone, attendance, events, menu, starter, main, dessert, transfer, dietary, notes, plus_one, plus_one_name, plus_one_menu, plus_one_starter, plus_one_main, plus_one_dessert, arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size
+    submitted_at, language, name, email, phone, attendance, events, menu, starter, main, dessert, transfer, dietary, notes, plus_one, plus_one_name, plus_one_menu, plus_one_starter, plus_one_main, plus_one_dessert, arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size, kids, token
   ) VALUES (
-    @submittedAt, @language, @name, @email, @phone, @attendance, @events, @menu, @starter, @main, @dessert, @transfer, @dietary, @notes, @plusOne, @plusOneName, @plusOneMenu, @plusOneStarter, @plusOneMain, @plusOneDessert, @arrivalDateTime, @arrivalLocation, @returnDateTime, @returnLocation, @transferPartySize
+    @submittedAt, @language, @name, @email, @phone, @attendance, @events, @menu, @starter, @main, @dessert, @transfer, @dietary, @notes, @plusOne, @plusOneName, @plusOneMenu, @plusOneStarter, @plusOneMain, @plusOneDessert, @arrivalDateTime, @arrivalLocation, @returnDateTime, @returnLocation, @transferPartySize, @kids, @token
   )
 `);
 
@@ -110,9 +110,48 @@ const selectRsvps = db.prepare(`
     return_datetime,
     return_location,
     transfer_party_size,
-    kids
+    kids,
+    token
   FROM rsvps
   ORDER BY datetime(submitted_at) DESC, id DESC
+`);
+
+const selectRsvpByToken = db.prepare(`
+  SELECT *
+  FROM rsvps
+  WHERE token = ?
+  LIMIT 1
+`);
+
+const updateRsvpByToken = db.prepare(`
+  UPDATE rsvps
+  SET
+    language = @language,
+    name = @name,
+    email = @email,
+    phone = @phone,
+    attendance = @attendance,
+    events = @events,
+    menu = @menu,
+    starter = @starter,
+    main = @main,
+    dessert = @dessert,
+    transfer = @transfer,
+    dietary = @dietary,
+    notes = @notes,
+    plus_one = @plusOne,
+    plus_one_name = @plusOneName,
+    plus_one_menu = @plusOneMenu,
+    plus_one_starter = @plusOneStarter,
+    plus_one_main = @plusOneMain,
+    plus_one_dessert = @plusOneDessert,
+    arrival_datetime = @arrivalDateTime,
+    arrival_location = @arrivalLocation,
+    return_datetime = @returnDateTime,
+    return_location = @returnLocation,
+    transfer_party_size = @transferPartySize,
+    kids = @kids
+  WHERE token = @token
 `);
 
 const selectBoardOverrides = db.prepare(`
@@ -620,6 +659,8 @@ app.put("/api/private/boards/:boardId/tasks/:taskId", requireBoardAuth, (req, re
 });
 
 app.post("/api/rsvps", (req, res) => {
+  const token = crypto.randomUUID();
+  const kids = Array.isArray(req.body.kids) ? req.body.kids.slice(0, 3).filter((kid) => (kid?.name || "").trim()) : [];
   const payload = {
     submittedAt: req.body.submittedAt || new Date().toISOString(),
     language: req.body.language || "",
@@ -645,7 +686,9 @@ app.post("/api/rsvps", (req, res) => {
     arrivalLocation: (req.body.arrivalLocation || "").trim(),
     returnDateTime: (req.body.returnDateTime || "").trim(),
     returnLocation: (req.body.returnLocation || "").trim(),
-    transferPartySize: (req.body.transferPartySize || "").trim()
+    transferPartySize: (req.body.transferPartySize || "").trim(),
+    kids: JSON.stringify(kids),
+    token
   };
 
   if (!payload.name || !payload.email) {
@@ -654,18 +697,164 @@ app.post("/api/rsvps", (req, res) => {
   }
 
   if (payload.attendance !== "no") {
-    if (!payload.menu) {
+    if (!payload.starter || !payload.main || !payload.dessert) {
       res.status(400).json({ error: "Menu choice is required." });
       return;
     }
-    if (payload.plusOne === "yes" && !payload.plusOneMenu) {
+    if (payload.plusOne === "yes" && (!payload.plusOneStarter || !payload.plusOneMain || !payload.plusOneDessert)) {
       res.status(400).json({ error: "Menu choice for +1 is required." });
       return;
     }
   }
 
   const result = insertRsvp.run(payload);
-  res.status(201).json({ ok: true, id: result.lastInsertRowid });
+  res.status(201).json({ ok: true, id: result.lastInsertRowid, token });
+});
+
+app.get("/api/rsvps/:token", (req, res) => {
+  const row = selectRsvpByToken.get(req.params.token);
+  if (!row) {
+    res.status(404).json({ error: "RSVP not found." });
+    return;
+  }
+
+  let kids = [];
+  try { kids = JSON.parse(row.kids || "[]"); } catch { kids = []; }
+
+  res.json({
+    name: row.name || "",
+    email: row.email || "",
+    phone: row.phone || "",
+    language: row.language || "",
+    attendance: row.attendance || "",
+    events: row.events || "",
+    menu: row.menu || "",
+    starter: row.starter || "",
+    main: row.main || "",
+    dessert: row.dessert || "",
+    transfer: row.transfer || "",
+    dietary: row.dietary || "",
+    notes: row.notes || "",
+    plusOne: row.plus_one || "",
+    plusOneName: row.plus_one_name || "",
+    plusOneMenu: row.plus_one_menu || "",
+    plusOneStarter: row.plus_one_starter || "",
+    plusOneMain: row.plus_one_main || "",
+    plusOneDessert: row.plus_one_dessert || "",
+    arrivalDateTime: row.arrival_datetime || "",
+    arrivalLocation: row.arrival_location || "",
+    returnDateTime: row.return_datetime || "",
+    returnLocation: row.return_location || "",
+    transferPartySize: row.transfer_party_size || "",
+    kids,
+    token: row.token || ""
+  });
+});
+
+app.post("/api/rsvps/recover", (req, res) => {
+  const email = (req.body.email || "").trim();
+  if (!email) {
+    res.status(400).json({ error: "Email is required." });
+    return;
+  }
+
+  const row = db.prepare(
+    "SELECT * FROM rsvps WHERE lower(email) = lower(?) ORDER BY submitted_at DESC LIMIT 1"
+  ).get(email);
+
+  if (!row || !row.token) {
+    res.status(404).json({ error: "RSVP not found." });
+    return;
+  }
+
+  let kids = [];
+  try { kids = JSON.parse(row.kids || "[]"); } catch { kids = []; }
+
+  res.json({
+    name: row.name || "",
+    email: row.email || "",
+    phone: row.phone || "",
+    language: row.language || "",
+    attendance: row.attendance || "",
+    events: row.events || "",
+    menu: row.menu || "",
+    starter: row.starter || "",
+    main: row.main || "",
+    dessert: row.dessert || "",
+    transfer: row.transfer || "",
+    dietary: row.dietary || "",
+    notes: row.notes || "",
+    plusOne: row.plus_one || "",
+    plusOneName: row.plus_one_name || "",
+    plusOneMenu: row.plus_one_menu || "",
+    plusOneStarter: row.plus_one_starter || "",
+    plusOneMain: row.plus_one_main || "",
+    plusOneDessert: row.plus_one_dessert || "",
+    arrivalDateTime: row.arrival_datetime || "",
+    arrivalLocation: row.arrival_location || "",
+    returnDateTime: row.return_datetime || "",
+    returnLocation: row.return_location || "",
+    transferPartySize: row.transfer_party_size || "",
+    kids,
+    token: row.token || ""
+  });
+});
+
+app.put("/api/rsvps/:token", (req, res) => {
+  const row = selectRsvpByToken.get(req.params.token);
+  if (!row) {
+    res.status(404).json({ error: "RSVP not found." });
+    return;
+  }
+
+  const kids = Array.isArray(req.body.kids) ? req.body.kids.slice(0, 3).filter((kid) => (kid?.name || "").trim()) : [];
+  const payload = {
+    token: req.params.token,
+    language: req.body.language || row.language || "",
+    name: (req.body.name || row.name || "").trim(),
+    email: (req.body.email || row.email || "").trim(),
+    phone: (req.body.phone || row.phone || "").trim(),
+    attendance: req.body.attendance || row.attendance || "",
+    events: req.body.events || row.events || "",
+    menu: req.body.menu || "",
+    starter: req.body.starter || "",
+    main: req.body.main || "",
+    dessert: req.body.dessert || "",
+    transfer: req.body.transfer || "",
+    dietary: (req.body.dietary || "").trim(),
+    notes: (req.body.notes || row.notes || "").trim(),
+    plusOne: req.body.plusOne || "",
+    plusOneName: (req.body.plusOneName || row.plus_one_name || "").trim(),
+    plusOneMenu: req.body.plusOneMenu || "",
+    plusOneStarter: req.body.plusOneStarter || "",
+    plusOneMain: req.body.plusOneMain || "",
+    plusOneDessert: req.body.plusOneDessert || "",
+    arrivalDateTime: (req.body.arrivalDateTime || "").trim(),
+    arrivalLocation: (req.body.arrivalLocation || "").trim(),
+    returnDateTime: (req.body.returnDateTime || "").trim(),
+    returnLocation: (req.body.returnLocation || "").trim(),
+    transferPartySize: (req.body.transferPartySize || "").trim(),
+    kids: JSON.stringify(kids)
+  };
+
+  if (!payload.name || !payload.email) {
+    res.status(400).json({ error: "Name and email are required." });
+    return;
+  }
+
+  if (payload.attendance !== "no") {
+    if (!payload.starter || !payload.main || !payload.dessert) {
+      res.status(400).json({ error: "Menu choice is required." });
+      return;
+    }
+    if (payload.plusOne === "yes" && (!payload.plusOneStarter || !payload.plusOneMain || !payload.plusOneDessert)) {
+      res.status(400).json({ error: "Menu choice for +1 is required." });
+      return;
+    }
+  }
+
+  updateRsvpByToken.run(payload);
+  res.json({ ok: true, token: req.params.token });
 });
 
 app.get("/api/country", (req, res) => {
