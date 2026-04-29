@@ -126,10 +126,10 @@ async function handleRsvpPost(request, env) {
 
   const attendance = body.attendance || "";
   if (attendance !== "no") {
-    if (!body.menu) {
+    if (!body.starter || !body.main || !body.dessert) {
       return Response.json({ error: "Menu choice is required." }, { status: 400 });
     }
-    if (body.plusOne === "yes" && !body.plusOneMenu) {
+    if (body.plusOne === "yes" && (!body.plusOneStarter || !body.plusOneMain || !body.plusOneDessert)) {
       return Response.json({ error: "Menu choice for +1 is required." }, { status: 400 });
     }
   }
@@ -153,11 +153,11 @@ async function handleRsvpPost(request, env) {
   const rsvp = await env.DB.prepare(`
     INSERT INTO rsvps (
       submitted_at, language, name, email, phone,
-      attendance, events, menu, transfer, dietary, notes,
-      plus_one, plus_one_name, plus_one_menu,
+      attendance, events, menu, starter, main, dessert, transfer, dietary, notes,
+      plus_one, plus_one_name, plus_one_menu, plus_one_starter, plus_one_main, plus_one_dessert,
       arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size,
       token, kids
-    ) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21)
+    ) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22,?23,?24,?25,?26,?27)
     RETURNING id
   `).bind(
     submittedAt,
@@ -168,12 +168,18 @@ async function handleRsvpPost(request, env) {
     body.attendance || "",
     body.events || "",
     body.menu || "",
+    body.starter || "",
+    body.main || "",
+    body.dessert || "",
     body.transfer || "",
     (body.dietary || "").trim(),
     (body.notes || "").trim(),
     body.plusOne || "",
     plusOneName,
     body.plusOneMenu || "",
+    body.plusOneStarter || "",
+    body.plusOneMain || "",
+    body.plusOneDessert || "",
     (body.arrivalDateTime || "").trim(),
     (body.arrivalLocation || "").trim(),
     (body.returnDateTime || "").trim(),
@@ -202,8 +208,10 @@ async function handleRsvpPost(request, env) {
 
   // 3. Insert primary menu + transfer in parallel
   const statements = [
-    env.DB.prepare(`INSERT INTO guest_menus (guest_id, menu) VALUES (?1, ?2)`)
-      .bind(guestId, body.menu || ""),
+    env.DB.prepare(`
+      INSERT INTO guest_menus (guest_id, menu, starter, main, dessert)
+      VALUES (?1, ?2, ?3, ?4, ?5)
+    `).bind(guestId, body.menu || "", body.starter || "", body.main || "", body.dessert || ""),
     env.DB.prepare(`
       INSERT INTO guest_transfers (guest_id, needs_transfer, arrival_datetime, arrival_location, return_datetime, return_location, party_size)
       VALUES (?1,?2,?3,?4,?5,?6,?7)
@@ -231,8 +239,11 @@ async function handleRsvpPost(request, env) {
   // 5. Insert +1 menu
   if (hasPlusOne) {
     const plusOneId = batchResults[batchResults.length - 1].results[0].id;
-    await env.DB.prepare(`INSERT INTO guest_menus (guest_id, menu) VALUES (?1, ?2)`)
-      .bind(plusOneId, body.plusOneMenu || "")
+    await env.DB.prepare(`
+      INSERT INTO guest_menus (guest_id, menu, starter, main, dessert)
+      VALUES (?1, ?2, ?3, ?4, ?5)
+    `)
+      .bind(plusOneId, body.plusOneMenu || "", body.plusOneStarter || "", body.plusOneMain || "", body.plusOneDessert || "")
       .run();
   }
 
@@ -258,7 +269,7 @@ async function handleRsvpGet(env) {
       g.attendance, g.events, g.dietary, g.notes,
       g.guest_type, g.primary_guest_id, g.rsvp_id,
       pg.name AS primary_guest_name,
-      gm.menu,
+      gm.menu, gm.starter, gm.main, gm.dessert,
       gt.needs_transfer, gt.arrival_datetime, gt.arrival_location,
       gt.return_datetime, gt.return_location, gt.party_size
     FROM guests g
@@ -378,6 +389,9 @@ async function handlePrivateRsvps(env) {
       g.primary_guest_id,
       g.rsvp_id,
       gm.menu,
+      gm.starter,
+      gm.main,
+      gm.dessert,
       gt.needs_transfer AS transfer,
       gt.arrival_datetime,
       gt.arrival_location,

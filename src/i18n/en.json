@@ -31,29 +31,79 @@
   "menu": {
     "kicker": "Dinner at Roncemay",
     "title": "Our wedding dinner menu",
-    "note": "We picked one starter and one dessert from the current Roncemay menu for everyone, and each guest can choose a main course below.",
-    "shared": "Shared for everyone",
-    "choice": "Your choice",
-    "starterTitle": "Starter",
-    "starterDish": "Farm egg cocotte with Soumaintrain cheese, poultry confit, and sourdough bread",
-    "mainTitle": "Main course",
-    "dessertTitle": "Dessert",
-    "dessertDish": "Gianduja profiterole with ice cream, cocoa craquelin, gianduja sauce, and toasted hazelnuts",
+    "note": "Each guest will choose one starter, one main course, and one dessert.",
+    "intro": "Please choose one option in each course.",
+    "sections": [
+      {
+        "id": "starter",
+        "title": "Starters",
+        "options": [
+          {
+            "id": "mesclun-lardons",
+            "label": "Mesclun salad with lardons and jus vinaigrette",
+            "description": "A fresh green salad with crispy lardons and a savoury jus-based vinaigrette."
+          },
+          {
+            "id": "fish-tartare",
+            "label": "Mediterranean fish tartare with citrus ravigote and peas",
+            "description": "A bright fish tartare finished with citrus and spring peas."
+          },
+          {
+            "id": "spring-vegetable-salad",
+            "label": "Mesclun salad with spring vegetables",
+            "description": "Mesclun with peas, green and white asparagus, and peppers."
+          }
+        ]
+      },
+      {
+        "id": "main",
+        "title": "Main courses",
+        "options": [
+          {
+            "id": "trout-cuttlefish",
+            "label": "Trout and cuttlefish with olive sauce and rice",
+            "description": "Fish and seiche served with olive sauce and rice."
+          },
+          {
+            "id": "chicken-poulette",
+            "label": "Chicken supreme with poulette sauce and vegetables",
+            "description": "Suprême de volaille with a classic poulette sauce and seasonal vegetables."
+          },
+          {
+            "id": "quinoa-roasted-vegetables",
+            "label": "Quinoa salad with roasted vegetables and ravigote",
+            "description": "A vegetarian plate with roasted vegetables and a lively ravigote dressing."
+          }
+        ]
+      },
+      {
+        "id": "dessert",
+        "title": "Desserts",
+        "options": [
+          {
+            "id": "ile-flottante",
+            "label": "Floating island with vanilla custard and caramel sauce",
+            "description": "A soft meringue dessert with vanilla creme anglaise and caramel."
+          },
+          {
+            "id": "millefeuille-fruits",
+            "label": "Fruit mille-feuille",
+            "description": "Layers of crisp pastry and fruit."
+          }
+        ]
+      }
+    ],
     "dietaryTitle": "Dietary note",
-    "dietaryText": "Vegetarian and vegan alternatives will be prepared on request. Please mention any dietary restrictions or allergies in the RSVP form.",
-    "selectedLabel": "Selected main",
-    "selectionHint": "Tap a main course card to prefill your RSVP choice.",
-    "upcoming": "Coming soon",
-    "upcomingNote": "The menu details will be shared closer to the date."
+    "dietaryText": "If you have allergies or specific dietary restrictions, please mention them in the RSVP form and we will adapt with the venue."
   },
   "rsvp": {
     "kicker": "RSVP",
-    "title": "Reply with your menu choice",
-    "note": "Please reply by 15 April 2026. If you are coming with a +1, you can optionally add their name and choose a second main course below.",
-    "menuGroupTitleSingle": "Your menu choice",
+    "title": "Reply with your menu choices",
+    "note": "Please reply by 15 April 2026. If you are coming with a +1, please add their name and choose one starter, one main course, and one dessert for each of you.",
+    "menuGroupTitleSingle": "Your menu choices",
     "menuGroupTitlePair": "Menu choices for both of you",
-    "menuGroupNoteSingle": "Please choose your preferred main course below.",
-    "menuGroupNotePair": "Please choose one main course for yourself and one for your guest.",
+    "menuGroupNoteSingle": "Please choose one starter, one main course, and one dessert below.",
+    "menuGroupNotePair": "Please choose one starter, one main course, and one dessert for each guest.",
     "fields": {
       "name": "Full name",
       "email": "Email",
@@ -62,9 +112,14 @@
       "plusOne": "Will you bring a +1?",
       "plusOneName": "Full name of your +1 for place cards",
       "events": "Which moments will you join?",
-      "menu": "Your main course choice",
-      "plusOneMenu": "Main course choice for your +1",
-      "plusOneMenuFor": "Main course choice for",
+      "menu": "Your menu choices",
+      "plusOneMenu": "Menu choices for your +1",
+      "plusOneMenuFor": "Menu choices for",
+      "guestOne": "For you",
+      "guestTwo": "For your +1",
+      "starter": "Starter",
+      "main": "Main course",
+      "dessert": "Dessert",
       "transfer": "Are you an international guest landing at a Paris airport? Do you need a transfer from Paris to Auxerre and back?",
       "transferDetails": "Transfer details",
       "arrivalDateTime": "When do you arrive in Paris?",
@@ -84,11 +139,6 @@
       "weddingAndBrunch": "Wedding day + brunch",
       "weddingOnly": "Wedding day only",
       "brunchOnly": "Brunch only",
-      "meat": "Meat",
-      "fish": "Fish",
-      "poultry": "Poultry",
-      "vegetarian": "Vegetarian",
-      "vegan": "Vegan",
       "transferYes": "Yes",
       "transferNo": "No"
     },
@@ -108,8 +158,8 @@
     "successLocal": "RSVP saved in this browser for now. Add a real RSVP endpoint in the app to receive submissions online.",
     "duplicate": "We already have your RSVP. If you need to make a change, please reach out to us directly.",
     "error": "Something went wrong while sending the RSVP. Please try again.",
-    "menuMissing": "Please select your main course.",
-    "plusOneMenuMissing": "Please select a main course for your +1.",
+    "menuMissing": "Please choose one starter, one main course, and one dessert.",
+    "plusOneMenuMissing": "Please choose one starter, one main course, and one dessert for your +1.",
     "confirmedTitle": "See you in Burgundy",
     "confirmedNote": "Your RSVP is confirmed. We can't wait to celebrate with you.",
     "confirmedAlreadyNote": "We already had your RSVP on file. We can't wait to celebrate with you.",

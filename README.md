@@ -21,7 +21,7 @@ This project now runs on Vite + React + Tailwind CSS.
 Most content lives in the `content` object at the top of `src/App.jsx`.
 
 - `content.en.scheduleItems` and `content.fr.scheduleItems`
-- `content.en.menuOptions` and `content.fr.menuOptions`
+- `content.en.menu.sections` and `content.fr.menu.sections`
 - `content.en.logisticsCards` and `content.fr.logisticsCards`
 
 ## RSVP setup

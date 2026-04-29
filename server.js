@@ -60,6 +60,12 @@ function ensureColumn(tableName, columnName, definition) {
 ensureColumn("rsvps", "plus_one", "TEXT");
 ensureColumn("rsvps", "plus_one_name", "TEXT");
 ensureColumn("rsvps", "plus_one_menu", "TEXT");
+ensureColumn("rsvps", "starter", "TEXT");
+ensureColumn("rsvps", "main", "TEXT");
+ensureColumn("rsvps", "dessert", "TEXT");
+ensureColumn("rsvps", "plus_one_starter", "TEXT");
+ensureColumn("rsvps", "plus_one_main", "TEXT");
+ensureColumn("rsvps", "plus_one_dessert", "TEXT");
 ensureColumn("rsvps", "arrival_datetime", "TEXT");
 ensureColumn("rsvps", "arrival_location", "TEXT");
 ensureColumn("rsvps", "return_datetime", "TEXT");
@@ -70,9 +76,9 @@ ensureColumn("rsvps", "token", "TEXT");
 
 const insertRsvp = db.prepare(`
   INSERT INTO rsvps (
-    submitted_at, language, name, email, phone, attendance, events, menu, transfer, dietary, notes, plus_one, plus_one_name, plus_one_menu, arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size
+    submitted_at, language, name, email, phone, attendance, events, menu, starter, main, dessert, transfer, dietary, notes, plus_one, plus_one_name, plus_one_menu, plus_one_starter, plus_one_main, plus_one_dessert, arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size
   ) VALUES (
-    @submittedAt, @language, @name, @email, @phone, @attendance, @events, @menu, @transfer, @dietary, @notes, @plusOne, @plusOneName, @plusOneMenu, @arrivalDateTime, @arrivalLocation, @returnDateTime, @returnLocation, @transferPartySize
+    @submittedAt, @language, @name, @email, @phone, @attendance, @events, @menu, @starter, @main, @dessert, @transfer, @dietary, @notes, @plusOne, @plusOneName, @plusOneMenu, @plusOneStarter, @plusOneMain, @plusOneDessert, @arrivalDateTime, @arrivalLocation, @returnDateTime, @returnLocation, @transferPartySize
   )
 `);
 
@@ -87,12 +93,18 @@ const selectRsvps = db.prepare(`
     attendance,
     events,
     menu,
+    starter,
+    main,
+    dessert,
     transfer,
     dietary,
     notes,
     plus_one,
     plus_one_name,
     plus_one_menu,
+    plus_one_starter,
+    plus_one_main,
+    plus_one_dessert,
     arrival_datetime,
     arrival_location,
     return_datetime,
@@ -617,12 +629,18 @@ app.post("/api/rsvps", (req, res) => {
     attendance: req.body.attendance || "",
     events: req.body.events || "",
     menu: req.body.menu || "",
+    starter: req.body.starter || "",
+    main: req.body.main || "",
+    dessert: req.body.dessert || "",
     transfer: req.body.transfer || "",
     dietary: (req.body.dietary || "").trim(),
     notes: (req.body.notes || "").trim(),
     plusOne: req.body.plusOne || "",
     plusOneName: (req.body.plusOneName || "").trim(),
     plusOneMenu: req.body.plusOneMenu || "",
+    plusOneStarter: req.body.plusOneStarter || "",
+    plusOneMain: req.body.plusOneMain || "",
+    plusOneDessert: req.body.plusOneDessert || "",
     arrivalDateTime: (req.body.arrivalDateTime || "").trim(),
     arrivalLocation: (req.body.arrivalLocation || "").trim(),
     returnDateTime: (req.body.returnDateTime || "").trim(),
@@ -678,12 +696,18 @@ app.get("/responses", (_req, res) => {
           <td>${escapeHtml(row.attendance)}</td>
           <td>${escapeHtml(row.events)}</td>
           <td>${escapeHtml(row.menu)}</td>
+          <td>${escapeHtml(row.starter)}</td>
+          <td>${escapeHtml(row.main)}</td>
+          <td>${escapeHtml(row.dessert)}</td>
           <td>${escapeHtml(row.transfer)}</td>
           <td>${escapeHtml(row.dietary)}</td>
           <td>${escapeHtml(row.notes)}</td>
           <td>${escapeHtml(row.plus_one)}</td>
           <td>${escapeHtml(row.plus_one_name)}</td>
           <td>${escapeHtml(row.plus_one_menu)}</td>
+          <td>${escapeHtml(row.plus_one_starter)}</td>
+          <td>${escapeHtml(row.plus_one_main)}</td>
+          <td>${escapeHtml(row.plus_one_dessert)}</td>
           <td>${escapeHtml(row.arrival_datetime)}</td>
           <td>${escapeHtml(row.arrival_location)}</td>
           <td>${escapeHtml(row.return_datetime)}</td>
@@ -729,13 +753,19 @@ app.get("/responses", (_req, res) => {
                   <th>Phone</th>
                   <th>Attendance</th>
                   <th>Events</th>
-                  <th>Menu</th>
+                  <th>Menu Summary</th>
+                  <th>Starter</th>
+                  <th>Main</th>
+                  <th>Dessert</th>
                   <th>Transfer</th>
                   <th>Dietary</th>
                   <th>Notes</th>
                   <th>+1</th>
                   <th>+1 Name</th>
-                  <th>+1 Menu</th>
+                  <th>+1 Menu Summary</th>
+                  <th>+1 Starter</th>
+                  <th>+1 Main</th>
+                  <th>+1 Dessert</th>
                   <th>Paris Arrival</th>
                   <th>Arrival Airport / Station</th>
                   <th>Return Time</th>
@@ -752,7 +782,7 @@ app.get("/responses", (_req, res) => {
   `);
 });
 
-app.listen(port, () => {
+app.listen(port, "127.0.0.1", () => {
   console.log(`RSVP server running at http://127.0.0.1:${port}`);
   console.log(`Responses table available at http://127.0.0.1:${port}/responses`);
   console.log(`Admin panel: open /admin on your Vite dev server (default http://localhost:5173/admin)`);

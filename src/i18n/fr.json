@@ -31,29 +31,79 @@
   "menu": {
     "kicker": "Dîner au Roncemay",
     "title": "Le menu de notre dîner",
-    "note": "Nous avons choisi une entrée et un dessert dans la carte actuelle du Roncemay pour tout le monde, et chaque invité peut sélectionner son plat principal ci-dessous.",
-    "shared": "Pour tout le monde",
-    "choice": "À choisir",
-    "starterTitle": "Entrée",
-    "starterDish": "Œuf cocotte fermier au soumaintrain, confit de volaille et pain au levain",
-    "mainTitle": "Plat principal",
-    "dessertTitle": "Dessert",
-    "dessertDish": "La profiterole au gianduja, crème glacée, craquelin cacao et sauce gianduja avec quelques noisettes torréfiées",
+    "note": "Chaque invité choisira une entrée, un plat et un dessert.",
+    "intro": "Merci de sélectionner une option dans chaque catégorie.",
+    "sections": [
+      {
+        "id": "starter",
+        "title": "Entrées",
+        "options": [
+          {
+            "id": "mesclun-lardons",
+            "label": "Mesclun de salades, lardons, vinaigrette au jus",
+            "description": "Une salade verte relevée par des lardons et une vinaigrette au jus."
+          },
+          {
+            "id": "fish-tartare",
+            "label": "Tartare de poisson méditerranéen, ravigote aux agrumes et petits pois",
+            "description": "Un tartare frais et acidulé, accompagné de petits pois."
+          },
+          {
+            "id": "spring-vegetable-salad",
+            "label": "Salade de mesclun, légumes de printemps",
+            "description": "Petits pois, asperges vertes et blanches, poivrons."
+          }
+        ]
+      },
+      {
+        "id": "main",
+        "title": "Plats",
+        "options": [
+          {
+            "id": "trout-cuttlefish",
+            "label": "Truite, seiche, sauce olives, riz",
+            "description": "Une assiette autour de la truite et de la seiche, servie avec riz et sauce olives."
+          },
+          {
+            "id": "chicken-poulette",
+            "label": "Suprême de volaille, sauce poulette, légumes",
+            "description": "Une volaille servie avec sauce poulette et légumes."
+          },
+          {
+            "id": "quinoa-roasted-vegetables",
+            "label": "Salade de quinoa, légumes rôtis, ravigote",
+            "description": "Une option végétarienne autour du quinoa et des légumes rôtis."
+          }
+        ]
+      },
+      {
+        "id": "dessert",
+        "title": "Desserts",
+        "options": [
+          {
+            "id": "ile-flottante",
+            "label": "Île flottante, crème anglaise vanille, sauce caramel",
+            "description": "Un grand classique avec crème anglaise vanille et caramel."
+          },
+          {
+            "id": "millefeuille-fruits",
+            "label": "Mille-feuille aux fruits",
+            "description": "Un dessert feuilleté aux fruits."
+          }
+        ]
+      }
+    ],
     "dietaryTitle": "Note alimentaire",
-    "dietaryText": "Des alternatives végétariennes et vegan pourront être préparées sur demande. Merci d'indiquer toute allergie ou restriction alimentaire dans le formulaire RSVP.",
-    "selectedLabel": "Plat sélectionné",
-    "selectionHint": "Touchez une carte pour préremplir votre choix dans le RSVP.",
-    "upcoming": "Bientôt disponible",
-    "upcomingNote": "Le menu sera partagé prochainement."
+    "dietaryText": "Si vous avez des allergies ou un régime particulier, merci de l'indiquer dans le formulaire RSVP afin que nous puissions voir avec le lieu."
   },
   "rsvp": {
     "kicker": "RSVP",
     "title": "Confirmez votre venue et votre menu",
-    "note": "Merci de répondre avant le 15 avril 2026. Si vous venez avec un +1, vous pouvez ajouter son nom et choisir un second plat principal ci-dessous.",
-    "menuGroupTitleSingle": "Votre choix de menu",
+    "note": "Merci de répondre avant le 15 avril 2026. Si vous venez avec un +1, merci d'ajouter son nom et de choisir une entrée, un plat et un dessert pour chacun de vous.",
+    "menuGroupTitleSingle": "Vos choix de menu",
     "menuGroupTitlePair": "Les choix de menu pour vous deux",
-    "menuGroupNoteSingle": "Merci de choisir votre plat principal ci-dessous.",
-    "menuGroupNotePair": "Merci de choisir un plat principal pour vous et un autre pour votre invite(e).",
+    "menuGroupNoteSingle": "Merci de choisir une entrée, un plat et un dessert ci-dessous.",
+    "menuGroupNotePair": "Merci de choisir une entrée, un plat et un dessert pour chaque invité.",
     "fields": {
       "name": "Nom complet",
       "email": "Email",
@@ -62,9 +112,14 @@
       "plusOne": "Viendrez-vous avec un +1 ?",
       "plusOneName": "Nom complet de votre +1 pour les marque-places",
       "events": "À quels moments serez-vous parmi nous ?",
-      "menu": "Votre choix de plat",
-      "plusOneMenu": "Choix du plat pour votre +1",
-      "plusOneMenuFor": "Choix du plat pour",
+      "menu": "Vos choix de menu",
+      "plusOneMenu": "Choix de menu pour votre +1",
+      "plusOneMenuFor": "Choix de menu pour",
+      "guestOne": "Pour vous",
+      "guestTwo": "Pour votre +1",
+      "starter": "Entrée",
+      "main": "Plat",
+      "dessert": "Dessert",
       "transfer": "Êtes-vous un invité international arrivant à un aéroport parisien ? Avez-vous besoin d'un transfert de Paris à Auxerre puis du retour ?",
       "transferDetails": "Détails du transfert",
       "arrivalDateTime": "Quand arrivez-vous à Paris ?",
@@ -84,11 +139,6 @@
       "weddingAndBrunch": "Mariage + brunch",
       "weddingOnly": "Mariage uniquement",
       "brunchOnly": "Brunch uniquement",
-      "meat": "Viande",
-      "fish": "Poisson",
-      "poultry": "Volaille",
-      "vegetarian": "Végétarien",
-      "vegan": "Vegan",
       "transferYes": "Oui",
       "transferNo": "Non"
     },
@@ -108,8 +158,8 @@
     "successLocal": "Le RSVP est enregistré dans ce navigateur pour le moment. Ajoutez un vrai endpoint dans l'app pour recevoir les réponses en ligne.",
     "duplicate": "Nous avons déjà reçu votre réponse. Si vous souhaitez la modifier, contactez-nous directement.",
     "error": "Une erreur est survenue pendant l'envoi. Merci de réessayer.",
-    "menuMissing": "Merci de choisir votre plat principal.",
-    "plusOneMenuMissing": "Merci de choisir un plat principal pour votre +1.",
+    "menuMissing": "Merci de choisir une entrée, un plat et un dessert.",
+    "plusOneMenuMissing": "Merci de choisir une entrée, un plat et un dessert pour votre +1.",
     "confirmedTitle": "À bientôt en Bourgogne",
     "confirmedNote": "Votre réponse est bien enregistrée. On a hâte de fêter ça avec vous.",
     "confirmedAlreadyNote": "Nous avions déjà votre réponse. On a hâte de fêter ça avec vous.",

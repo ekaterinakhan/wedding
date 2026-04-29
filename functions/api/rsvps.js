@@ -24,23 +24,29 @@ export async function onRequestPost(context) {
     attendance: body.attendance || "",
     events: body.events || "",
     menu: body.menu || "",
+    starter: body.starter || "",
+    main: body.main || "",
+    dessert: body.dessert || "",
     transfer: body.transfer || "",
     dietary: (body.dietary || "").trim(),
     notes: (body.notes || "").trim(),
     plus_one: body.plusOne || "",
     plus_one_name: (body.plusOneName || "").trim(),
     plus_one_menu: body.plusOneMenu || "",
+    plus_one_starter: body.plusOneStarter || "",
+    plus_one_main: body.plusOneMain || "",
+    plus_one_dessert: body.plusOneDessert || "",
   };
 
   const result = await DB.prepare(`
     INSERT INTO rsvps (
       submitted_at, language, name, email, phone,
-      attendance, events, menu, transfer, dietary, notes,
-      plus_one, plus_one_name, plus_one_menu
+      attendance, events, menu, starter, main, dessert, transfer, dietary, notes,
+      plus_one, plus_one_name, plus_one_menu, plus_one_starter, plus_one_main, plus_one_dessert
     ) VALUES (
       ?1, ?2, ?3, ?4, ?5,
-      ?6, ?7, ?8, ?9, ?10, ?11,
-      ?12, ?13, ?14
+      ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14,
+      ?15, ?16, ?17, ?18, ?19, ?20
     )
   `).bind(
     payload.submitted_at,
@@ -51,12 +57,18 @@ export async function onRequestPost(context) {
     payload.attendance,
     payload.events,
     payload.menu,
+    payload.starter,
+    payload.main,
+    payload.dessert,
     payload.transfer,
     payload.dietary,
     payload.notes,
     payload.plus_one,
     payload.plus_one_name,
     payload.plus_one_menu,
+    payload.plus_one_starter,
+    payload.plus_one_main,
+    payload.plus_one_dessert,
   ).run();
 
   return jsonResponse({ ok: true, id: result.meta.last_row_id }, 201);

@@ -174,6 +174,54 @@ function ScheduleSection({ t }) {
 const fieldClass =
   "w-full rounded-2xl border border-[rgba(74,99,85,0.16)] bg-[#fffdf9] px-4 py-3 text-sm text-[#1e2a22] outline-none transition focus:border-[rgba(74,99,85,0.3)] focus:ring-2 focus:ring-[rgba(196,160,110,0.45)]";
 
+function formatMenuSummary(selection) {
+  return [selection.starter, selection.main, selection.dessert].filter(Boolean).join(" | ");
+}
+
+function CourseChoiceField({ title, options, value, onChange }) {
+  return (
+    <div className="grid gap-3">
+      <p className="text-sm font-medium text-[#1e2a22]">{title}</p>
+      <div className="grid gap-2">
+        {options.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            onClick={() => onChange(option.label)}
+            className={`grid gap-1 rounded-[20px] border px-4 py-3 text-left transition ${
+              value === option.label
+                ? "border-[rgba(74,99,85,0.5)] bg-[#4a6355] text-white shadow-sm"
+                : "border-[rgba(53,75,62,0.12)] bg-white/70 text-[#354b3e] hover:border-[rgba(53,75,62,0.28)] hover:bg-white"
+            }`}
+          >
+            <span className="text-sm font-semibold">{option.label}</span>
+            <span className={`text-sm leading-6 ${value === option.label ? "text-white/85" : "text-[#576e63]"}`}>
+              {option.description}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GuestMenuChoices({ title, fields, sections, selection, onSelectionChange }) {
+  return (
+    <div className="grid gap-5 rounded-[24px] border border-[rgba(53,75,62,0.12)] bg-white/60 p-5">
+      <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#4d6858]">{title}</p>
+      {sections.map((section) => (
+        <CourseChoiceField
+          key={section.id}
+          title={fields[section.id]}
+          options={section.options}
+          value={selection[section.id]}
+          onChange={(nextValue) => onSelectionChange(section.id, nextValue)}
+        />
+      ))}
+    </div>
+  );
+}
+
 function App() {
   const [lang, setLang] = useState(() => {
     try { return localStorage.getItem("wedding_lang") || null; } catch { return null; }
@@ -181,7 +229,9 @@ function App() {
   const [status, setStatus] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [attendance, setAttendance] = useState("");
+  const [selectedStarter, setSelectedStarter] = useState("");
   const [selectedMain, setSelectedMain] = useState("");
+  const [selectedDessert, setSelectedDessert] = useState("");
   const [events, setEvents] = useState("");
   const [transfer, setTransfer] = useState("");
   const [arrivalDateTime, setArrivalDateTime] = useState("");
@@ -191,7 +241,9 @@ function App() {
   const [transferPartySize, setTransferPartySize] = useState("");
   const [hasPlusOne, setHasPlusOne] = useState("");
   const [plusOneName, setPlusOneName] = useState("");
+  const [selectedPlusOneStarter, setSelectedPlusOneStarter] = useState("");
   const [selectedPlusOneMain, setSelectedPlusOneMain] = useState("");
+  const [selectedPlusOneDessert, setSelectedPlusOneDessert] = useState("");
   const [phone, setPhone] = useState("");
   const [phoneCountry, setPhoneCountry] = useState("FR");
   const [kids, setKids] = useState([]);
@@ -203,6 +255,8 @@ function App() {
   const t = content[lang] ?? content["en"];
   const menuRequired = attendance !== "no";
   const plusOneEnabled = menuRequired && hasPlusOne === "yes";
+  const primarySelection = { starter: selectedStarter, main: selectedMain, dessert: selectedDessert };
+  const plusOneSelection = { starter: selectedPlusOneStarter, main: selectedPlusOneMain, dessert: selectedPlusOneDessert };
 
   useEffect(() => {
     fetch("/api/country")
@@ -218,12 +272,12 @@ function App() {
     event.preventDefault();
     const form = event.currentTarget;
 
-    if (menuRequired && !selectedMain) {
+    if (menuRequired && (!selectedStarter || !selectedMain || !selectedDessert)) {
       setMenuError("main");
       setStatus(t.rsvp.menuMissing);
       return;
     }
-    if (plusOneEnabled && !selectedPlusOneMain) {
+    if (plusOneEnabled && (!selectedPlusOneStarter || !selectedPlusOneMain || !selectedPlusOneDessert)) {
       setMenuError("plusOne");
       setStatus(t.rsvp.plusOneMenuMissing);
       return;
@@ -232,6 +286,14 @@ function App() {
 
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
+    payload.menu = formatMenuSummary(primarySelection);
+    payload.starter = selectedStarter;
+    payload.main = selectedMain;
+    payload.dessert = selectedDessert;
+    payload.plusOneMenu = plusOneEnabled ? formatMenuSummary(plusOneSelection) : "";
+    payload.plusOneStarter = plusOneEnabled ? selectedPlusOneStarter : "";
+    payload.plusOneMain = plusOneEnabled ? selectedPlusOneMain : "";
+    payload.plusOneDessert = plusOneEnabled ? selectedPlusOneDessert : "";
     payload.language = lang;
     payload.submittedAt = new Date().toISOString();
     payload.phone = phone || "";
@@ -269,7 +331,9 @@ function App() {
 
       form.reset();
       setAttendance("");
+      setSelectedStarter("");
       setSelectedMain("");
+      setSelectedDessert("");
       setEvents("");
       setTransfer("");
       setArrivalDateTime("");
@@ -279,7 +343,9 @@ function App() {
       setTransferPartySize("");
       setHasPlusOne("");
       setPlusOneName("");
+      setSelectedPlusOneStarter("");
       setSelectedPlusOneMain("");
+      setSelectedPlusOneDessert("");
       setPhone("");
       setKids([]);
       setHasKids("");
@@ -288,7 +354,7 @@ function App() {
     } finally {
       setSubmitting(false);
     }
-  }, [lang, t, phone, kids, attendance, selectedMain, selectedPlusOneMain, events, transfer, hasPlusOne, menuRequired, plusOneEnabled]);
+  }, [lang, t, phone, kids, menuRequired, plusOneEnabled, primarySelection, plusOneSelection, selectedDessert, selectedMain, selectedPlusOneDessert, selectedPlusOneMain, selectedPlusOneStarter, selectedStarter]);
 
   return (
     <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1100px)] pb-28 sm:w-[min(calc(100%-48px),1100px)]">
@@ -344,11 +410,28 @@ function App() {
         <ScheduleSection t={t} />
 
         <SectionCard id="menu">
-          <SectionHeading kicker={t.menu.kicker} title={t.menu.title} />
-          <div className="flex items-center gap-4 py-2">
-            <div className="h-px flex-1 bg-[rgba(53,75,62,0.08)]" />
-            <p className="font-serif text-[1rem] italic text-[#4d6858]/50">{t.menu.upcomingNote}</p>
-            <div className="h-px flex-1 bg-[rgba(53,75,62,0.08)]" />
+          <SectionHeading kicker={t.menu.kicker} title={t.menu.title} note={t.menu.note} />
+          <div className="grid gap-5">
+            <p className="text-sm leading-6 text-[#354b3e]">{t.menu.intro}</p>
+            <div className="grid gap-4 lg:grid-cols-3">
+              {t.menu.sections.map((section) => (
+                <div key={section.id} className="grid gap-4 rounded-[24px] border border-[rgba(53,75,62,0.12)] bg-[#f7f9f6] p-5">
+                  <h3 className="font-serif text-[1.5rem] leading-none text-[#1e2a22]">{section.title}</h3>
+                  <div className="grid gap-3">
+                    {section.options.map((option) => (
+                      <div key={option.id} className="rounded-[20px] border border-[rgba(53,75,62,0.1)] bg-white/75 px-4 py-3">
+                        <p className="text-sm font-semibold text-[#1e2a22]">{option.label}</p>
+                        <p className="mt-1 text-sm leading-6 text-[#576e63]">{option.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-[24px] border border-[rgba(196,160,110,0.22)] bg-[rgba(255,250,242,0.75)] p-5">
+              <p className="text-sm font-semibold text-[#5d3426]">{t.menu.dietaryTitle}</p>
+              <p className="mt-2 text-sm leading-6 text-[#6a5a51]">{t.menu.dietaryText}</p>
+            </div>
           </div>
         </SectionCard>
 
@@ -394,10 +477,14 @@ function App() {
                         setReturnDateTime("");
                         setReturnLocation("");
                         setTransferPartySize("");
+                        setSelectedStarter("");
                         setSelectedMain("");
+                        setSelectedDessert("");
                         setHasPlusOne("");
                         setPlusOneName("");
+                        setSelectedPlusOneStarter("");
                         setSelectedPlusOneMain("");
+                        setSelectedPlusOneDessert("");
                         setHasKids("");
                         setKids([]);
                       }
@@ -445,7 +532,9 @@ function App() {
                                 setHasPlusOne(val);
                                 if (val !== "yes") {
                                   setPlusOneName("");
+                                  setSelectedPlusOneStarter("");
                                   setSelectedPlusOneMain("");
+                                  setSelectedPlusOneDessert("");
                                 }
                               }}
                               className={`rounded-full px-6 py-3 text-sm font-semibold transition ${hasPlusOne === val
@@ -483,37 +572,51 @@ function App() {
                         </p>
                       </div>
 
+                      <input type="hidden" name="starter" value={selectedStarter} />
+                      <input type="hidden" name="main" value={selectedMain} />
+                      <input type="hidden" name="dessert" value={selectedDessert} />
+                      <input type="hidden" name="menu" value={formatMenuSummary(primarySelection)} />
+                      <input type="hidden" name="plusOneStarter" value={selectedPlusOneStarter} />
+                      <input type="hidden" name="plusOneMain" value={selectedPlusOneMain} />
+                      <input type="hidden" name="plusOneDessert" value={selectedPlusOneDessert} />
+                      <input type="hidden" name="plusOneMenu" value={plusOneEnabled ? formatMenuSummary(plusOneSelection) : ""} />
+
                       <div className={`grid gap-5 ${plusOneEnabled ? "lg:grid-cols-2" : ""}`}>
-                        <div className="grid gap-3">
-                          <p className="text-sm font-medium text-[#1e2a22]">{t.rsvp.fields.menu}</p>
-                          <input type="hidden" name="menu" value={selectedMain} />
-                          <div className="flex flex-wrap gap-2">
-                            {t.menuOptions.map(([value, label]) => (
-                              <button key={value} type="button" onClick={() => { setSelectedMain(value); if (menuError === "main") { setMenuError(""); setStatus(""); } }}
-                                className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedMain === value ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
-                                {label}
-                              </button>
-                            ))}
-                          </div>
-                          {menuError === "main" && <p className="text-sm text-red-600">{t.rsvp.menuMissing}</p>}
-                        </div>
+                        <GuestMenuChoices
+                          title={t.rsvp.fields.guestOne}
+                          fields={t.rsvp.fields}
+                          sections={t.menu.sections}
+                          selection={primarySelection}
+                          onSelectionChange={(courseId, nextValue) => {
+                            if (courseId === "starter") setSelectedStarter(nextValue);
+                            if (courseId === "main") setSelectedMain(nextValue);
+                            if (courseId === "dessert") setSelectedDessert(nextValue);
+                            if (menuError === "main") {
+                              setMenuError("");
+                              setStatus("");
+                            }
+                          }}
+                        />
 
                         {plusOneEnabled ? (
-                          <div className="grid gap-3">
-                            <p className="text-sm font-medium text-[#1e2a22]">{plusOneName.trim() ? `${t.rsvp.fields.plusOneMenuFor} ${plusOneName.trim().split(" ")[0]}` : t.rsvp.fields.plusOneMenu}</p>
-                            <input type="hidden" name="plusOneMenu" value={selectedPlusOneMain} />
-                            <div className="flex flex-wrap gap-2">
-                              {t.menuOptions.map(([value, label]) => (
-                                <button key={`plus-${value}`} type="button" onClick={() => { setSelectedPlusOneMain(value); if (menuError === "plusOne") { setMenuError(""); setStatus(""); } }}
-                                  className={`rounded-full px-6 py-3 text-sm font-semibold transition ${selectedPlusOneMain === value ? "bg-[#4a6355] text-white shadow-sm" : "border border-[rgba(53,75,62,0.18)] bg-white/60 text-[#354b3e] hover:border-[rgba(53,75,62,0.35)] hover:bg-white"}`}>
-                                  {label}
-                                </button>
-                              ))}
-                            </div>
-                            {menuError === "plusOne" && <p className="text-sm text-red-600">{t.rsvp.plusOneMenuMissing}</p>}
-                          </div>
+                          <GuestMenuChoices
+                            title={plusOneName.trim() ? `${t.rsvp.fields.plusOneMenuFor} ${plusOneName.trim().split(" ")[0]}` : t.rsvp.fields.guestTwo}
+                            fields={t.rsvp.fields}
+                            sections={t.menu.sections}
+                            selection={plusOneSelection}
+                            onSelectionChange={(courseId, nextValue) => {
+                              if (courseId === "starter") setSelectedPlusOneStarter(nextValue);
+                              if (courseId === "main") setSelectedPlusOneMain(nextValue);
+                              if (courseId === "dessert") setSelectedPlusOneDessert(nextValue);
+                              if (menuError === "plusOne") {
+                                setMenuError("");
+                                setStatus("");
+                              }
+                            }}
+                          />
                         ) : null}
                       </div>
+                      {menuError ? <p className="text-sm text-red-600">{status}</p> : null}
                     </div>
 
                     {/* Transfer */}
