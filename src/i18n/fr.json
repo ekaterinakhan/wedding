@@ -148,6 +148,7 @@
     "submit": "Envoyer le RSVP",
     "editCta": "Modifier le menu",
     "editLoading": "Chargement de vos choix de menu...",
+    "recoverTitle": "Vous avez déjà répondu ?",
     "recoverPrompt": "Si ce RSVP a été enregistré avant l'activation des modifications, entrez votre email pour le rouvrir.",
     "recoverEmail": "Email utilisé pour le RSVP",
     "recoverCta": "Retrouver mon RSVP",

@@ -174,7 +174,7 @@ function ScheduleSection({ t }) {
 const fieldClass =
   "w-full rounded-2xl border border-[rgba(74,99,85,0.16)] bg-[#fffdf9] px-4 py-3 text-sm text-[#1e2a22] outline-none transition focus:border-[rgba(74,99,85,0.3)] focus:ring-2 focus:ring-[rgba(196,160,110,0.45)]";
 
-function FishGlyph({ className = "h-[11px] w-[11px]" }) {
+function FishGlyph({ className = "h-3.5 w-3.5" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
       <path d="M6 12c3.2-4 8-5.5 12-5 0 2.4-1 4-2.5 5 1.5 1 2.5 2.6 2.5 5-4 .5-8.8-1-12-5Z" />
@@ -183,7 +183,7 @@ function FishGlyph({ className = "h-[11px] w-[11px]" }) {
   );
 }
 
-function LeafGlyph({ className = "h-[11px] w-[11px]" }) {
+function LeafGlyph({ className = "h-3.5 w-3.5" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
       <path d="M19 5c-6.5.2-11 3.6-13 9 3.8 1.6 8.6.4 11.3-3.1C18.8 9 19.4 7 19 5Z" />
@@ -192,7 +192,7 @@ function LeafGlyph({ className = "h-[11px] w-[11px]" }) {
   );
 }
 
-function PoultryGlyph({ className = "h-[11px] w-[11px]" }) {
+function PoultryGlyph({ className = "h-3.5 w-3.5" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
       <path d="M7.5 14.5c0-3.7 2.8-6.5 6.4-6.5 2.6 0 4.7 2.1 4.7 4.7 0 2-.9 3.8-2.6 5.2-2 1.6-4.2 2.1-6.7 1.6-1.2-.2-1.8-1.7-1-2.7l1.6-2.3Z" />
@@ -201,7 +201,7 @@ function PoultryGlyph({ className = "h-[11px] w-[11px]" }) {
   );
 }
 
-function DessertGlyph({ className = "h-[11px] w-[11px]" }) {
+function DessertGlyph({ className = "h-3.5 w-3.5" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
       <path d="M5 18h14" />
@@ -266,7 +266,7 @@ function CourseChoiceField({ sectionId, title, options, value, onChange }) {
                 }`}
               >
                 <span className="flex items-start gap-3">
-                  <span className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${visual.bg} ${visual.border} ${visual.color}`}>
+                  <span className={`mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border ${visual.bg} ${visual.border} ${visual.color}`}>
                     <Glyph />
                   </span>
                   <span className="font-medium">{option.label}</span>
@@ -613,8 +613,8 @@ function App() {
                         const Glyph = visual.glyph;
                         return (
                           <div key={option.id} className="flex items-start gap-3 border-b border-[rgba(53,75,62,0.08)] py-2.5 text-sm leading-6 text-[#354b3e] last:border-b-0 last:pb-0">
-                            <span className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${visual.bg} ${visual.color}`}>
-                              <Glyph className="h-[10px] w-[10px]" />
+                            <span className={`mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${visual.bg} ${visual.color}`}>
+                              <Glyph className="h-4 w-4" />
                             </span>
                             <span>{option.label}</span>
                           </div>
@@ -651,6 +651,32 @@ function App() {
               t={t}
             />
           ) : (
+            <div className="grid gap-6">
+              {!isEditing ? (
+                <div className="grid gap-3 rounded-[22px] border border-[rgba(196,160,110,0.22)] bg-[rgba(255,250,242,0.75)] p-5">
+                  <p className="text-sm font-semibold text-[#5d3426]">{t.rsvp.recoverTitle}</p>
+                  <p className="text-sm leading-6 text-[#6a5a51]">{t.rsvp.recoverPrompt}</p>
+                  <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                    <input
+                      className={fieldClass}
+                      type="email"
+                      value={recoverEmail}
+                      onChange={(event) => setRecoverEmail(event.target.value)}
+                      placeholder={t.rsvp.recoverEmail}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRecoverRequest}
+                      disabled={loadingEdit}
+                      className="rounded-full border border-[rgba(53,75,62,0.16)] bg-white/80 px-5 py-3 text-sm font-semibold text-[#4a6355] transition hover:bg-white disabled:opacity-60"
+                    >
+                      {loadingEdit ? t.rsvp.editLoading : t.rsvp.recoverCta}
+                    </button>
+                  </div>
+                  {status && !loadingEdit ? <p className="text-sm text-[#9a7a6a]">{status}</p> : null}
+                </div>
+              ) : null}
+
             <form key={formSeed} className="grid gap-8" onSubmit={handleSubmit}>
 
               {/* Contact */}
@@ -996,6 +1022,7 @@ function App() {
                 <p className="min-h-6 text-sm leading-6 text-[#576e63]">{status}</p>
               </div>
             </form>
+            </div>
           )}
         </SectionCard>
 
@@ -1067,6 +1094,7 @@ function RsvpConfirmed({ name, plusOneName, kids, already, updated, canEdit, edi
         </div>
       ) : (
         <div className="grid w-full max-w-[26rem] gap-3">
+          <p className="text-sm font-semibold text-[#5d3426]">{t.rsvp.recoverTitle}</p>
           <p className="text-sm leading-6 text-[#6a5a51]">{t.rsvp.recoverPrompt}</p>
           <input
             className={fieldClass}

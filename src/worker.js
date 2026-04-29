@@ -146,9 +146,7 @@ async function handleRsvpPost(request, env) {
   }
 
   // Duplicate check
-  const existing = await env.DB.prepare(
-    "SELECT id, token FROM guests WHERE lower(email) = lower(?1) LIMIT 1"
-  ).bind(email).first();
+  const existing = await findRsvpByEmail(env, email);
 
   if (existing) {
     return Response.json({ duplicate: true, token: existing.token }, { status: 409 });
@@ -339,6 +337,27 @@ function publicRsvpPayloadFromRow(row) {
   };
 }
 
+async function ensureLegacyRsvpToken(env, row) {
+  if (!row) return null;
+  if (row.token) return row;
+
+  const token = crypto.randomUUID();
+  await env.DB.batch([
+    env.DB.prepare("UPDATE rsvps SET token = ?1 WHERE id = ?2").bind(token, row.id),
+    env.DB.prepare("UPDATE guests SET token = ?1 WHERE rsvp_id = ?2 AND guest_type = 'primary'").bind(token, row.id),
+  ]);
+
+  return { ...row, token };
+}
+
+async function findRsvpByEmail(env, email) {
+  const row = await env.DB.prepare(
+    "SELECT * FROM rsvps WHERE lower(email) = lower(?1) ORDER BY datetime(submitted_at) DESC, id DESC LIMIT 1"
+  ).bind(email).first();
+
+  return ensureLegacyRsvpToken(env, row);
+}
+
 async function handlePublicRsvpGet(env, token) {
   const row = await env.DB.prepare("SELECT * FROM rsvps WHERE token = ?1 LIMIT 1").bind(token).first();
   if (!row) {
@@ -360,9 +379,7 @@ async function handlePublicRsvpRecover(request, env) {
     return Response.json({ error: "Email is required." }, { status: 400 });
   }
 
-  const row = await env.DB.prepare(
-    "SELECT * FROM rsvps WHERE lower(email) = lower(?1) ORDER BY submitted_at DESC LIMIT 1"
-  ).bind(email).first();
+  const row = await findRsvpByEmail(env, email);
 
   if (!row || !row.token) {
     return Response.json({ error: "RSVP not found." }, { status: 404 });

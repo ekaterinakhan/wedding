@@ -148,6 +148,7 @@
     "submit": "Send RSVP",
     "editCta": "Edit menu choices",
     "editLoading": "Loading your menu choices...",
+    "recoverTitle": "Already replied?",
     "recoverPrompt": "If this RSVP was saved before editing was enabled, enter your email to reopen it.",
     "recoverEmail": "Email used for RSVP",
     "recoverCta": "Find my RSVP",

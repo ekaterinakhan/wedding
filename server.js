@@ -154,6 +154,20 @@ const updateRsvpByToken = db.prepare(`
   WHERE token = @token
 `);
 
+const selectLatestRsvpByEmail = db.prepare(`
+  SELECT *
+  FROM rsvps
+  WHERE lower(email) = lower(?)
+  ORDER BY datetime(submitted_at) DESC, id DESC
+  LIMIT 1
+`);
+
+const updateRsvpTokenById = db.prepare(`
+  UPDATE rsvps
+  SET token = ?
+  WHERE id = ?
+`);
+
 const selectBoardOverrides = db.prepare(`
   SELECT
     task_id,
@@ -213,6 +227,15 @@ const upsertBoardOverride = db.prepare(`
 `);
 
 app.use(express.json());
+
+function ensureLegacyRsvpToken(row) {
+  if (!row) return null;
+  if (row.token) return row;
+
+  const token = crypto.randomUUID();
+  updateRsvpTokenById.run(token, row.id);
+  return { ...row, token };
+}
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -758,9 +781,7 @@ app.post("/api/rsvps/recover", (req, res) => {
     return;
   }
 
-  const row = db.prepare(
-    "SELECT * FROM rsvps WHERE lower(email) = lower(?) ORDER BY submitted_at DESC LIMIT 1"
-  ).get(email);
+  const row = ensureLegacyRsvpToken(selectLatestRsvpByEmail.get(email));
 
   if (!row || !row.token) {
     res.status(404).json({ error: "RSVP not found." });
