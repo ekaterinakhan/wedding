@@ -61,34 +61,92 @@ function CourseChoiceField({ sectionId, title, options, value, onChange }) {
   return (
     <div className="grid gap-3">
       <p className="text-sm font-medium uppercase tracking-[0.12em] text-[#4d6858]">{title}</p>
-      <div className="grid gap-2">
+      <div className="grid gap-2.5">
         {options.map((option) => {
           const visual = getMenuOptionVisual(sectionId, option.id);
           const Glyph = visual.glyph;
           const selected = value === option.label;
           return (
-            <button
+            <motion.button
               key={option.id}
               type="button"
               onClick={() => onChange(option.label)}
-              className={`rounded-[16px] border px-4 py-3 text-left text-sm leading-6 transition ${
+              aria-pressed={selected}
+              animate={{ scale: selected ? 1.01 : 1 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ type: "spring", stiffness: 360, damping: 24 }}
+              className={`group relative rounded-[18px] pl-4 pr-12 py-3.5 text-left text-sm leading-6 transition-colors duration-200 ${
                 selected
-                  ? "border-[rgba(74,99,85,0.28)] bg-[rgba(255,255,255,0.96)] text-[#1e2a22] shadow-[0_10px_24px_rgba(72,40,23,0.04)]"
-                  : "border-[rgba(53,75,62,0.10)] bg-white/75 text-[#354b3e] hover:border-[rgba(53,75,62,0.22)] hover:bg-white"
+                  ? "bg-[rgba(74,99,85,0.09)] text-[#1e2a22]"
+                  : "bg-white/80 text-[#354b3e] hover:bg-white"
               }`}
+              style={
+                selected
+                  ? {
+                      boxShadow:
+                        "0 0 0 2px #4a6355, 0 12px 28px rgba(74,99,85,0.22)",
+                    }
+                  : {
+                      boxShadow:
+                        "0 0 0 1px rgba(53,75,62,0.14), 0 1px 2px rgba(72,40,23,0.03)",
+                    }
+              }
             >
               <span className="flex items-start gap-3">
-                <span className={`mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border ${visual.bg} ${visual.border} ${visual.color}`}>
+                <span
+                  className={`mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors duration-200 ${
+                    selected
+                      ? "border-[#3e5448] bg-[#4a6355] text-white"
+                      : `${visual.bg} ${visual.color} ${visual.border}`
+                  }`}
+                >
                   <Glyph />
                 </span>
                 <span className="grid gap-0.5">
-                  <span className="font-medium">{option.label}</span>
+                  <span className={`font-medium ${selected ? "text-[#1e2a22]" : ""}`}>
+                    {option.label}
+                  </span>
                   {option.description ? (
                     <span className="text-xs italic text-[#6a7f7a]">{option.description}</span>
                   ) : null}
+                  {selected ? (
+                    <motion.span
+                      initial={{ opacity: 0, y: -2 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.18 }}
+                      className="mt-1 inline-flex w-fit items-center gap-1 rounded-full bg-[#4a6355] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white"
+                    >
+                      Picked
+                    </motion.span>
+                  ) : null}
                 </span>
               </span>
-            </button>
+              <AnimatePresence initial={false}>
+                {selected ? (
+                  <motion.span
+                    key="check"
+                    initial={{ opacity: 0, scale: 0.4, rotate: -12 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    transition={{ type: "spring", stiffness: 420, damping: 22 }}
+                    className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-[#4a6355] text-white shadow-[0_6px_14px_rgba(74,99,85,0.35)]"
+                    aria-hidden="true"
+                  >
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12.5l4 4L19 6.5" />
+                    </svg>
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="empty"
+                    initial={false}
+                    className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full"
+                    style={{ boxShadow: "inset 0 0 0 1.5px rgba(53,75,62,0.20)" }}
+                    aria-hidden="true"
+                  />
+                )}
+              </AnimatePresence>
+            </motion.button>
           );
         })}
       </div>
