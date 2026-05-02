@@ -713,6 +713,61 @@ function findRsvpForLookup(contact) {
   );
 }
 
+const insertRsvpAdmin = db.prepare(`
+  INSERT INTO rsvps (
+    submitted_at, language, name, email, phone, attendance, events,
+    menu, starter, main, dessert,
+    transfer, dietary, notes,
+    plus_one, plus_one_name, plus_one_menu, plus_one_starter, plus_one_main, plus_one_dessert,
+    arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size,
+    kids, token
+  ) VALUES (
+    @submittedAt, @language, @name, @email, @phone, @attendance, @events,
+    '', '', '', '',
+    @transfer, @dietary, @notes,
+    @plusOne, @plusOneName, '', '', '', '',
+    @arrivalDateTime, @arrivalLocation, @returnDateTime, @returnLocation, @transferPartySize,
+    @kids, @token
+  )
+`);
+
+app.post("/api/private/rsvps", requireBoardAuth, (req, res) => {
+  const name = (req.body.name || "").trim();
+  if (!name) {
+    res.status(400).json({ error: "Name is required." });
+    return;
+  }
+
+  const token = crypto.randomUUID();
+  const kids = Array.isArray(req.body.kids)
+    ? req.body.kids.slice(0, 3).filter((k) => (k?.name || "").trim())
+    : [];
+
+  const result = insertRsvpAdmin.run({
+    submittedAt: new Date().toISOString(),
+    language: req.body.language || "en",
+    name,
+    email: (req.body.email || "").trim(),
+    phone: (req.body.phone || "").trim(),
+    attendance: req.body.attendance || "yes",
+    events: req.body.events || "",
+    transfer: req.body.transfer || "",
+    dietary: (req.body.dietary || "").trim(),
+    notes: (req.body.notes || "").trim(),
+    plusOne: req.body.plus_one || "no",
+    plusOneName: (req.body.plus_one_name || "").trim(),
+    arrivalDateTime: (req.body.arrival_datetime || "").trim(),
+    arrivalLocation: (req.body.arrival_location || "").trim(),
+    returnDateTime: (req.body.return_datetime || "").trim(),
+    returnLocation: (req.body.return_location || "").trim(),
+    transferPartySize: (req.body.transfer_party_size || "").trim(),
+    kids: JSON.stringify(kids),
+    token,
+  });
+
+  res.status(201).json({ ok: true, id: result.lastInsertRowid, token });
+});
+
 const selectRsvpById = db.prepare("SELECT * FROM rsvps WHERE id = ?");
 const updateRsvpMenuById = db.prepare(`
   UPDATE rsvps

@@ -828,6 +828,249 @@ function EditModal({ family, onClose, onSave }) {
   );
 }
 
+function AddGuestModal({ onClose, onSave }) {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    attendance: "yes",
+    events: "weddingAndBrunch",
+    dietary: "",
+    notes: "",
+    plus_one: "no",
+    plus_one_name: "",
+    transfer: "",
+    arrival_datetime: "",
+    arrival_location: "",
+    return_datetime: "",
+    return_location: "",
+    transfer_party_size: "",
+    children: [],
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  function set(field) { return (e) => setForm((f) => ({ ...f, [field]: e.target.value })); }
+  function setChild(i, field) {
+    return (e) => setForm((f) => ({ ...f, children: f.children.map((c, j) => (j === i ? { ...c, [field]: e.target.value } : c)) }));
+  }
+  function addChild() {
+    setForm((f) => f.children.length >= 3 ? f : { ...f, children: [...f.children, { name: "", dietary: "" }] });
+  }
+  function removeChild(i) {
+    setForm((f) => ({ ...f, children: f.children.filter((_, j) => j !== i) }));
+  }
+
+  async function handleSave() {
+    if (!form.name.trim()) {
+      setError("A name is required.");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    try {
+      const payload = { ...form, kids: form.children };
+      delete payload.children;
+      const res = await fetch("/api/private/rsvps", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) onSave();
+      else {
+        const json = await res.json().catch(() => ({}));
+        setError(json.error || "Failed to add.");
+      }
+    } catch { setError("Network error."); }
+    finally { setSaving(false); }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: "rgba(26,37,32,0.45)", backdropFilter: "blur(6px)" }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 12, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full max-w-[600px] max-h-[90vh] flex flex-col rounded-[14px] overflow-hidden"
+        style={{
+          background: PALETTE.paperHi,
+          border: `1px solid ${PALETTE.edge}`,
+          boxShadow: "0 30px 80px rgba(26,37,32,0.25)",
+        }}
+      >
+        <div
+          className="px-6 py-5 flex items-center justify-between gap-4"
+          style={{ borderBottom: `1px solid ${PALETTE.edge}` }}
+        >
+          <div>
+            <Kicker>New dossier</Kicker>
+            <h3 className="font-serif italic mt-1" style={{ color: PALETTE.ink, fontSize: 24 }}>
+              Add a guest
+            </h3>
+            <p className="text-[12px] mt-1" style={{ color: PALETTE.mist }}>
+              For folks who didn't make it to the form. You can pick their menu in the Service tab afterwards.
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-2xl leading-none"
+            style={{ color: PALETTE.mist }}
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="overflow-y-auto px-6 py-5 flex flex-col gap-7">
+          <section className="flex flex-col gap-4">
+            <Kicker accent="sage">Primary</Kicker>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <FieldGroup label="Name *"><FieldInput value={form.name} onChange={set("name")} placeholder="Required" /></FieldGroup>
+              <FieldGroup label="Email"><FieldInput value={form.email} onChange={set("email")} type="email" placeholder="optional" /></FieldGroup>
+              <FieldGroup label="Phone"><FieldInput value={form.phone} onChange={set("phone")} placeholder="optional" /></FieldGroup>
+            </div>
+            <FieldGroup label="Attendance">
+              <PillToggle
+                value={form.attendance}
+                onChange={(v) => setForm((f) => ({ ...f, attendance: v }))}
+                options={[["yes", "Attending"], ["no", "Declined"]]}
+              />
+            </FieldGroup>
+            {form.attendance !== "no" && (
+              <FieldGroup label="Events">
+                <PillToggle
+                  value={form.events}
+                  onChange={(v) => setForm((f) => ({ ...f, events: v }))}
+                  options={[["weddingAndBrunch", "Wedding + Brunch"], ["weddingOnly", "Wedding only"], ["brunchOnly", "Brunch only"]]}
+                />
+              </FieldGroup>
+            )}
+            <FieldGroup label="Dietary">
+              <FieldInput value={form.dietary} onChange={set("dietary")} placeholder="None" />
+            </FieldGroup>
+            <FieldGroup label="Notes">
+              <textarea
+                value={form.notes}
+                onChange={set("notes")}
+                rows={2}
+                className="w-full px-3 py-2 outline-none resize-none focus:ring-2"
+                style={{
+                  background: PALETTE.paperHi,
+                  border: `1px solid ${PALETTE.edge}`,
+                  borderRadius: 8,
+                  fontSize: 13,
+                  fontFamily: "Manrope, sans-serif",
+                  color: PALETTE.ink,
+                }}
+              />
+            </FieldGroup>
+          </section>
+
+          <section className="flex flex-col gap-4">
+            <Kicker accent="sage">Plus-one</Kicker>
+            <FieldGroup label="Bringing a +1?">
+              <PillToggle
+                value={form.plus_one}
+                onChange={(v) => setForm((f) => ({ ...f, plus_one: v, plus_one_name: v === "yes" ? f.plus_one_name : "" }))}
+                options={[["no", "No"], ["yes", "Yes"]]}
+              />
+            </FieldGroup>
+            {form.plus_one === "yes" && (
+              <FieldGroup label="+1 name"><FieldInput value={form.plus_one_name} onChange={set("plus_one_name")} /></FieldGroup>
+            )}
+          </section>
+
+          <section className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <Kicker accent="sage">Children</Kicker>
+              {form.children.length < 3 && (
+                <button
+                  type="button"
+                  onClick={addChild}
+                  className="text-[11px] font-semibold uppercase"
+                  style={{ letterSpacing: "0.2em", color: PALETTE.gold }}
+                >
+                  + Add child
+                </button>
+              )}
+            </div>
+            {form.children.length === 0 ? (
+              <p className="text-[12px] italic" style={{ color: PALETTE.mistSoft, fontFamily: "Cormorant Garamond, serif" }}>
+                None.
+              </p>
+            ) : (
+              form.children.map((child, i) => (
+                <div key={i} className="grid sm:grid-cols-[1fr_1fr_auto] gap-3 items-end">
+                  <FieldGroup label={`Child ${i + 1}`}><FieldInput value={child.name} onChange={setChild(i, "name")} /></FieldGroup>
+                  <FieldGroup label="Dietary"><FieldInput value={child.dietary} onChange={setChild(i, "dietary")} placeholder="None" /></FieldGroup>
+                  <button
+                    type="button"
+                    onClick={() => removeChild(i)}
+                    className="px-3 py-2 text-[11px] font-semibold uppercase"
+                    style={{ letterSpacing: "0.2em", color: PALETTE.terracotta }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))
+            )}
+          </section>
+
+          <section className="flex flex-col gap-4">
+            <Kicker accent="sage">Transport (optional)</Kicker>
+            <FieldGroup label="Needs transfer?">
+              <PillToggle
+                value={form.transfer}
+                onChange={(v) => setForm((f) => ({ ...f, transfer: v }))}
+                options={[["", "Skip"], ["yes", "Yes"], ["no", "No"]]}
+              />
+            </FieldGroup>
+            {form.transfer === "yes" && (
+              <div className="grid sm:grid-cols-2 gap-3">
+                <FieldGroup label="Arrival date/time"><FieldInput value={form.arrival_datetime} onChange={set("arrival_datetime")} placeholder="9 May 10:00" /></FieldGroup>
+                <FieldGroup label="Arrival location"><FieldInput value={form.arrival_location} onChange={set("arrival_location")} placeholder="CDG, Orly..." /></FieldGroup>
+                <FieldGroup label="Return date/time"><FieldInput value={form.return_datetime} onChange={set("return_datetime")} placeholder="10 May 17:00" /></FieldGroup>
+                <FieldGroup label="Return location"><FieldInput value={form.return_location} onChange={set("return_location")} placeholder="CDG, Orly..." /></FieldGroup>
+                <FieldGroup label="Party size"><FieldInput value={form.transfer_party_size} onChange={set("transfer_party_size")} type="number" /></FieldGroup>
+              </div>
+            )}
+          </section>
+
+          {error && <p style={{ color: PALETTE.terracotta }} className="text-sm">{error}</p>}
+        </div>
+
+        <div className="px-6 py-4 flex justify-end gap-3" style={{ borderTop: `1px solid ${PALETTE.edge}` }}>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-[11px] font-semibold uppercase"
+            style={{ letterSpacing: "0.22em", color: PALETTE.mist }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="px-5 py-2 rounded-full text-[11px] font-semibold uppercase transition disabled:opacity-60"
+            style={{
+              letterSpacing: "0.22em",
+              background: PALETTE.sageDeep,
+              color: PALETTE.paper,
+              border: `1px solid ${PALETTE.sageDeep}`,
+            }}
+          >
+            {saving ? "Adding…" : "Add guest"}
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 function DeleteModal({ family, onClose, onConfirm }) {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
@@ -1307,6 +1550,7 @@ function FamiliesTab({ families, refresh }) {
   const declined = families.filter((f) => !f.attending);
   const [editingFamily, setEditingFamily] = useState(null);
   const [deletingFamily, setDeletingFamily] = useState(null);
+  const [adding, setAdding] = useState(false);
 
   return (
     <div className="flex flex-col gap-8">
@@ -1324,12 +1568,34 @@ function FamiliesTab({ families, refresh }) {
           onConfirm={() => { setDeletingFamily(null); refresh(); }}
         />
       )}
+      {adding && (
+        <AddGuestModal
+          onClose={() => setAdding(false)}
+          onSave={() => { setAdding(false); refresh(); }}
+        />
+      )}
 
-      <SectionTitle
-        kicker="The roster"
-        title="Families"
-        sub={`${attending.length} attending · ${declined.length} declined`}
-      />
+      <div className="flex items-end justify-between gap-4 flex-wrap">
+        <SectionTitle
+          kicker="The roster"
+          title="Families"
+          sub={`${attending.length} attending · ${declined.length} declined`}
+        />
+        <button
+          type="button"
+          onClick={() => setAdding(true)}
+          className="px-5 py-2.5 rounded-full text-[11px] font-semibold uppercase transition"
+          style={{
+            letterSpacing: "0.22em",
+            background: PALETTE.sageDeep,
+            color: PALETTE.paper,
+            border: `1px solid ${PALETTE.sageDeep}`,
+            boxShadow: "0 8px 22px rgba(45,67,57,0.18)",
+          }}
+        >
+          + Add a guest
+        </button>
+      </div>
 
       {attending.length === 0 ? (
         <Surface className="p-12 text-center">

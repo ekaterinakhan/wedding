@@ -92,6 +92,7 @@ export default {
       if (!(await isAuthenticated(request, env))) {
         return Response.json({ error: "Authentication required." }, { status: 401 });
       }
+      if (request.method === "POST") return handleAdminCreateGuest(request, env);
       return handlePrivateRsvps(env);
     }
 
@@ -476,6 +477,59 @@ async function handleUpdateFamily(request, env, rsvpId) {
   }
 
   return Response.json({ ok: true });
+}
+
+async function handleAdminCreateGuest(request, env) {
+  let body;
+  try { body = await request.json(); }
+  catch { return Response.json({ error: "Invalid JSON." }, { status: 400 }); }
+
+  const name = (body.name || "").trim();
+  if (!name) return Response.json({ error: "Name is required." }, { status: 400 });
+
+  const submittedAt = new Date().toISOString();
+  const token = crypto.randomUUID();
+  const kids = Array.isArray(body.kids)
+    ? body.kids.slice(0, 3).filter((k) => (k?.name || "").trim()).map((k) => ({
+        name: String(k.name || "").trim(),
+        dietary: String(k.dietary || "").trim(),
+      }))
+    : [];
+  const plusOne = body.plus_one === "yes" ? "yes" : "no";
+  const plusOneName = plusOne === "yes" ? (body.plus_one_name || "").trim() : "";
+
+  const result = await env.DB.prepare(`
+    INSERT INTO rsvps (
+      submitted_at, language, name, email, phone, attendance, events,
+      menu, starter, main, dessert, transfer, dietary, notes,
+      plus_one, plus_one_name, plus_one_menu, plus_one_starter, plus_one_main, plus_one_dessert,
+      arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size,
+      token, kids
+    ) VALUES (?1,?2,?3,?4,?5,?6,?7,'','','','',?8,?9,?10,?11,?12,'','','','',?13,?14,?15,?16,?17,?18,?19)
+    RETURNING id
+  `).bind(
+    submittedAt,
+    body.language || "en",
+    name,
+    (body.email || "").trim(),
+    (body.phone || "").trim(),
+    body.attendance || "yes",
+    body.events || "",
+    body.transfer || "",
+    (body.dietary || "").trim(),
+    (body.notes || "").trim(),
+    plusOne,
+    plusOneName,
+    (body.arrival_datetime || "").trim(),
+    (body.arrival_location || "").trim(),
+    (body.return_datetime || "").trim(),
+    (body.return_location || "").trim(),
+    (body.transfer_party_size || "").trim(),
+    token,
+    kids.length > 0 ? JSON.stringify(kids) : null,
+  ).first();
+
+  return Response.json({ ok: true, id: result.id, token }, { status: 201 });
 }
 
 async function handlePrivateRsvps(env) {
