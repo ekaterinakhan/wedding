@@ -384,101 +384,175 @@ async function handleUpdateFamily(request, env, rsvpId) {
   try { body = await request.json(); }
   catch { return Response.json({ error: "Invalid JSON." }, { status: 400 }); }
 
-  const primary = await env.DB.prepare(
-    "SELECT id FROM guests WHERE rsvp_id = ?1 AND guest_type = 'primary'"
+  const row = await env.DB.prepare("SELECT * FROM rsvps WHERE id = ?1 LIMIT 1").bind(rsvpId).first();
+  if (!row) return Response.json({ error: "Not found." }, { status: 404 });
+
+  const name = (body.name ?? row.name ?? "").trim();
+  const email = (body.email ?? row.email ?? "").trim();
+  const phone = (body.phone ?? row.phone ?? "").trim();
+  const attendance = body.attendance ?? row.attendance ?? "";
+  const events = body.events ?? row.events ?? "";
+  const dietary = (body.dietary ?? row.dietary ?? "").trim();
+  const notes = (body.notes ?? row.notes ?? "").trim();
+  const menu = body.menu ?? row.menu ?? "";
+  const transfer = body.transfer ?? row.transfer ?? "";
+  const arrivalDatetime = (body.arrival_datetime ?? row.arrival_datetime ?? "").trim();
+  const arrivalLocation = (body.arrival_location ?? row.arrival_location ?? "").trim();
+  const returnDatetime = (body.return_datetime ?? row.return_datetime ?? "").trim();
+  const returnLocation = (body.return_location ?? row.return_location ?? "").trim();
+  const transferPartySize = (body.transfer_party_size ?? row.transfer_party_size ?? "").trim();
+  const plusOneName = (body.plus_one_name ?? row.plus_one_name ?? "").trim();
+  const plusOneMenu = body.plus_one_menu ?? row.plus_one_menu ?? "";
+
+  let kidsJson = row.kids;
+  if (Array.isArray(body.children)) {
+    let existingKids = [];
+    try { existingKids = JSON.parse(row.kids || "[]"); } catch { existingKids = []; }
+    const merged = body.children.map((child, i) => ({
+      name: (child.name || "").trim(),
+      dietary: (child.dietary || "").trim() || existingKids[i]?.dietary || "",
+    })).filter((kid) => kid.name);
+    kidsJson = merged.length > 0 ? JSON.stringify(merged) : null;
+  }
+
+  await env.DB.prepare(`
+    UPDATE rsvps SET
+      name = ?2, email = ?3, phone = ?4, attendance = ?5, events = ?6,
+      menu = ?7, dietary = ?8, notes = ?9,
+      transfer = ?10, arrival_datetime = ?11, arrival_location = ?12,
+      return_datetime = ?13, return_location = ?14, transfer_party_size = ?15,
+      plus_one_name = ?16, plus_one_menu = ?17, kids = ?18
+    WHERE id = ?1
+  `).bind(
+    rsvpId,
+    name, email, phone, attendance, events,
+    menu, dietary, notes,
+    transfer, arrivalDatetime, arrivalLocation,
+    returnDatetime, returnLocation, transferPartySize,
+    plusOneName, plusOneMenu, kidsJson,
+  ).run();
+
+  // Best-effort sync to denormalized tables for any consumers still reading them
+  const primaryGuest = await env.DB.prepare(
+    "SELECT id FROM guests WHERE rsvp_id = ?1 AND guest_type = 'primary' LIMIT 1"
   ).bind(rsvpId).first();
 
-  if (!primary) return Response.json({ error: "Not found." }, { status: 404 });
+  if (primaryGuest) {
+    await env.DB.batch([
+      env.DB.prepare(`
+        UPDATE guests SET name=?1, email=?2, phone=?3, attendance=?4, events=?5, dietary=?6, notes=?7
+        WHERE id=?8
+      `).bind(name, email, phone, attendance, events, dietary, notes, primaryGuest.id),
+      env.DB.prepare("UPDATE guest_menus SET menu=?1 WHERE guest_id=?2").bind(menu, primaryGuest.id),
+      env.DB.prepare("DELETE FROM guest_transfers WHERE guest_id=?1").bind(primaryGuest.id),
+      env.DB.prepare(`
+        INSERT INTO guest_transfers (guest_id, needs_transfer, arrival_datetime, arrival_location, return_datetime, return_location, party_size)
+        VALUES (?1,?2,?3,?4,?5,?6,?7)
+      `).bind(primaryGuest.id, transfer, arrivalDatetime, arrivalLocation, returnDatetime, returnLocation, transferPartySize),
+    ]);
 
-  const guestId = primary.id;
-
-  let plusOneId = null;
-  if (body.plus_one_name !== undefined) {
-    const plusOne = await env.DB.prepare(
-      "SELECT id FROM guests WHERE rsvp_id = ?1 AND guest_type = 'plus_one'"
+    const plusOneGuest = await env.DB.prepare(
+      "SELECT id FROM guests WHERE rsvp_id = ?1 AND guest_type = 'plus_one' LIMIT 1"
     ).bind(rsvpId).first();
-    if (plusOne) plusOneId = plusOne.id;
-  }
+    if (plusOneGuest) {
+      await env.DB.batch([
+        env.DB.prepare("UPDATE guests SET name=?1 WHERE id=?2").bind(plusOneName, plusOneGuest.id),
+        env.DB.prepare("UPDATE guest_menus SET menu=?1 WHERE guest_id=?2").bind(plusOneMenu, plusOneGuest.id),
+      ]);
+    }
 
-  const statements = [
-    env.DB.prepare(`
-      UPDATE guests SET name=?1, email=?2, phone=?3, attendance=?4, events=?5, dietary=?6, notes=?7
-      WHERE id=?8
-    `).bind(
-      (body.name || "").trim(), (body.email || "").trim(), (body.phone || "").trim(),
-      body.attendance || "", body.events || "",
-      (body.dietary || "").trim(), (body.notes || "").trim(), guestId
-    ),
-    env.DB.prepare("UPDATE guest_menus SET menu=?1 WHERE guest_id=?2")
-      .bind(body.menu || "", guestId),
-    env.DB.prepare("DELETE FROM guest_transfers WHERE guest_id=?1").bind(guestId),
-    env.DB.prepare(`
-      INSERT INTO guest_transfers (guest_id, needs_transfer, arrival_datetime, arrival_location, return_datetime, return_location, party_size)
-      VALUES (?1,?2,?3,?4,?5,?6,?7)
-    `).bind(
-      guestId, body.transfer || "",
-      (body.arrival_datetime || "").trim(), (body.arrival_location || "").trim(),
-      (body.return_datetime || "").trim(), (body.return_location || "").trim(),
-      (body.transfer_party_size || "").trim()
-    ),
-  ];
-
-  if (plusOneId) {
-    statements.push(
-      env.DB.prepare("UPDATE guests SET name=?1 WHERE id=?2")
-        .bind((body.plus_one_name || "").trim(), plusOneId)
-    );
-    if (body.plus_one_menu !== undefined) {
-      statements.push(
-        env.DB.prepare("UPDATE guest_menus SET menu=?1 WHERE guest_id=?2")
-          .bind(body.plus_one_menu || "", plusOneId)
-      );
+    if (Array.isArray(body.children) && body.children.length > 0) {
+      const { results: childRows } = await env.DB.prepare(
+        "SELECT id FROM guests WHERE rsvp_id = ?1 AND guest_type = 'child' ORDER BY id"
+      ).bind(rsvpId).all();
+      const updates = childRows.map((c, i) => {
+        const incoming = body.children[i];
+        if (!incoming) return null;
+        return env.DB.prepare("UPDATE guests SET name=?1, dietary=?2 WHERE id=?3")
+          .bind((incoming.name || "").trim(), (incoming.dietary || "").trim(), c.id);
+      }).filter(Boolean);
+      if (updates.length > 0) await env.DB.batch(updates);
     }
   }
 
-  if (Array.isArray(body.children)) {
-    for (const child of body.children) {
-      if (!child.id) continue;
-      statements.push(
-        env.DB.prepare("UPDATE guests SET name=?1, dietary=?2 WHERE id=?3 AND rsvp_id=?4")
-          .bind((child.name || "").trim(), (child.dietary || "").trim(), child.id, rsvpId)
-      );
-    }
-  }
-
-  await env.DB.batch(statements);
   return Response.json({ ok: true });
 }
 
 async function handlePrivateRsvps(env) {
-  const { results } = await env.DB.prepare(`
-    SELECT
-      g.id,
-      g.submitted_at,
-      g.name,
-      g.email,
-      g.phone,
-      g.attendance,
-      g.events,
-      g.dietary,
-      g.notes,
-      g.guest_type,
-      g.primary_guest_id,
-      g.rsvp_id,
-      gm.menu,
-      gm.starter,
-      gm.main,
-      gm.dessert,
-      gt.needs_transfer AS transfer,
-      gt.arrival_datetime,
-      gt.arrival_location,
-      gt.return_datetime,
-      gt.return_location,
-      gt.party_size AS transfer_party_size
-    FROM guests g
-    LEFT JOIN guest_menus gm ON gm.guest_id = g.id
-    LEFT JOIN guest_transfers gt ON gt.guest_id = g.id
-    ORDER BY COALESCE(g.primary_guest_id, g.id), g.primary_guest_id IS NOT NULL, g.id
+  const { results: rsvps } = await env.DB.prepare(`
+    SELECT * FROM rsvps ORDER BY datetime(submitted_at) DESC, id DESC
   `).all();
-  return Response.json(results);
+
+  const people = [];
+  let vid = 100000;
+
+  for (const r of rsvps) {
+    const attending = r.attendance !== "no";
+    people.push({
+      id: r.id,
+      submitted_at: r.submitted_at,
+      name: r.name,
+      email: r.email,
+      phone: r.phone,
+      attendance: r.attendance,
+      events: r.events,
+      guest_type: "primary",
+      primary_guest_id: null,
+      rsvp_id: r.id,
+      menu: r.menu,
+      starter: r.starter,
+      main: r.main,
+      dessert: r.dessert,
+      dietary: r.dietary,
+      notes: r.notes,
+      transfer: r.transfer,
+      arrival_datetime: r.arrival_datetime,
+      arrival_location: r.arrival_location,
+      return_datetime: r.return_datetime,
+      return_location: r.return_location,
+      transfer_party_size: r.transfer_party_size,
+    });
+
+    if (!attending) continue;
+
+    if (r.plus_one === "yes" && r.plus_one_name) {
+      people.push({
+        id: vid++,
+        submitted_at: r.submitted_at,
+        name: r.plus_one_name,
+        guest_type: "plus_one",
+        primary_guest_id: r.id,
+        rsvp_id: r.id,
+        menu: r.plus_one_menu,
+        starter: r.plus_one_starter,
+        main: r.plus_one_main,
+        dessert: r.plus_one_dessert,
+        dietary: null,
+        notes: null,
+        events: r.events,
+        attendance: "yes",
+      });
+    }
+
+    let kids = [];
+    try { kids = JSON.parse(r.kids || "[]"); } catch { /* empty */ }
+    for (const kid of kids) {
+      people.push({
+        id: vid++,
+        submitted_at: r.submitted_at,
+        name: kid.name,
+        guest_type: "child",
+        primary_guest_id: r.id,
+        rsvp_id: r.id,
+        menu: "kids",
+        dietary: kid.dietary,
+        notes: null,
+        events: r.events,
+        attendance: "yes",
+      });
+    }
+  }
+
+  return Response.json(people);
 }
+
