@@ -498,38 +498,45 @@ async function handleAdminCreateGuest(request, env) {
   const plusOne = body.plus_one === "yes" ? "yes" : "no";
   const plusOneName = plusOne === "yes" ? (body.plus_one_name || "").trim() : "";
 
-  const result = await env.DB.prepare(`
-    INSERT INTO rsvps (
-      submitted_at, language, name, email, phone, attendance, events,
-      menu, starter, main, dessert, transfer, dietary, notes,
-      plus_one, plus_one_name, plus_one_menu, plus_one_starter, plus_one_main, plus_one_dessert,
-      arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size,
-      token, kids
-    ) VALUES (?1,?2,?3,?4,?5,?6,?7,'','','','',?8,?9,?10,?11,?12,'','','','',?13,?14,?15,?16,?17,?18,?19)
-    RETURNING id
-  `).bind(
-    submittedAt,
-    body.language || "en",
-    name,
-    (body.email || "").trim(),
-    (body.phone || "").trim(),
-    body.attendance || "yes",
-    body.events || "",
-    body.transfer || "",
-    (body.dietary || "").trim(),
-    (body.notes || "").trim(),
-    plusOne,
-    plusOneName,
-    (body.arrival_datetime || "").trim(),
-    (body.arrival_location || "").trim(),
-    (body.return_datetime || "").trim(),
-    (body.return_location || "").trim(),
-    (body.transfer_party_size || "").trim(),
-    token,
-    kids.length > 0 ? JSON.stringify(kids) : null,
-  ).first();
+  try {
+    const insert = await env.DB.prepare(`
+      INSERT INTO rsvps (
+        submitted_at, language, name, email, phone, attendance, events,
+        menu, starter, main, dessert, transfer, dietary, notes,
+        plus_one, plus_one_name, plus_one_menu, plus_one_starter, plus_one_main, plus_one_dessert,
+        arrival_datetime, arrival_location, return_datetime, return_location, transfer_party_size,
+        token, kids
+      ) VALUES (?1,?2,?3,?4,?5,?6,?7,'','','','',?8,?9,?10,?11,?12,'','','','',?13,?14,?15,?16,?17,?18,?19)
+    `).bind(
+      submittedAt,
+      body.language || "en",
+      name,
+      (body.email || "").trim(),
+      (body.phone || "").trim(),
+      body.attendance || "yes",
+      body.events || "",
+      body.transfer || "",
+      (body.dietary || "").trim(),
+      (body.notes || "").trim(),
+      plusOne,
+      plusOneName,
+      (body.arrival_datetime || "").trim(),
+      (body.arrival_location || "").trim(),
+      (body.return_datetime || "").trim(),
+      (body.return_location || "").trim(),
+      (body.transfer_party_size || "").trim(),
+      token,
+      kids.length > 0 ? JSON.stringify(kids) : null,
+    ).run();
 
-  return Response.json({ ok: true, id: result.id, token }, { status: 201 });
+    const id = insert?.meta?.last_row_id ?? null;
+    return Response.json({ ok: true, id, token }, { status: 201 });
+  } catch (err) {
+    return Response.json(
+      { error: "Insert failed.", detail: String(err?.message || err) },
+      { status: 500 }
+    );
+  }
 }
 
 async function handlePrivateRsvps(env) {

@@ -880,7 +880,7 @@ function AddGuestModal({ onClose, onSave }) {
       if (res.ok) onSave();
       else {
         const json = await res.json().catch(() => ({}));
-        setError(json.error || "Failed to add.");
+        setError([json.error, json.detail].filter(Boolean).join(" — ") || "Failed to add.");
       }
     } catch { setError("Network error."); }
     finally { setSaving(false); }
