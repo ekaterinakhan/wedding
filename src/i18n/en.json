@@ -123,6 +123,7 @@
     "submitting": "Saving...",
     "menuMissing": "Please choose one starter, one main course, and one dessert.",
     "plusOneMenuMissing": "Please choose one starter, one main course, and one dessert for your +1.",
+    "pickedLabel": "Picked",
     "savedTitle": "Menu saved",
     "savedNote": "Got it. You can still come back here to update your choices any time before the day.",
     "editCta": "Edit my choices"

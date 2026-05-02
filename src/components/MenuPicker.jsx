@@ -57,7 +57,7 @@ function getMenuOptionVisual(sectionId, optionId) {
   return { glyph: LeafGlyph, ...tone.vegetarian };
 }
 
-function CourseChoiceField({ sectionId, title, options, value, onChange }) {
+function CourseChoiceField({ sectionId, title, options, value, onChange, pickedLabel }) {
   return (
     <div className="grid gap-3">
       <p className="text-sm font-medium uppercase tracking-[0.12em] text-[#4d6858]">{title}</p>
@@ -116,7 +116,7 @@ function CourseChoiceField({ sectionId, title, options, value, onChange }) {
                       transition={{ duration: 0.18 }}
                       className="mt-1 inline-flex w-fit items-center gap-1 rounded-full bg-[#4a6355] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white"
                     >
-                      Picked
+                      {pickedLabel}
                     </motion.span>
                   ) : null}
                 </span>
@@ -154,7 +154,7 @@ function CourseChoiceField({ sectionId, title, options, value, onChange }) {
   );
 }
 
-function GuestMenuChoices({ title, fields, sections, selection, onSelectionChange }) {
+function GuestMenuChoices({ title, fields, sections, selection, onSelectionChange, pickedLabel }) {
   return (
     <div className="grid gap-5 rounded-[24px] border border-[rgba(53,75,62,0.1)] bg-white/70 p-5">
       <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#4d6858]">{title}</p>
@@ -166,6 +166,7 @@ function GuestMenuChoices({ title, fields, sections, selection, onSelectionChang
           options={section.options}
           value={selection[section.id]}
           onChange={(nextValue) => onSelectionChange(section.id, nextValue)}
+          pickedLabel={pickedLabel}
         />
       ))}
     </div>
@@ -385,6 +386,7 @@ export function MenuPicker({ t, sections }) {
           fields={fields}
           sections={sections}
           selection={primarySelection}
+          pickedLabel={tt.pickedLabel}
           onSelectionChange={(courseId, value) => {
             setPrimarySelection((prev) => ({ ...prev, [courseId]: value }));
             if (status.type === "error") setStatus({ type: "", message: "" });
@@ -396,6 +398,7 @@ export function MenuPicker({ t, sections }) {
             fields={fields}
             sections={sections}
             selection={plusOneSelection}
+            pickedLabel={tt.pickedLabel}
             onSelectionChange={(courseId, value) => {
               setPlusOneSelection((prev) => ({ ...prev, [courseId]: value }));
               if (status.type === "error") setStatus({ type: "", message: "" });

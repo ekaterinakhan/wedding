@@ -115,6 +115,7 @@
     "submitting": "Enregistrement...",
     "menuMissing": "Merci de choisir une entrée, un plat et un dessert.",
     "plusOneMenuMissing": "Merci de choisir une entrée, un plat et un dessert pour votre +1.",
+    "pickedLabel": "Choisi",
     "savedTitle": "Menu enregistré",
     "savedNote": "C'est noté. Vous pouvez revenir modifier vos choix à tout moment avant le jour J.",
     "editCta": "Modifier mes choix"
