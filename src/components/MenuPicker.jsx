@@ -81,7 +81,12 @@ function CourseChoiceField({ sectionId, title, options, value, onChange }) {
                 <span className={`mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border ${visual.bg} ${visual.border} ${visual.color}`}>
                   <Glyph />
                 </span>
-                <span className="font-medium">{option.label}</span>
+                <span className="grid gap-0.5">
+                  <span className="font-medium">{option.label}</span>
+                  {option.description ? (
+                    <span className="text-xs italic text-[#6a7f7a]">{option.description}</span>
+                  ) : null}
+                </span>
               </span>
             </button>
           );

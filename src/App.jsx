@@ -299,7 +299,12 @@ function App() {
                             <span className={`mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${visual.bg} ${visual.color}`}>
                               <Glyph className="h-4 w-4" />
                             </span>
-                            <span>{option.label}</span>
+                            <span className="grid gap-0.5">
+                              <span>{option.label}</span>
+                              {option.description ? (
+                                <span className="text-xs italic text-[#6a7f7a]">{option.description}</span>
+                              ) : null}
+                            </span>
                           </div>
                         );
                       })}

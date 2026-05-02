@@ -40,15 +40,18 @@
         "options": [
           {
             "id": "mesclun-lardons",
-            "label": "Mesclun de salades, lardons, vinaigrette au jus"
+            "label": "Mesclun de salades, lardons, vinaigrette au jus",
+            "description": "Mixed greens with bacon and pan-jus vinaigrette"
           },
           {
             "id": "fish-tartare",
-            "label": "Tartare de poisson méditerranéen, ravigote aux agrumes et petits pois"
+            "label": "Tartare de poisson méditerranéen, ravigote aux agrumes et petits pois",
+            "description": "Mediterranean fish tartare with citrus ravigote and peas"
           },
           {
             "id": "spring-vegetable-salad",
-            "label": "Salade de mesclun, légumes de printemps (petits pois, asperges vertes et blanches, poivrons)"
+            "label": "Salade de mesclun, légumes de printemps (petits pois, asperges vertes et blanches, poivrons)",
+            "description": "Mixed greens with spring vegetables (peas, green and white asparagus, peppers)"
           }
         ]
       },
@@ -58,15 +61,18 @@
         "options": [
           {
             "id": "trout-cuttlefish",
-            "label": "Truite ou Seigne, sauce olives et riz"
+            "label": "Truite ou Seiche, sauce olives et riz",
+            "description": "Trout or cuttlefish with olive sauce and rice"
           },
           {
             "id": "chicken-poulette",
-            "label": "Suprême de volaille / sauce poulette / légumes"
+            "label": "Suprême de volaille / sauce poulette / légumes",
+            "description": "Chicken breast with poulette sauce and vegetables"
           },
           {
             "id": "quinoa-roasted-vegetables",
-            "label": "Salade de quinoa, légumes rôtis, ravigote"
+            "label": "Salade de quinoa, légumes rôtis, ravigote",
+            "description": "Quinoa salad with roasted vegetables and ravigote"
           }
         ]
       },
@@ -76,11 +82,13 @@
         "options": [
           {
             "id": "ile-flottante",
-            "label": "Île flottante, crème anglaise vanille, sauce caramel"
+            "label": "Île flottante, crème anglaise vanille, sauce caramel",
+            "description": "Floating island with vanilla custard and caramel sauce"
           },
           {
             "id": "millefeuille-fruits",
-            "label": "Mille-feuille aux fruits"
+            "label": "Mille-feuille aux fruits",
+            "description": "Fruit mille-feuille"
           }
         ]
       }
