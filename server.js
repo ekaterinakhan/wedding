@@ -564,6 +564,9 @@ app.get("/api/private/rsvps", requireBoardAuth, (_req, res) => {
       primary_guest_id: null,
       rsvp_id: r.id,
       menu: r.menu,
+      starter: r.starter,
+      main: r.main,
+      dessert: r.dessert,
       dietary: r.dietary,
       notes: r.notes,
       transfer: r.transfer,
@@ -585,6 +588,9 @@ app.get("/api/private/rsvps", requireBoardAuth, (_req, res) => {
         primary_guest_id: r.id,
         rsvp_id: r.id,
         menu: r.plus_one_menu,
+        starter: r.plus_one_starter,
+        main: r.plus_one_main,
+        dessert: r.plus_one_dessert,
         dietary: null,
         notes: null,
         events: r.events,
@@ -706,6 +712,64 @@ function findRsvpForLookup(contact) {
     }) || null
   );
 }
+
+const selectRsvpById = db.prepare("SELECT * FROM rsvps WHERE id = ?");
+const updateRsvpMenuById = db.prepare(`
+  UPDATE rsvps
+  SET
+    starter = @starter,
+    main = @main,
+    dessert = @dessert,
+    menu = @menu,
+    plus_one_starter = @plusOneStarter,
+    plus_one_main = @plusOneMain,
+    plus_one_dessert = @plusOneDessert,
+    plus_one_menu = @plusOneMenu
+  WHERE id = @id
+`);
+
+app.put("/api/private/menu/:rsvpId", requireBoardAuth, (req, res) => {
+  const rsvpId = Number(req.params.rsvpId);
+  if (!Number.isInteger(rsvpId)) {
+    res.status(400).json({ error: "Invalid id." });
+    return;
+  }
+
+  const row = selectRsvpById.get(rsvpId);
+  if (!row) {
+    res.status(404).json({ error: "Not found." });
+    return;
+  }
+
+  const primary = req.body.primary || {};
+  const hasPlusOne = row.plus_one === "yes" && (row.plus_one_name || "").trim();
+  const plusOne = hasPlusOne ? req.body.plusOne || {} : null;
+
+  const next = {
+    starter: primary.starter ?? row.starter ?? "",
+    main: primary.main ?? row.main ?? "",
+    dessert: primary.dessert ?? row.dessert ?? "",
+    plusOneStarter: hasPlusOne ? plusOne.starter ?? row.plus_one_starter ?? "" : "",
+    plusOneMain: hasPlusOne ? plusOne.main ?? row.plus_one_main ?? "" : "",
+    plusOneDessert: hasPlusOne ? plusOne.dessert ?? row.plus_one_dessert ?? "" : ""
+  };
+
+  updateRsvpMenuById.run({
+    id: rsvpId,
+    starter: next.starter,
+    main: next.main,
+    dessert: next.dessert,
+    menu: [next.starter, next.main, next.dessert].filter(Boolean).join(" | "),
+    plusOneStarter: next.plusOneStarter,
+    plusOneMain: next.plusOneMain,
+    plusOneDessert: next.plusOneDessert,
+    plusOneMenu: hasPlusOne
+      ? [next.plusOneStarter, next.plusOneMain, next.plusOneDessert].filter(Boolean).join(" | ")
+      : ""
+  });
+
+  res.json({ ok: true });
+});
 
 app.post("/api/menu/lookup", (req, res) => {
   const row = ensureLegacyRsvpToken(findRsvpForLookup(req.body.contact));

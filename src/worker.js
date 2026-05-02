@@ -106,6 +106,16 @@ export default {
       return Response.json({ error: "Method not allowed." }, { status: 405 });
     }
 
+    if (url.pathname.startsWith("/api/private/menu/")) {
+      if (!(await isAuthenticated(request, env))) {
+        return Response.json({ error: "Authentication required." }, { status: 401 });
+      }
+      const rsvpId = parseInt(url.pathname.slice("/api/private/menu/".length), 10);
+      if (isNaN(rsvpId)) return Response.json({ error: "Invalid ID." }, { status: 400 });
+      if (request.method === "PUT") return handleAdminMenuPut(request, env, rsvpId);
+      return Response.json({ error: "Method not allowed." }, { status: 405 });
+    }
+
     if (url.pathname === "/admin" || url.pathname.startsWith("/admin/")) {
       url.pathname = "/index.html";
       return env.ASSETS.fetch(url.toString());
@@ -265,6 +275,73 @@ async function handleMenuPut(request, env, token) {
   ).bind(token).first();
 
   return Response.json(publicMenuPayload(updated, rowKidsCount(updated)));
+}
+
+async function handleAdminMenuPut(request, env, rsvpId) {
+  let body;
+  try { body = await request.json(); }
+  catch { return Response.json({ error: "Invalid JSON." }, { status: 400 }); }
+
+  const row = await env.DB.prepare("SELECT * FROM rsvps WHERE id = ?1 LIMIT 1").bind(rsvpId).first();
+  if (!row) {
+    return Response.json({ error: "Not found." }, { status: 404 });
+  }
+
+  const primary = body.primary || {};
+  const hasPlusOne = row.plus_one === "yes" && (row.plus_one_name || "").trim();
+  const plusOne = hasPlusOne ? body.plusOne || {} : null;
+
+  const next = {
+    starter: primary.starter ?? row.starter ?? "",
+    main: primary.main ?? row.main ?? "",
+    dessert: primary.dessert ?? row.dessert ?? "",
+    plusOneStarter: hasPlusOne ? plusOne.starter ?? row.plus_one_starter ?? "" : "",
+    plusOneMain: hasPlusOne ? plusOne.main ?? row.plus_one_main ?? "" : "",
+    plusOneDessert: hasPlusOne ? plusOne.dessert ?? row.plus_one_dessert ?? "" : "",
+  };
+
+  const primaryMenu = [next.starter, next.main, next.dessert].filter(Boolean).join(" | ");
+  const plusOneMenu = hasPlusOne
+    ? [next.plusOneStarter, next.plusOneMain, next.plusOneDessert].filter(Boolean).join(" | ")
+    : "";
+
+  await env.DB.prepare(`
+    UPDATE rsvps
+    SET starter = ?2, main = ?3, dessert = ?4, menu = ?5,
+        plus_one_starter = ?6, plus_one_main = ?7, plus_one_dessert = ?8, plus_one_menu = ?9
+    WHERE id = ?1
+  `).bind(
+    rsvpId,
+    next.starter, next.main, next.dessert, primaryMenu,
+    next.plusOneStarter, next.plusOneMain, next.plusOneDessert, plusOneMenu,
+  ).run();
+
+  const primaryGuest = await env.DB.prepare(
+    "SELECT id FROM guests WHERE rsvp_id = ?1 AND guest_type = 'primary' LIMIT 1"
+  ).bind(rsvpId).first();
+
+  if (primaryGuest) {
+    await env.DB.prepare(`
+      UPDATE guest_menus
+      SET menu = ?1, starter = ?2, main = ?3, dessert = ?4
+      WHERE guest_id = ?5
+    `).bind(primaryMenu, next.starter, next.main, next.dessert, primaryGuest.id).run();
+
+    if (hasPlusOne) {
+      const plusOneGuest = await env.DB.prepare(
+        "SELECT id FROM guests WHERE rsvp_id = ?1 AND guest_type = 'plus_one' LIMIT 1"
+      ).bind(rsvpId).first();
+      if (plusOneGuest) {
+        await env.DB.prepare(`
+          UPDATE guest_menus
+          SET menu = ?1, starter = ?2, main = ?3, dessert = ?4
+          WHERE guest_id = ?5
+        `).bind(plusOneMenu, next.plusOneStarter, next.plusOneMain, next.plusOneDessert, plusOneGuest.id).run();
+      }
+    }
+  }
+
+  return Response.json({ ok: true });
 }
 
 async function ensureLegacyRsvpToken(env, row) {

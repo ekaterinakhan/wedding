@@ -1,4 +1,8 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
+import menuI18n from "./i18n/en.json";
+
+const MENU_SECTIONS = menuI18n.menu.sections;
+const COURSE_LABELS = { starter: "Starter", main: "Main", dessert: "Dessert" };
 
 const MENU_LABELS = { meat: "Meat", fish: "Fish", poultry: "Poultry", vegetarian: "Vegetarian", vegan: "Vegan" };
 const MENU_EMOJI = { meat: "🥩", fish: "🐟", poultry: "🍗", vegetarian: "🥬", vegan: "🌱" };
@@ -361,6 +365,7 @@ function LoginForm({ onLogin }) {
 const TABS = [
   { id: "overview", label: "Overview" },
   { id: "guests", label: "Families" },
+  { id: "courses", label: "Courses" },
   { id: "menu", label: "Menu" },
   { id: "transport", label: "Transport" },
 ];
@@ -457,6 +462,7 @@ export default function AdminGuests() {
           <>
             {tab === "overview" && <OverviewTab stats={stats} families={families} />}
             {tab === "guests" && <FamiliesTab families={families} refresh={fetchPeople} />}
+            {tab === "courses" && <CoursesTab families={families} refresh={fetchPeople} />}
             {tab === "menu" && <MenuTab stats={stats} people={people} />}
             {tab === "transport" && <TransportTab stats={stats} />}
           </>
@@ -773,6 +779,170 @@ function MenuTab({ stats, people }) {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   COURSES TAB — per-attendee menu choices, admin-editable
+   ═══════════════════════════════════════════════════ */
+
+function CoursePicker({ value, course, onChange, disabled }) {
+  const section = MENU_SECTIONS.find((s) => s.id === course);
+  const options = section ? section.options : [];
+  return (
+    <select
+      value={value || ""}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      className={`w-full text-xs rounded-lg border px-2 py-1.5 outline-none focus:ring-2 focus:ring-sage-500/30 transition ${
+        value
+          ? "border-sage-200/60 bg-white text-ink-900"
+          : "border-amber-200 bg-amber-50/60 text-amber-700"
+      }`}
+    >
+      <option value="">— Pick —</option>
+      {options.map((opt) => (
+        <option key={opt.id} value={opt.label}>{opt.label}</option>
+      ))}
+    </select>
+  );
+}
+
+function CoursesTab({ families, refresh }) {
+  const attending = families.filter((f) => f.attending);
+  const [savingKey, setSavingKey] = useState("");
+  const [error, setError] = useState("");
+
+  const rows = useMemo(() => {
+    const list = [];
+    for (const fam of attending) {
+      const { primary, plusOne, children } = fam;
+      list.push({ kind: "primary", rsvpId: primary.rsvp_id, person: primary, family: fam, kids: children.length });
+      if (plusOne) {
+        list.push({ kind: "plusOne", rsvpId: primary.rsvp_id, person: plusOne, family: fam, kids: 0 });
+      }
+    }
+    list.sort((a, b) => {
+      const an = a.family.primary.name || "";
+      const bn = b.family.primary.name || "";
+      if (an !== bn) return an.localeCompare(bn);
+      return a.kind === "primary" ? -1 : 1;
+    });
+    return list;
+  }, [attending]);
+
+  const totals = useMemo(() => {
+    const total = rows.length;
+    let complete = 0;
+    let partial = 0;
+    let empty = 0;
+    for (const r of rows) {
+      const filled = ["starter", "main", "dessert"].filter((c) => r.person[c]).length;
+      if (filled === 3) complete += 1;
+      else if (filled === 0) empty += 1;
+      else partial += 1;
+    }
+    return { total, complete, partial, empty };
+  }, [rows]);
+
+  async function update(row, course, value) {
+    const key = `${row.rsvpId}:${row.kind}:${course}`;
+    setSavingKey(key);
+    setError("");
+    const target = row.kind === "primary" ? "primary" : "plusOne";
+    const body = { [target]: { [course]: value } };
+    try {
+      const res = await fetch(`/api/private/menu/${row.rsvpId}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        setError(json.error || "Failed to save.");
+        return;
+      }
+      refresh();
+    } catch {
+      setError("Network error.");
+    } finally {
+      setSavingKey("");
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <StatCard label="Adult attendees" value={totals.total} accent="bg-sage-500/5 border-sage-500/20" />
+        <StatCard label="All courses picked" value={totals.complete} accent="bg-green-50 border-green-200" />
+        <StatCard label="Partially picked" value={totals.partial} accent={totals.partial > 0 ? "bg-amber-50 border-amber-200" : undefined} />
+        <StatCard label="No choice yet" value={totals.empty} accent={totals.empty > 0 ? "bg-red-50 border-red-200" : undefined} />
+      </div>
+
+      {error && <p className="text-red-600 text-sm">{error}</p>}
+
+      {rows.length === 0 ? (
+        <EmptyState text="No attending guests yet." />
+      ) : (
+        <div className="bg-white border border-sage-200/40 rounded-2xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[900px]">
+              <thead className="bg-sage-500/5 border-b border-sage-200/30">
+                <tr className="text-left text-[11px] uppercase tracking-widest text-mist-600 font-semibold">
+                  <th className="px-4 py-3">Guest</th>
+                  <th className="px-3 py-3 w-20">Type</th>
+                  <th className="px-3 py-3">{COURSE_LABELS.starter}</th>
+                  <th className="px-3 py-3">{COURSE_LABELS.main}</th>
+                  <th className="px-3 py-3">{COURSE_LABELS.dessert}</th>
+                  <th className="px-3 py-3 w-24">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row) => {
+                  const filled = ["starter", "main", "dessert"].filter((c) => row.person[c]).length;
+                  const status =
+                    filled === 3 ? { label: "Complete", cls: "bg-green-50 text-green-700 border-green-200" }
+                    : filled === 0 ? { label: "Empty", cls: "bg-red-50 text-red-700 border-red-200" }
+                    : { label: `${filled}/3`, cls: "bg-amber-50 text-amber-700 border-amber-200" };
+
+                  return (
+                    <tr key={`${row.rsvpId}-${row.kind}`} className="border-b border-sage-200/10 last:border-0 hover:bg-sage-500/5">
+                      <td className="px-4 py-2.5">
+                        <div className={`flex flex-col ${row.kind === "plusOne" ? "pl-4 border-l-2 border-violet-200/60" : ""}`}>
+                          <span className="font-medium text-ink-900">{row.person.name || <span className="text-mist-600 italic">No name</span>}</span>
+                          {row.kind === "primary" && row.kids > 0 && (
+                            <span className="text-[10px] text-mist-600 mt-0.5">+ {row.kids} kid{row.kids > 1 ? "s" : ""} (kids menu)</span>
+                          )}
+                          {row.person.dietary && <span className="text-[11px] text-red-600 mt-0.5">⚠ {row.person.dietary}</span>}
+                        </div>
+                      </td>
+                      <td className="px-3 py-2.5"><TypeBadge type={row.kind === "primary" ? "primary" : "plus_one"} /></td>
+                      {["starter", "main", "dessert"].map((course) => {
+                        const key = `${row.rsvpId}:${row.kind}:${course}`;
+                        return (
+                          <td key={course} className="px-3 py-2.5 align-top">
+                            <CoursePicker
+                              value={row.person[course] || ""}
+                              course={course}
+                              disabled={savingKey === key}
+                              onChange={(v) => update(row, course, v)}
+                            />
+                          </td>
+                        );
+                      })}
+                      <td className="px-3 py-2.5">
+                        <Badge className={status.cls}>{status.label}</Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
