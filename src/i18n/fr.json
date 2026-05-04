@@ -149,9 +149,9 @@
     {
       "time": "15:15-15:45",
       "title": "Transfert vers le Domaine du Roncemay",
-      "description": "Plage de transfert prévue entre Auxerre et le lieu de réception.",
-      "location": "Place de l'Arquebuse",
-      "url": "https://maps.app.goo.gl/kAozCZSt48x1raUN7"
+      "description": "Bus organisé au départ du 1 Bd du 11 Novembre à 15h15. Le même bus ramènera les invités au même endroit en fin de soirée.",
+      "location": "1 Bd du 11 Novembre, Auxerre",
+      "url": "https://www.google.com/maps/search/?api=1&query=1+Boulevard+du+11+Novembre+89000+Auxerre"
     },
     {
       "time": "16:00",
@@ -179,9 +179,9 @@
     {
       "time": "09:30",
       "title": "Transfert depuis Auxerre",
-      "description": "Départ depuis le même point de rendez-vous à Auxerre pour les invités qui rejoignent le Domaine du Roncemay.",
-      "location": "Place de l'Arquebuse",
-      "url": "https://maps.app.goo.gl/kAozCZSt48x1raUN7"
+      "description": "Bus organisé au départ de la Gare d'Auxerre Saint-Gervais à 09h30 pour les invités qui rejoignent le Domaine du Roncemay.",
+      "location": "Gare d'Auxerre Saint-Gervais",
+      "url": "https://www.google.com/maps/search/?api=1&query=Gare+d%27Auxerre+Saint-Gervais+89000+Auxerre"
     },
     {
       "time": "10:00-12:00",
