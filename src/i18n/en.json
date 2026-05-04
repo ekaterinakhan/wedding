@@ -128,6 +128,12 @@
     "savedNote": "Got it. You can still come back here to update your choices any time before the day.",
     "editCta": "Edit my choices"
   },
+  "cagnotte": {
+    "kicker": "Gift",
+    "title": "Wedding gift pot",
+    "note": "For those who would like to contribute, we have set up a Leetchi pot. You can open it directly or scan the QR code.",
+    "cta": "Open the pot"
+  },
   "logistics": {
     "kicker": "Logistics",
     "title": "Travel and stay details",

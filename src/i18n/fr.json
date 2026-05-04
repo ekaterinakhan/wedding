@@ -120,6 +120,12 @@
     "savedNote": "C'est noté. Vous pouvez revenir modifier vos choix à tout moment avant le jour J.",
     "editCta": "Modifier mes choix"
   },
+  "cagnotte": {
+    "kicker": "Cagnotte",
+    "title": "Cagnotte de mariage",
+    "note": "Pour celles et ceux qui souhaitent participer, nous avons mis en place une cagnotte Leetchi. Vous pouvez l'ouvrir directement ou scanner le QR code.",
+    "cta": "Ouvrir la cagnotte"
+  },
   "logistics": {
     "kicker": "Logistique",
     "title": "Informations de trajet et de séjour",

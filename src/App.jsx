@@ -5,7 +5,7 @@ import { MenuPicker } from "./components/MenuPicker";
 import {
   LuMapPin, LuArrowUpRight, LuChevronDown,
   LuHeart, LuCar, LuWine, LuUtensils, LuFlag,
-  LuMail, LuMap, LuCalendarDays, LuSunrise,
+  LuMail, LuMap, LuCalendarDays, LuSunrise, LuGift,
 } from "react-icons/lu";
 
 import en from "./i18n/en.json";
@@ -321,6 +321,8 @@ function App() {
           <MenuPicker t={t} sections={t.menu.sections} />
         </SectionCard>
 
+        <CagnotteSection t={t} />
+
         <LogisticsSection t={t} />
       </main>
 
@@ -363,6 +365,39 @@ function SectionHeading({ kicker, title, note }) {
       <h2 className="font-serif text-[clamp(1.9rem,3.8vw,3.2rem)] leading-[0.92] tracking-[-0.01em] text-[#1e2a22]">{title}</h2>
       {note ? <p className="mt-3 text-[0.8125rem] leading-relaxed text-[#354b3e]">{note}</p> : null}
     </div>
+  );
+}
+
+const LEETCHI_URL = "https://www.leetchi.com/fr/c/mariage-dekaterina-lucas-9979876";
+
+function CagnotteSection({ t }) {
+  return (
+    <SectionCard id="cagnotte">
+      <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col">
+          <SectionHeading kicker={t.cagnotte.kicker} title={t.cagnotte.title} note={t.cagnotte.note} />
+          <a
+            href={LEETCHI_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-fit items-center gap-2.5 rounded-full bg-[#354b3e] px-6 py-3.5 font-bold text-white transition-opacity hover:opacity-90"
+          >
+            <LuGift size={16} />
+            {t.cagnotte.cta}
+            <LuArrowUpRight size={14} />
+          </a>
+        </div>
+        <div className="shrink-0 self-start rounded-[18px] border border-[rgba(53,75,62,0.12)] bg-white p-3 shadow-sm md:self-auto">
+          <img
+            src="https://wedding.scariot.fr/qrcode-leetchi-mariage-dekaterina-lucas-9979876.png"
+            alt="QR code cagnotte Leetchi"
+            width={140}
+            height={140}
+            className="block rounded-[10px]"
+          />
+        </div>
+      </div>
+    </SectionCard>
   );
 }
 
