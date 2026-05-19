@@ -246,13 +246,44 @@ export default {
       });
     }
 
-    if (url.pathname === "/api/album/photos") {
+    if (url.pathname === "/api/album/photos" && request.method === "GET") {
       if (!(await isGateAuthenticated(request, env))) {
         return Response.json({ error: "Authentication required." }, { status: 401 });
       }
       const album = await listGithubAlbum(env);
       if (album.error) return Response.json({ error: album.error }, { status: album.status || 500 });
       return Response.json({ photos: album.photos });
+    }
+
+    if (url.pathname === "/api/album/photos" && request.method === "POST") {
+      if (!(await isGateAuthenticated(request, env))) {
+        return Response.json({ error: "Authentication required." }, { status: 401 });
+      }
+      const config = albumConfig(env);
+      if (!configuredAlbum(env) || !config.token) {
+        return Response.json({ error: "GitHub upload storage is not configured." }, { status: 503 });
+      }
+      let form;
+      try { form = await request.formData(); } catch { return Response.json({ error: "Invalid upload." }, { status: 400 }); }
+      const file = form.get("photo");
+      if (!(file instanceof File)) return Response.json({ error: "No photo was attached." }, { status: 400 });
+      const safeName = `${Date.now()}-${safeAlbumName(file.name)}`;
+      const uploadPath = `${config.path}/${safeName}`;
+      const putUrl = `https://api.github.com/repos/${config.repo}/contents/${encodeURIComponent(uploadPath).replaceAll("%2F", "/")}`;
+      const response = await fetch(putUrl, {
+        method: "PUT",
+        headers: githubHeaders(env),
+        body: JSON.stringify({
+          message: `Add wedding album photo ${safeName}`,
+          content: arrayBufferToBase64(await file.arrayBuffer()),
+          branch: config.branch,
+        }),
+      });
+      const json = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        return Response.json({ error: json.message || "GitHub upload failed." }, { status: response.status });
+      }
+      return Response.json({ ok: true, photo: { name: safeName, path: uploadPath } }, { status: 201 });
     }
 
     const photoDownloadMatch = url.pathname.match(/^\/api\/album\/photos\/([^/]+)\/download$/);

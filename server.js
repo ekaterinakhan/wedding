@@ -696,6 +696,53 @@ app.get("/api/album/photos", requireGateAuth, async (_req, res) => {
   res.json({ photos: album.photos });
 });
 
+app.post("/api/album/photos", requireGateAuth, async (req, res) => {
+  const config = albumConfig();
+  if (!config.repo || !config.path || !config.token) {
+    res.status(503).json({ error: "GitHub upload storage is not configured." });
+    return;
+  }
+
+  let form;
+  try {
+    const request = new Request(`http://${req.headers.host}${req.originalUrl}`, {
+      method: req.method,
+      headers: req.headers,
+      body: req,
+      duplex: "half",
+    });
+    form = await request.formData();
+  } catch {
+    res.status(400).json({ error: "Invalid upload." });
+    return;
+  }
+
+  const file = form.get("photo");
+  if (!(file instanceof File)) {
+    res.status(400).json({ error: "No photo was attached." });
+    return;
+  }
+
+  const safeName = `${Date.now()}-${safeAlbumName(file.name)}`;
+  const uploadPath = `${config.path}/${safeName}`;
+  const putUrl = `https://api.github.com/repos/${config.repo}/contents/${encodeURIComponent(uploadPath).replaceAll("%2F", "/")}`;
+  const response = await fetch(putUrl, {
+    method: "PUT",
+    headers: githubHeaders(),
+    body: JSON.stringify({
+      message: `Add wedding album photo ${safeName}`,
+      content: arrayBufferToBase64(await file.arrayBuffer()),
+      branch: config.branch,
+    }),
+  });
+  const json = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    res.status(response.status).json({ error: json.message || "GitHub upload failed." });
+    return;
+  }
+  res.status(201).json({ ok: true, photo: { name: safeName, path: uploadPath } });
+});
+
 app.get("/api/album/photos/:name/download", requireGateAuth, async (req, res) => {
   const album = await listGithubAlbum();
   if (album.error) {

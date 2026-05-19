@@ -34,12 +34,9 @@
     "download": "Download photo",
     "downloadAll": "Download all",
     "refresh": "Refresh album",
-    "adminPassword": "Admin password",
-    "adminLogin": "Unlock uploads",
-    "adminError": "Invalid admin password.",
-    "adminNote": "Uploads are stored in the configured GitHub repository album folder, not on this laptop.",
     "upload": "Upload photographs",
     "uploading": "Uploading...",
+    "uploadNote": "Uploads are stored in the configured GitHub repository album folder, not on this laptop.",
     "uploadError": "Upload failed."
   },
   "welcome": {

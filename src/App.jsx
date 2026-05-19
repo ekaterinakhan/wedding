@@ -445,9 +445,6 @@ function PhotoAlbumSection({ t }) {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [albumError, setAlbumError] = useState("");
-  const [admin, setAdmin] = useState(false);
-  const [adminPassword, setAdminPassword] = useState("");
-  const [adminError, setAdminError] = useState("");
   const [uploading, setUploading] = useState(false);
 
   async function loadPhotos() {
@@ -467,29 +464,7 @@ function PhotoAlbumSection({ t }) {
 
   useEffect(() => {
     loadPhotos();
-    fetch("/api/private/session", { credentials: "include" })
-      .then((r) => r.json())
-      .then((data) => setAdmin(Boolean(data.authenticated)))
-      .catch(() => setAdmin(false));
   }, []);
-
-  async function handleAdminLogin(event) {
-    event.preventDefault();
-    setAdminError("");
-    const response = await fetch("/api/private/login", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: adminPassword }),
-    });
-    const json = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      setAdminError(json.error || t.album.adminError);
-      return;
-    }
-    setAdmin(true);
-    setAdminPassword("");
-  }
 
   async function handleUpload(event) {
     const files = Array.from(event.target.files || []);
@@ -500,7 +475,7 @@ function PhotoAlbumSection({ t }) {
       for (const file of files) {
         const form = new FormData();
         form.append("photo", file);
-        const response = await fetch("/api/private/album/photos", {
+        const response = await fetch("/api/album/photos", {
           method: "POST",
           credentials: "include",
           body: form,
@@ -538,33 +513,14 @@ function PhotoAlbumSection({ t }) {
         </button>
       </div>
 
-      {admin ? (
-        <div className="mb-6 rounded-[18px] border border-[rgba(196,160,110,0.26)] bg-[rgba(196,160,110,0.08)] p-4">
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#4a6355] px-5 py-3 text-sm font-bold text-white">
-            <LuUpload size={15} />
-            {uploading ? t.album.uploading : t.album.upload}
-            <input type="file" multiple accept="image/*" onChange={handleUpload} disabled={uploading} className="sr-only" />
-          </label>
-          <p className="mt-3 text-xs leading-5 text-[#576e63]">{t.album.adminNote}</p>
-        </div>
-      ) : (
-        <form onSubmit={handleAdminLogin} className="mb-6 grid gap-3 rounded-[18px] border border-[rgba(53,75,62,0.12)] bg-white/60 p-4 md:grid-cols-[1fr_auto] md:items-end">
-          <label className="grid gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#576e63]">{t.album.adminPassword}</span>
-            <input
-              type="password"
-              value={adminPassword}
-              onChange={(event) => setAdminPassword(event.target.value)}
-              className="rounded-2xl border border-[rgba(74,99,85,0.16)] bg-[#fffdf9] px-4 py-3 text-sm text-[#1e2a22] outline-none transition focus:border-[rgba(74,99,85,0.3)] focus:ring-2 focus:ring-[rgba(196,160,110,0.45)]"
-            />
-            {adminError ? <span className="text-xs font-semibold text-[#b45050]">{adminError}</span> : null}
-          </label>
-          <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-full border border-[rgba(74,99,85,0.16)] bg-[#fffdf9] px-5 py-3 text-sm font-bold text-[#4a6355]">
-            <LuShieldCheck size={15} />
-            {t.album.adminLogin}
-          </button>
-        </form>
-      )}
+      <div className="mb-6 rounded-[18px] border border-[rgba(196,160,110,0.26)] bg-[rgba(196,160,110,0.08)] p-4">
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#4a6355] px-5 py-3 text-sm font-bold text-white">
+          <LuUpload size={15} />
+          {uploading ? t.album.uploading : t.album.upload}
+          <input type="file" multiple accept="image/*" onChange={handleUpload} disabled={uploading} className="sr-only" />
+        </label>
+        <p className="mt-3 text-xs leading-5 text-[#576e63]">{t.album.uploadNote}</p>
+      </div>
 
       {albumError ? (
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[rgba(180,80,80,0.18)] bg-[rgba(180,80,80,0.08)] px-4 py-2 text-sm font-semibold text-[#b45050]">

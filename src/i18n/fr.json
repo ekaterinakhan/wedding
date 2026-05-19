@@ -34,12 +34,9 @@
     "download": "Télécharger la photo",
     "downloadAll": "Tout télécharger",
     "refresh": "Actualiser l'album",
-    "adminPassword": "Mot de passe admin",
-    "adminLogin": "Déverrouiller l'ajout",
-    "adminError": "Mot de passe admin invalide.",
-    "adminNote": "Les ajouts sont stockés dans le dossier album du dépôt GitHub configuré, pas sur cet ordinateur.",
     "upload": "Ajouter des photographies",
     "uploading": "Ajout en cours...",
+    "uploadNote": "Les ajouts sont stockés dans le dossier album du dépôt GitHub configuré, pas sur cet ordinateur.",
     "uploadError": "L'ajout a échoué."
   },
   "welcome": {
