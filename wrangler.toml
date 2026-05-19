@@ -3,13 +3,13 @@ account_id = "0c03e4760f29cf6a66daa90e7ee3abb3"
 compatibility_date = "2024-09-23"
 main = "src/worker.js"
 
-[assets]
-directory = "./dist"
-binding = "ASSETS"
-
 routes = [
   { pattern = "wedding.scariot.fr", zone_name = "scariot.fr", custom_domain = true }
 ]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
 
 [[d1_databases]]
 binding = "DB"
