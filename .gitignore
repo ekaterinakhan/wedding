@@ -2,6 +2,10 @@ node_modules/
 dist/
 .DS_Store
 data/
+!data/
+data/*
+!data/photoalbum/
+!data/photoalbum/.gitkeep
 *.log
 .env.local
 memory/
