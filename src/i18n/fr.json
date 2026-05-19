@@ -35,8 +35,10 @@
     "downloadAll": "Tout télécharger",
     "refresh": "Actualiser l'album",
     "upload": "Ajouter des photographies",
+    "uploadOnGitHub": "Ajouter les photos sur GitHub",
     "uploading": "Ajout en cours...",
     "uploadNote": "Les ajouts sont stockés dans le dossier album du dépôt GitHub configuré, pas sur cet ordinateur.",
+    "uploadGitHubNote": "L'ajout depuis le site nécessite un token GitHub dans Cloudflare. En attendant, ajoutez les photos directement dans le dossier album GitHub.",
     "uploadError": "L'ajout a échoué."
   },
   "welcome": {

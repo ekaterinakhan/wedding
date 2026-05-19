@@ -445,6 +445,7 @@ function PhotoAlbumSection({ t }) {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [albumError, setAlbumError] = useState("");
+  const [uploadConfigured, setUploadConfigured] = useState(false);
   const [uploading, setUploading] = useState(false);
 
   async function loadPhotos() {
@@ -455,6 +456,7 @@ function PhotoAlbumSection({ t }) {
       const json = await response.json();
       if (!response.ok) throw new Error(json.error || t.album.error);
       setPhotos(json.photos || []);
+      setUploadConfigured(Boolean(json.uploadConfigured));
     } catch (error) {
       setAlbumError(error.message || t.album.error);
     } finally {
@@ -514,12 +516,26 @@ function PhotoAlbumSection({ t }) {
       </div>
 
       <div className="mb-6 rounded-[18px] border border-[rgba(196,160,110,0.26)] bg-[rgba(196,160,110,0.08)] p-4">
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#4a6355] px-5 py-3 text-sm font-bold text-white">
-          <LuUpload size={15} />
-          {uploading ? t.album.uploading : t.album.upload}
-          <input type="file" multiple accept="image/*" onChange={handleUpload} disabled={uploading} className="sr-only" />
-        </label>
-        <p className="mt-3 text-xs leading-5 text-[#576e63]">{t.album.uploadNote}</p>
+        {uploadConfigured ? (
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#4a6355] px-5 py-3 text-sm font-bold text-white">
+            <LuUpload size={15} />
+            {uploading ? t.album.uploading : t.album.upload}
+            <input type="file" multiple accept="image/*" onChange={handleUpload} disabled={uploading} className="sr-only" />
+          </label>
+        ) : (
+          <a
+            href="https://github.com/ekaterinakhan/wedding/upload/main/data/photoalbum"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-[#4a6355] px-5 py-3 text-sm font-bold text-white"
+          >
+            <LuUpload size={15} />
+            {t.album.uploadOnGitHub}
+          </a>
+        )}
+        <p className="mt-3 text-xs leading-5 text-[#576e63]">
+          {uploadConfigured ? t.album.uploadNote : t.album.uploadGitHubNote}
+        </p>
       </div>
 
       {albumError ? (

@@ -693,7 +693,7 @@ app.get("/api/album/photos", requireGateAuth, async (_req, res) => {
     res.status(album.status || 500).json({ error: album.error });
     return;
   }
-  res.json({ photos: album.photos });
+  res.json({ photos: album.photos, uploadConfigured: Boolean(process.env.GITHUB_TOKEN) });
 });
 
 app.post("/api/album/photos", requireGateAuth, async (req, res) => {

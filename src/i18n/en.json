@@ -35,8 +35,10 @@
     "downloadAll": "Download all",
     "refresh": "Refresh album",
     "upload": "Upload photographs",
+    "uploadOnGitHub": "Add photographs on GitHub",
     "uploading": "Uploading...",
     "uploadNote": "Uploads are stored in the configured GitHub repository album folder, not on this laptop.",
+    "uploadGitHubNote": "Site uploads need a GitHub token in Cloudflare. Until then, add photographs directly to the GitHub album folder.",
     "uploadError": "Upload failed."
   },
   "welcome": {

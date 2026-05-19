@@ -252,7 +252,7 @@ export default {
       }
       const album = await listGithubAlbum(env);
       if (album.error) return Response.json({ error: album.error }, { status: album.status || 500 });
-      return Response.json({ photos: album.photos });
+      return Response.json({ photos: album.photos, uploadConfigured: Boolean(env.GITHUB_TOKEN) });
     }
 
     if (url.pathname === "/api/album/photos" && request.method === "POST") {
