@@ -11,6 +11,10 @@ const dbPath = path.join(dbDir, "rsvps.sqlite");
 const boardsDir = path.join(dbDir, "boards");
 const privateConfigPath = path.join(dbDir, "private-config.json");
 const SESSION_COOKIE = "private_board_auth";
+const GATE_COOKIE = "wedding_guest_auth";
+const DEFAULT_SITE_PASSWORD = "E&L09052026";
+const DEFAULT_ALBUM_PATH = "data/photoalbum";
+const DEFAULT_ALBUM_BRANCH = "main";
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 fs.mkdirSync(dbDir, { recursive: true });
@@ -270,6 +274,125 @@ function requireBoardAuth(req, res, next) {
   }
 
   res.status(401).json({ error: "Authentication required." });
+}
+
+function sitePassword() {
+  return process.env.SITE_PASSWORD || DEFAULT_SITE_PASSWORD;
+}
+
+function gateToken() {
+  return crypto.createHmac("sha256", sitePassword()).update("guest-session").digest("base64");
+}
+
+function requireGateAuth(req, res, next) {
+  const cookies = parseCookies(req.headers.cookie);
+  if (cookies[GATE_COOKIE] === gateToken()) {
+    next();
+    return;
+  }
+  res.status(401).json({ error: "Authentication required." });
+}
+
+function albumConfig() {
+  return {
+    repo: process.env.GITHUB_REPO || "",
+    branch: process.env.GITHUB_BRANCH || DEFAULT_ALBUM_BRANCH,
+    path: (process.env.GITHUB_ALBUM_PATH || DEFAULT_ALBUM_PATH).replace(/^\/+|\/+$/g, ""),
+    token: process.env.GITHUB_TOKEN || "",
+  };
+}
+
+function githubHeaders() {
+  const headers = {
+    "Accept": "application/vnd.github+json",
+    "User-Agent": "scariot-wedding-album",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+  if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  return headers;
+}
+
+function safeAlbumName(value) {
+  const name = String(value || "photo").split(/[\\/]/).pop();
+  return name
+    .normalize("NFKD")
+    .replace(/[^\w.\- ]+/g, "")
+    .trim()
+    .replace(/\s+/g, "-") || `photo-${Date.now()}.jpg`;
+}
+
+function arrayBufferToBase64(buffer) {
+  return Buffer.from(buffer).toString("base64");
+}
+
+async function listGithubAlbum() {
+  const config = albumConfig();
+  if (!config.repo || !config.path) {
+    return { error: "GitHub album storage is not configured.", status: 503 };
+  }
+  const url = `https://api.github.com/repos/${config.repo}/contents/${encodeURIComponent(config.path).replaceAll("%2F", "/")}?ref=${encodeURIComponent(config.branch)}`;
+  const response = await fetch(url, { headers: githubHeaders() });
+  if (response.status === 404) return { photos: [] };
+  if (!response.ok) return { error: "Could not read the GitHub album.", status: response.status };
+  const rows = await response.json();
+  const photos = (Array.isArray(rows) ? rows : [])
+    .filter((item) => item.type === "file" && /\.(jpe?g|png|webp|gif|heic|heif)$/i.test(item.name))
+    .map((item) => ({ name: item.name, path: item.path, size: item.size, sha: item.sha, url: item.download_url }))
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  return { photos };
+}
+
+function writeU16(value) {
+  return Buffer.from([value & 255, (value >>> 8) & 255]);
+}
+
+function writeU32(value) {
+  return Buffer.from([value & 255, (value >>> 8) & 255, (value >>> 16) & 255, (value >>> 24) & 255]);
+}
+
+function crc32(buffer) {
+  let crc = -1;
+  for (const byte of buffer) {
+    crc ^= byte;
+    for (let i = 0; i < 8; i += 1) crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+  }
+  return (crc ^ -1) >>> 0;
+}
+
+function zipDateParts(date = new Date()) {
+  return {
+    dosTime: (date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2),
+    dosDate: ((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate(),
+  };
+}
+
+function buildStoredZip(files) {
+  const locals = [];
+  const centrals = [];
+  let offset = 0;
+  const { dosTime, dosDate } = zipDateParts();
+  for (const file of files) {
+    const nameBytes = Buffer.from(file.name);
+    const data = Buffer.from(file.bytes);
+    const crc = crc32(data);
+    const local = Buffer.concat([
+      writeU32(0x04034b50), writeU16(20), writeU16(0), writeU16(0), writeU16(dosTime), writeU16(dosDate),
+      writeU32(crc), writeU32(data.length), writeU32(data.length), writeU16(nameBytes.length), writeU16(0), nameBytes, data,
+    ]);
+    locals.push(local);
+    centrals.push(Buffer.concat([
+      writeU32(0x02014b50), writeU16(20), writeU16(20), writeU16(0), writeU16(0), writeU16(dosTime), writeU16(dosDate),
+      writeU32(crc), writeU32(data.length), writeU32(data.length), writeU16(nameBytes.length), writeU16(0), writeU16(0),
+      writeU16(0), writeU16(0), writeU32(0), writeU32(offset), nameBytes,
+    ]));
+    offset += local.length;
+  }
+  const centralSize = centrals.reduce((sum, chunk) => sum + chunk.length, 0);
+  return Buffer.concat([
+    ...locals, ...centrals,
+    writeU32(0x06054b50), writeU16(0), writeU16(0), writeU16(files.length), writeU16(files.length),
+    writeU32(centralSize), writeU32(offset), writeU16(0),
+  ]);
 }
 
 function parseDateValue(value) {
@@ -543,6 +666,119 @@ app.post("/api/private/logout", (_req, res) => {
 app.get("/api/private/session", (req, res) => {
   const cookies = parseCookies(req.headers.cookie);
   res.json({ authenticated: cookies[SESSION_COOKIE] === "1" });
+});
+
+app.get("/api/gate/session", (req, res) => {
+  const cookies = parseCookies(req.headers.cookie);
+  res.json({ authenticated: cookies[GATE_COOKIE] === gateToken() });
+});
+
+app.post("/api/gate/login", (req, res) => {
+  if ((req.body.password || "") !== sitePassword()) {
+    res.status(401).json({ error: "Invalid password." });
+    return;
+  }
+  res.setHeader("Set-Cookie", `${GATE_COOKIE}=${encodeURIComponent(gateToken())}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${30 * 24 * 60 * 60}`);
+  res.json({ ok: true });
+});
+
+app.post("/api/gate/logout", (_req, res) => {
+  res.setHeader("Set-Cookie", `${GATE_COOKIE}=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0`);
+  res.json({ ok: true });
+});
+
+app.get("/api/album/photos", requireGateAuth, async (_req, res) => {
+  const album = await listGithubAlbum();
+  if (album.error) {
+    res.status(album.status || 500).json({ error: album.error });
+    return;
+  }
+  res.json({ photos: album.photos });
+});
+
+app.get("/api/album/photos/:name/download", requireGateAuth, async (req, res) => {
+  const album = await listGithubAlbum();
+  if (album.error) {
+    res.status(album.status || 500).json({ error: album.error });
+    return;
+  }
+  const safeName = safeAlbumName(req.params.name);
+  const photo = album.photos.find((item) => item.name === safeName);
+  if (!photo) {
+    res.status(404).json({ error: "Photo not found." });
+    return;
+  }
+  const response = await fetch(photo.url, { headers: githubHeaders() });
+  if (!response.ok) {
+    res.status(response.status).json({ error: "Could not download the photo." });
+    return;
+  }
+  res.setHeader("Content-Type", response.headers.get("Content-Type") || "application/octet-stream");
+  res.setHeader("Content-Disposition", `attachment; filename="${photo.name.replaceAll('"', "")}"`);
+  res.send(Buffer.from(await response.arrayBuffer()));
+});
+
+app.get("/api/album/download-all", requireGateAuth, async (_req, res) => {
+  const album = await listGithubAlbum();
+  if (album.error) {
+    res.status(album.status || 500).json({ error: album.error });
+    return;
+  }
+  const files = [];
+  for (const photo of album.photos) {
+    const response = await fetch(photo.url, { headers: githubHeaders() });
+    if (response.ok) files.push({ name: photo.name, bytes: Buffer.from(await response.arrayBuffer()) });
+  }
+  res.setHeader("Content-Type", "application/zip");
+  res.setHeader("Content-Disposition", 'attachment; filename="ekaterina-lucas-wedding-photos.zip"');
+  res.send(buildStoredZip(files));
+});
+
+app.post("/api/private/album/photos", requireBoardAuth, async (req, res) => {
+  const config = albumConfig();
+  if (!config.repo || !config.path || !config.token) {
+    res.status(503).json({ error: "GitHub upload storage is not configured." });
+    return;
+  }
+
+  let form;
+  try {
+    const request = new Request(`http://${req.headers.host}${req.originalUrl}`, {
+      method: req.method,
+      headers: req.headers,
+      body: req,
+      duplex: "half",
+    });
+    form = await request.formData();
+  } catch {
+    res.status(400).json({ error: "Invalid upload." });
+    return;
+  }
+
+  const file = form.get("photo");
+  if (!(file instanceof File)) {
+    res.status(400).json({ error: "No photo was attached." });
+    return;
+  }
+
+  const safeName = `${Date.now()}-${safeAlbumName(file.name)}`;
+  const uploadPath = `${config.path}/${safeName}`;
+  const putUrl = `https://api.github.com/repos/${config.repo}/contents/${encodeURIComponent(uploadPath).replaceAll("%2F", "/")}`;
+  const response = await fetch(putUrl, {
+    method: "PUT",
+    headers: githubHeaders(),
+    body: JSON.stringify({
+      message: `Add wedding album photo ${safeName}`,
+      content: arrayBufferToBase64(await file.arrayBuffer()),
+      branch: config.branch,
+    }),
+  });
+  const json = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    res.status(response.status).json({ error: json.message || "GitHub upload failed." });
+    return;
+  }
+  res.status(201).json({ ok: true, photo: { name: safeName, path: uploadPath } });
 });
 
 app.get("/api/private/rsvps", requireBoardAuth, (_req, res) => {

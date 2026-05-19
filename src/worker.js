@@ -1,6 +1,10 @@
 const SESSION_COOKIE = "private_board_auth";
+const GATE_COOKIE = "wedding_guest_auth";
+const DEFAULT_SITE_PASSWORD = "E&L09052026";
+const DEFAULT_ALBUM_PATH = "data/photoalbum";
+const DEFAULT_ALBUM_BRANCH = "main";
 
-async function sessionToken(password) {
+async function sessionTokenFor(password, purpose) {
   const key = await crypto.subtle.importKey(
     "raw",
     new TextEncoder().encode(password),
@@ -11,9 +15,13 @@ async function sessionToken(password) {
   const sig = await crypto.subtle.sign(
     "HMAC",
     key,
-    new TextEncoder().encode("admin-session"),
+    new TextEncoder().encode(purpose),
   );
   return btoa(String.fromCharCode(...new Uint8Array(sig)));
+}
+
+async function sessionToken(password) {
+  return sessionTokenFor(password, "admin-session");
 }
 
 function parseCookies(header) {
@@ -36,6 +44,171 @@ async function isAuthenticated(request, env) {
   return cookies[SESSION_COOKIE] === expected;
 }
 
+function sitePassword(env) {
+  return env.SITE_PASSWORD || DEFAULT_SITE_PASSWORD;
+}
+
+async function isGateAuthenticated(request, env) {
+  const cookies = parseCookies(request.headers.get("Cookie"));
+  const expected = await sessionTokenFor(sitePassword(env), "guest-session");
+  return cookies[GATE_COOKIE] === expected;
+}
+
+function albumConfig(env) {
+  return {
+    repo: env.GITHUB_REPO || "",
+    branch: env.GITHUB_BRANCH || DEFAULT_ALBUM_BRANCH,
+    path: (env.GITHUB_ALBUM_PATH || DEFAULT_ALBUM_PATH).replace(/^\/+|\/+$/g, ""),
+    token: env.GITHUB_TOKEN || "",
+  };
+}
+
+function githubHeaders(env) {
+  const headers = {
+    "Accept": "application/vnd.github+json",
+    "User-Agent": "scariot-wedding-album",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+  if (env.GITHUB_TOKEN) headers.Authorization = `Bearer ${env.GITHUB_TOKEN}`;
+  return headers;
+}
+
+function configuredAlbum(env) {
+  const config = albumConfig(env);
+  return config.repo && config.path;
+}
+
+function safeAlbumName(value) {
+  const name = String(value || "photo").split(/[\\/]/).pop();
+  const cleaned = name
+    .normalize("NFKD")
+    .replace(/[^\w.\- ]+/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+  const fallback = `photo-${Date.now()}.jpg`;
+  return cleaned || fallback;
+}
+
+function arrayBufferToBase64(buffer) {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
+}
+
+async function listGithubAlbum(env) {
+  const config = albumConfig(env);
+  if (!configuredAlbum(env)) {
+    return { error: "GitHub album storage is not configured.", status: 503 };
+  }
+
+  const url = `https://api.github.com/repos/${config.repo}/contents/${encodeURIComponent(config.path).replaceAll("%2F", "/")}?ref=${encodeURIComponent(config.branch)}`;
+  const response = await fetch(url, { headers: githubHeaders(env) });
+  if (response.status === 404) return { photos: [] };
+  if (!response.ok) {
+    return { error: "Could not read the GitHub album.", status: response.status };
+  }
+  const rows = await response.json();
+  const photos = (Array.isArray(rows) ? rows : [])
+    .filter((item) => item.type === "file" && /\.(jpe?g|png|webp|gif|heic|heif)$/i.test(item.name))
+    .map((item) => ({
+      name: item.name,
+      path: item.path,
+      size: item.size,
+      sha: item.sha,
+      url: item.download_url,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  return { photos };
+}
+
+async function fetchAlbumPhoto(env, name) {
+  const album = await listGithubAlbum(env);
+  if (album.error) return album;
+  const safeName = safeAlbumName(name);
+  const photo = album.photos.find((item) => item.name === safeName);
+  if (!photo) return { error: "Photo not found.", status: 404 };
+  const response = await fetch(photo.url, { headers: githubHeaders(env) });
+  if (!response.ok) return { error: "Could not download the photo.", status: response.status };
+  return { photo, response };
+}
+
+function stringBytes(value) {
+  return new TextEncoder().encode(value);
+}
+
+function concatBytes(chunks) {
+  const total = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    out.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return out;
+}
+
+function crc32(bytes) {
+  let crc = -1;
+  for (const byte of bytes) {
+    crc ^= byte;
+    for (let i = 0; i < 8; i += 1) {
+      crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+    }
+  }
+  return (crc ^ -1) >>> 0;
+}
+
+function writeU16(value) {
+  return new Uint8Array([value & 255, (value >>> 8) & 255]);
+}
+
+function writeU32(value) {
+  return new Uint8Array([value & 255, (value >>> 8) & 255, (value >>> 16) & 255, (value >>> 24) & 255]);
+}
+
+function zipDateParts(date = new Date()) {
+  const dosTime = (date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2);
+  const dosDate = ((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate();
+  return { dosTime, dosDate };
+}
+
+function buildStoredZip(files) {
+  const locals = [];
+  const centrals = [];
+  let offset = 0;
+  const { dosTime, dosDate } = zipDateParts();
+
+  for (const file of files) {
+    const nameBytes = stringBytes(file.name);
+    const data = new Uint8Array(file.bytes);
+    const crc = crc32(data);
+    const local = concatBytes([
+      writeU32(0x04034b50), writeU16(20), writeU16(0), writeU16(0), writeU16(dosTime), writeU16(dosDate),
+      writeU32(crc), writeU32(data.length), writeU32(data.length), writeU16(nameBytes.length), writeU16(0),
+      nameBytes, data,
+    ]);
+    locals.push(local);
+    centrals.push(concatBytes([
+      writeU32(0x02014b50), writeU16(20), writeU16(20), writeU16(0), writeU16(0), writeU16(dosTime), writeU16(dosDate),
+      writeU32(crc), writeU32(data.length), writeU32(data.length), writeU16(nameBytes.length), writeU16(0), writeU16(0),
+      writeU16(0), writeU16(0), writeU32(0), writeU32(offset), nameBytes,
+    ]));
+    offset += local.length;
+  }
+
+  const centralSize = centrals.reduce((sum, chunk) => sum + chunk.length, 0);
+  return concatBytes([
+    ...locals,
+    ...centrals,
+    writeU32(0x06054b50), writeU16(0), writeU16(0), writeU16(files.length), writeU16(files.length),
+    writeU32(centralSize), writeU32(offset), writeU16(0),
+  ]);
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -43,6 +216,108 @@ export default {
     if (url.pathname === "/api/country") {
       const country = request.cf?.country || "XX";
       return Response.json({ country });
+    }
+
+    if (url.pathname === "/api/gate/session") {
+      return Response.json({ authenticated: await isGateAuthenticated(request, env) });
+    }
+
+    if (url.pathname === "/api/gate/login" && request.method === "POST") {
+      let body;
+      try { body = await request.json(); } catch { return Response.json({ error: "Invalid JSON." }, { status: 400 }); }
+      if ((body.password || "") !== sitePassword(env)) {
+        return Response.json({ error: "Invalid password." }, { status: 401 });
+      }
+      const token = await sessionTokenFor(sitePassword(env), "guest-session");
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: {
+          "Content-Type": "application/json",
+          "Set-Cookie": `${GATE_COOKIE}=${encodeURIComponent(token)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${30 * 24 * 60 * 60}; Secure`,
+        },
+      });
+    }
+
+    if (url.pathname === "/api/gate/logout" && request.method === "POST") {
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: {
+          "Content-Type": "application/json",
+          "Set-Cookie": `${GATE_COOKIE}=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0; Secure`,
+        },
+      });
+    }
+
+    if (url.pathname === "/api/album/photos") {
+      if (!(await isGateAuthenticated(request, env))) {
+        return Response.json({ error: "Authentication required." }, { status: 401 });
+      }
+      const album = await listGithubAlbum(env);
+      if (album.error) return Response.json({ error: album.error }, { status: album.status || 500 });
+      return Response.json({ photos: album.photos });
+    }
+
+    const photoDownloadMatch = url.pathname.match(/^\/api\/album\/photos\/([^/]+)\/download$/);
+    if (photoDownloadMatch) {
+      if (!(await isGateAuthenticated(request, env))) {
+        return Response.json({ error: "Authentication required." }, { status: 401 });
+      }
+      const result = await fetchAlbumPhoto(env, decodeURIComponent(photoDownloadMatch[1]));
+      if (result.error) return Response.json({ error: result.error }, { status: result.status || 500 });
+      return new Response(result.response.body, {
+        headers: {
+          "Content-Type": result.response.headers.get("Content-Type") || "application/octet-stream",
+          "Content-Disposition": `attachment; filename="${result.photo.name.replaceAll('"', "")}"`,
+        },
+      });
+    }
+
+    if (url.pathname === "/api/album/download-all") {
+      if (!(await isGateAuthenticated(request, env))) {
+        return Response.json({ error: "Authentication required." }, { status: 401 });
+      }
+      const album = await listGithubAlbum(env);
+      if (album.error) return Response.json({ error: album.error }, { status: album.status || 500 });
+      const files = [];
+      for (const photo of album.photos) {
+        const response = await fetch(photo.url, { headers: githubHeaders(env) });
+        if (response.ok) files.push({ name: photo.name, bytes: await response.arrayBuffer() });
+      }
+      return new Response(buildStoredZip(files), {
+        headers: {
+          "Content-Type": "application/zip",
+          "Content-Disposition": 'attachment; filename="ekaterina-lucas-wedding-photos.zip"',
+        },
+      });
+    }
+
+    if (url.pathname === "/api/private/album/photos" && request.method === "POST") {
+      if (!(await isAuthenticated(request, env))) {
+        return Response.json({ error: "Authentication required." }, { status: 401 });
+      }
+      const config = albumConfig(env);
+      if (!configuredAlbum(env) || !config.token) {
+        return Response.json({ error: "GitHub upload storage is not configured." }, { status: 503 });
+      }
+      let form;
+      try { form = await request.formData(); } catch { return Response.json({ error: "Invalid upload." }, { status: 400 }); }
+      const file = form.get("photo");
+      if (!(file instanceof File)) return Response.json({ error: "No photo was attached." }, { status: 400 });
+      const safeName = `${Date.now()}-${safeAlbumName(file.name)}`;
+      const uploadPath = `${config.path}/${safeName}`;
+      const putUrl = `https://api.github.com/repos/${config.repo}/contents/${encodeURIComponent(uploadPath).replaceAll("%2F", "/")}`;
+      const response = await fetch(putUrl, {
+        method: "PUT",
+        headers: githubHeaders(env),
+        body: JSON.stringify({
+          message: `Add wedding album photo ${safeName}`,
+          content: arrayBufferToBase64(await file.arrayBuffer()),
+          branch: config.branch,
+        }),
+      });
+      const json = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        return Response.json({ error: json.message || "GitHub upload failed." }, { status: response.status });
+      }
+      return Response.json({ ok: true, photo: { name: safeName, path: uploadPath } }, { status: 201 });
     }
 
     if (url.pathname === "/api/menu/lookup" && request.method === "POST") {
@@ -616,4 +891,3 @@ async function handlePrivateRsvps(env) {
 
   return Response.json(people);
 }
-

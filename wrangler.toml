@@ -13,5 +13,10 @@ database_name = "wedding-rsvps"
 database_id = "56972615-11f3-486a-a873-630499c6dfb7"
 
 # Admin password — set via: wrangler secret put ADMIN_PASSWORD
+# Site gate password — set via: wrangler secret put SITE_PASSWORD
+# GitHub album uploads — set via: wrangler secret put GITHUB_TOKEN
 # [vars]
 # ADMIN_PASSWORD = "cookie_muffin"  # use `wrangler secret put` instead of hardcoding here
+# GITHUB_REPO = "owner/repository"
+# GITHUB_BRANCH = "main"
+# GITHUB_ALBUM_PATH = "data/photoalbum"

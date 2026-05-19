@@ -13,6 +13,35 @@
     "primary": "Choisir mon menu",
     "secondary": "Organiser son trajet"
   },
+  "gate": {
+    "kicker": "Ekaterina & Lucas",
+    "title": "Les souvenirs du mariage sont bien gardés",
+    "note": "Merci d'avoir célébré avec nous. Entrez le mot de passe pour ouvrir la page privée du mariage et l'album photo.",
+    "passwordLabel": "Mot de passe",
+    "cta": "Ouvrir l'album",
+    "unlocking": "Ouverture...",
+    "loading": "Vérification de l'accès...",
+    "error": "Ce mot de passe ne correspond pas.",
+    "networkError": "Impossible de vérifier le mot de passe. Réessayez."
+  },
+  "album": {
+    "kicker": "Album photo",
+    "title": "Photographies du mariage",
+    "note": "Les photographies en pleine taille apparaîtront ici au fur et à mesure de leur ajout, pour que chacun puisse garder ses moments préférés.",
+    "loading": "Chargement des photographies...",
+    "empty": "L'album est prêt. Les photographies apparaîtront ici dès qu'elles seront ajoutées.",
+    "error": "Impossible de charger l'album.",
+    "download": "Télécharger la photo",
+    "downloadAll": "Tout télécharger",
+    "refresh": "Actualiser l'album",
+    "adminPassword": "Mot de passe admin",
+    "adminLogin": "Déverrouiller l'ajout",
+    "adminError": "Mot de passe admin invalide.",
+    "adminNote": "Les ajouts sont stockés dans le dossier album du dépôt GitHub configuré, pas sur cet ordinateur.",
+    "upload": "Ajouter des photographies",
+    "uploading": "Ajout en cours...",
+    "uploadError": "L'ajout a échoué."
+  },
   "welcome": {
     "kicker": "Jour du mariage",
     "title": "Samedi 9 mai 2026",
@@ -27,6 +56,78 @@
     "kicker": "Le lendemain",
     "title": "Dimanche 10 mai 2026",
     "note": "Un programme tranquille au Domaine du Roncemay, avec les transferts de retour dans l'après-midi."
+  },
+  "seating": {
+    "kicker": "Placement",
+    "title": "Plan de table",
+    "note": "Retrouvez votre table pour le dîner au Domaine du Roncemay.",
+    "tables": [
+      {
+        "id": "table-5",
+        "label": "Table 5",
+        "host": "Ekaterina & Lucas",
+        "featured": true,
+        "guests": [
+          "Georgia Georgiou",
+          "Veronika Vysokozerskaia",
+          "Ekaterina Bobrovnikova",
+          "Vitaliia Strekalova",
+          "Dzhavid Kerimov"
+        ]
+      },
+      {
+        "id": "table-1",
+        "label": "Table 1",
+        "guests": [
+          "Scariot Franck",
+          "Valerie Scariot",
+          "Maud Gandelle",
+          "Andréa Scariot",
+          "Thomas Scariot",
+          "Alexandre Brousseau",
+          "Chamira Feridaly"
+        ]
+      },
+      {
+        "id": "table-2",
+        "label": "Table 2",
+        "guests": [
+          "Genrietta Tsoy",
+          "Jesper Skjødt",
+          "Oksana Kozlova",
+          "Hubert Ancelot",
+          "Mariya Yegikyan",
+          "Tatiana Klimova",
+          "Yury Kotikov"
+        ]
+      },
+      {
+        "id": "table-3",
+        "label": "Table 3",
+        "guests": [
+          "Arkja Kavya",
+          "Côme de Larocque",
+          "Maxime Gouin",
+          "Vivien Steffen",
+          "Océane Humbert",
+          "Victorien Caquant",
+          "Samuel Charron"
+        ]
+      },
+      {
+        "id": "table-4",
+        "label": "Table 4",
+        "guests": [
+          "Felix Raciti",
+          "Kotoko Raciti",
+          "Oscar Raciti",
+          "Samuel Raciti",
+          "Teddy Raciti",
+          "Andrey Shadrin",
+          "Yana Shadrina"
+        ]
+      }
+    ]
   },
   "menu": {
     "kicker": "Dîner au Roncemay",

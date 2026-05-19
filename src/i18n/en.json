@@ -13,6 +13,35 @@
     "primary": "Pick my menu",
     "secondary": "Plan your trip"
   },
+  "gate": {
+    "kicker": "Ekaterina & Lucas",
+    "title": "Wedding memories are tucked away",
+    "note": "Thank you for celebrating with us. Enter the password to open the private wedding page and photo album.",
+    "passwordLabel": "Password",
+    "cta": "Open the album",
+    "unlocking": "Opening...",
+    "loading": "Checking access...",
+    "error": "That password does not match.",
+    "networkError": "We could not check the password. Please try again."
+  },
+  "album": {
+    "kicker": "Photo album",
+    "title": "Wedding photographs",
+    "note": "Full-size photographs will appear here as they are added, so everyone can keep their favourite moments.",
+    "loading": "Loading photographs...",
+    "empty": "The album is ready. Photographs will appear here once they have been uploaded.",
+    "error": "Could not load the album.",
+    "download": "Download photo",
+    "downloadAll": "Download all",
+    "refresh": "Refresh album",
+    "adminPassword": "Admin password",
+    "adminLogin": "Unlock uploads",
+    "adminError": "Invalid admin password.",
+    "adminNote": "Uploads are stored in the configured GitHub repository album folder, not on this laptop.",
+    "upload": "Upload photographs",
+    "uploading": "Uploading...",
+    "uploadError": "Upload failed."
+  },
   "welcome": {
     "kicker": "Wedding day",
     "title": "Saturday, 9 May 2026",
@@ -27,6 +56,78 @@
     "kicker": "Next day",
     "title": "Sunday, 10 May 2026",
     "note": "A relaxed Sunday plan at Domaine du Roncemay, with transfers back in the afternoon."
+  },
+  "seating": {
+    "kicker": "Seating",
+    "title": "Table plan",
+    "note": "Find your table for dinner at Domaine du Roncemay.",
+    "tables": [
+      {
+        "id": "table-5",
+        "label": "Table 5",
+        "host": "Ekaterina & Lucas",
+        "featured": true,
+        "guests": [
+          "Georgia Georgiou",
+          "Veronika Vysokozerskaia",
+          "Ekaterina Bobrovnikova",
+          "Vitaliia Strekalova",
+          "Dzhavid Kerimov"
+        ]
+      },
+      {
+        "id": "table-1",
+        "label": "Table 1",
+        "guests": [
+          "Scariot Franck",
+          "Valerie Scariot",
+          "Maud Gandelle",
+          "Andréa Scariot",
+          "Thomas Scariot",
+          "Alexandre Brousseau",
+          "Chamira Feridaly"
+        ]
+      },
+      {
+        "id": "table-2",
+        "label": "Table 2",
+        "guests": [
+          "Genrietta Tsoy",
+          "Jesper Skjødt",
+          "Oksana Kozlova",
+          "Hubert Ancelot",
+          "Mariya Yegikyan",
+          "Tatiana Klimova",
+          "Yury Kotikov"
+        ]
+      },
+      {
+        "id": "table-3",
+        "label": "Table 3",
+        "guests": [
+          "Arkja Kavya",
+          "Côme de Larocque",
+          "Maxime Gouin",
+          "Vivien Steffen",
+          "Océane Humbert",
+          "Victorien Caquant",
+          "Samuel Charron"
+        ]
+      },
+      {
+        "id": "table-4",
+        "label": "Table 4",
+        "guests": [
+          "Felix Raciti",
+          "Kotoko Raciti",
+          "Oscar Raciti",
+          "Samuel Raciti",
+          "Teddy Raciti",
+          "Andrey Shadrin",
+          "Yana Shadrina"
+        ]
+      }
+    ]
   },
   "menu": {
     "kicker": "Dinner at Roncemay",

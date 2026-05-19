@@ -6,6 +6,8 @@ import {
   LuMapPin, LuArrowUpRight, LuChevronDown,
   LuHeart, LuCar, LuWine, LuUtensils, LuFlag,
   LuMail, LuMap, LuCalendarDays, LuSunrise, LuGift,
+  LuTable2, LuUsersRound, LuFlower2, LuLockKeyhole,
+  LuImages, LuDownload, LuUpload, LuShieldCheck, LuX,
 } from "react-icons/lu";
 
 import en from "./i18n/en.json";
@@ -215,6 +217,7 @@ function App() {
   const [lang, setLang] = useState(() => {
     try { return localStorage.getItem("wedding_lang") || null; } catch { return null; }
   });
+  const [gate, setGate] = useState({ loading: true, authenticated: false });
   const t = content[lang] ?? content["en"];
 
   useEffect(() => {
@@ -224,6 +227,21 @@ function App() {
       .then((data) => setLang(data.country === "FR" ? "fr" : "en"))
       .catch(() => setLang("en"));
   }, [lang]);
+
+  useEffect(() => {
+    fetch("/api/gate/session", { credentials: "include" })
+      .then((r) => r.json())
+      .then((data) => setGate({ loading: false, authenticated: Boolean(data.authenticated) }))
+      .catch(() => setGate({ loading: false, authenticated: false }));
+  }, []);
+
+  if (gate.loading) {
+    return <BlockingPage t={t} mode="loading" />;
+  }
+
+  if (!gate.authenticated) {
+    return <BlockingPage t={t} onUnlock={() => setGate({ loading: false, authenticated: true })} />;
+  }
 
   return (
     <div className="relative mx-auto my-4 w-[min(calc(100%-20px),1100px)] pb-28 sm:w-[min(calc(100%-48px),1100px)]">
@@ -278,6 +296,8 @@ function App() {
 
         <ScheduleSection t={t} />
 
+        <SeatingPlanSection t={t} />
+
         <SectionCard id="menu">
           <SectionHeading kicker={t.menu.kicker} title={t.menu.title} note={t.menu.note} />
           <div className="grid gap-5">
@@ -323,6 +343,8 @@ function App() {
 
         <CagnotteSection t={t} />
 
+        <PhotoAlbumSection t={t} />
+
         <LogisticsSection t={t} />
       </main>
 
@@ -339,6 +361,300 @@ function App() {
       <StickyBar t={t} />
       <Cursors />
     </div>
+  );
+}
+
+function BlockingPage({ t, mode = "form", onUnlock }) {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const response = await fetch("/api/gate/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const json = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setError(json.error || t.gate.error);
+        return;
+      }
+      onUnlock?.();
+    } catch {
+      setError(t.gate.networkError);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main className="mx-auto flex min-h-screen w-[min(calc(100%-24px),760px)] items-center justify-center py-8">
+      <motion.section
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45 }}
+        className="relative w-full overflow-hidden rounded-[28px] border border-white/70 bg-[rgba(249,251,247,0.88)] p-6 text-center shadow-[0_24px_80px_rgba(72,40,23,0.12)] backdrop-blur-xl md:p-10"
+      >
+        <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-radial from-[rgba(196,160,110,0.42)] to-transparent" />
+        <div className="relative z-10 mx-auto max-w-[520px]">
+          <span className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-[rgba(196,160,110,0.35)] bg-[rgba(196,160,110,0.10)] text-[#4a6355]">
+            <LuLockKeyhole size={20} />
+          </span>
+          <p className="mt-5 text-xs font-bold uppercase tracking-[0.22em] text-[#4a6355]">{t.gate.kicker}</p>
+          <h1 className="mt-3 font-serif text-[clamp(2.3rem,7vw,4.6rem)] leading-[0.95] text-[#1e2a22]">{t.gate.title}</h1>
+          <p className="mx-auto mt-4 max-w-[42ch] text-sm leading-6 text-[#354b3e]">{t.gate.note}</p>
+
+          {mode === "loading" ? (
+            <p className="mt-8 text-sm font-semibold text-[#4a6355]">{t.gate.loading}</p>
+          ) : (
+            <form onSubmit={handleSubmit} className="mx-auto mt-8 grid max-w-[360px] gap-3 text-left">
+              <label className="grid gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#576e63]">{t.gate.passwordLabel}</span>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  autoComplete="current-password"
+                  className="rounded-2xl border border-[rgba(74,99,85,0.16)] bg-[#fffdf9] px-4 py-3 text-[#1e2a22] shadow-sm outline-none transition focus:border-[rgba(74,99,85,0.3)] focus:ring-2 focus:ring-[rgba(196,160,110,0.45)]"
+                />
+              </label>
+              {error ? <p className="text-sm font-semibold text-[#b45050]">{error}</p> : null}
+              <button
+                type="submit"
+                disabled={loading}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#4a6355] to-[#4d6858] px-6 py-3.5 font-bold text-white transition disabled:cursor-wait disabled:opacity-70"
+              >
+                <LuShieldCheck size={16} />
+                {loading ? t.gate.unlocking : t.gate.cta}
+              </button>
+            </form>
+          )}
+        </div>
+      </motion.section>
+    </main>
+  );
+}
+
+function PhotoAlbumSection({ t }) {
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [albumError, setAlbumError] = useState("");
+  const [admin, setAdmin] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminError, setAdminError] = useState("");
+  const [uploading, setUploading] = useState(false);
+
+  async function loadPhotos() {
+    setLoading(true);
+    setAlbumError("");
+    try {
+      const response = await fetch("/api/album/photos", { credentials: "include" });
+      const json = await response.json();
+      if (!response.ok) throw new Error(json.error || t.album.error);
+      setPhotos(json.photos || []);
+    } catch (error) {
+      setAlbumError(error.message || t.album.error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadPhotos();
+    fetch("/api/private/session", { credentials: "include" })
+      .then((r) => r.json())
+      .then((data) => setAdmin(Boolean(data.authenticated)))
+      .catch(() => setAdmin(false));
+  }, []);
+
+  async function handleAdminLogin(event) {
+    event.preventDefault();
+    setAdminError("");
+    const response = await fetch("/api/private/login", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: adminPassword }),
+    });
+    const json = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setAdminError(json.error || t.album.adminError);
+      return;
+    }
+    setAdmin(true);
+    setAdminPassword("");
+  }
+
+  async function handleUpload(event) {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+    setUploading(true);
+    setAlbumError("");
+    try {
+      for (const file of files) {
+        const form = new FormData();
+        form.append("photo", file);
+        const response = await fetch("/api/private/album/photos", {
+          method: "POST",
+          credentials: "include",
+          body: form,
+        });
+        const json = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(json.error || t.album.uploadError);
+      }
+      await loadPhotos();
+    } catch (error) {
+      setAlbumError(error.message || t.album.uploadError);
+    } finally {
+      setUploading(false);
+      event.target.value = "";
+    }
+  }
+
+  return (
+    <SectionCard id="album">
+      <SectionHeading kicker={t.album.kicker} title={t.album.title} note={t.album.note} />
+      <div className="mb-6 flex flex-wrap gap-3">
+        <a
+          href="/api/album/download-all"
+          className={`inline-flex items-center gap-2 rounded-full bg-[#354b3e] px-5 py-3 text-sm font-bold text-white transition ${photos.length ? "hover:opacity-90" : "pointer-events-none opacity-50"}`}
+        >
+          <LuDownload size={15} />
+          {t.album.downloadAll}
+        </a>
+        <button
+          type="button"
+          onClick={loadPhotos}
+          className="inline-flex items-center gap-2 rounded-full border border-[rgba(53,75,62,0.12)] bg-white/70 px-5 py-3 text-sm font-bold text-[#4a6355]"
+        >
+          <LuImages size={15} />
+          {t.album.refresh}
+        </button>
+      </div>
+
+      {admin ? (
+        <div className="mb-6 rounded-[18px] border border-[rgba(196,160,110,0.26)] bg-[rgba(196,160,110,0.08)] p-4">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#4a6355] px-5 py-3 text-sm font-bold text-white">
+            <LuUpload size={15} />
+            {uploading ? t.album.uploading : t.album.upload}
+            <input type="file" multiple accept="image/*" onChange={handleUpload} disabled={uploading} className="sr-only" />
+          </label>
+          <p className="mt-3 text-xs leading-5 text-[#576e63]">{t.album.adminNote}</p>
+        </div>
+      ) : (
+        <form onSubmit={handleAdminLogin} className="mb-6 grid gap-3 rounded-[18px] border border-[rgba(53,75,62,0.12)] bg-white/60 p-4 md:grid-cols-[1fr_auto] md:items-end">
+          <label className="grid gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#576e63]">{t.album.adminPassword}</span>
+            <input
+              type="password"
+              value={adminPassword}
+              onChange={(event) => setAdminPassword(event.target.value)}
+              className="rounded-2xl border border-[rgba(74,99,85,0.16)] bg-[#fffdf9] px-4 py-3 text-sm text-[#1e2a22] outline-none transition focus:border-[rgba(74,99,85,0.3)] focus:ring-2 focus:ring-[rgba(196,160,110,0.45)]"
+            />
+            {adminError ? <span className="text-xs font-semibold text-[#b45050]">{adminError}</span> : null}
+          </label>
+          <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-full border border-[rgba(74,99,85,0.16)] bg-[#fffdf9] px-5 py-3 text-sm font-bold text-[#4a6355]">
+            <LuShieldCheck size={15} />
+            {t.album.adminLogin}
+          </button>
+        </form>
+      )}
+
+      {albumError ? (
+        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[rgba(180,80,80,0.18)] bg-[rgba(180,80,80,0.08)] px-4 py-2 text-sm font-semibold text-[#b45050]">
+          <LuX size={14} />
+          {albumError}
+        </div>
+      ) : null}
+
+      {loading ? (
+        <p className="text-sm font-semibold text-[#4a6355]">{t.album.loading}</p>
+      ) : photos.length ? (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {photos.map((photo) => (
+            <figure key={photo.path} className="overflow-hidden rounded-[18px] border border-[rgba(53,75,62,0.12)] bg-[#fffdf9] shadow-sm">
+              <a href={photo.url} target="_blank" rel="noreferrer">
+                <img src={photo.url} alt={photo.name} loading="lazy" className="aspect-[4/3] w-full object-cover" />
+              </a>
+              <figcaption className="flex items-center justify-between gap-3 px-4 py-3">
+                <span className="min-w-0 truncate text-xs font-semibold text-[#354b3e]">{photo.name}</span>
+                <a href={`/api/album/photos/${encodeURIComponent(photo.name)}/download`} className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[rgba(74,99,85,0.16)] text-[#4a6355]" title={t.album.download}>
+                  <LuDownload size={14} />
+                </a>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      ) : (
+        <p className="rounded-[18px] border border-[rgba(53,75,62,0.12)] bg-white/60 p-5 text-sm leading-6 text-[#354b3e]">{t.album.empty}</p>
+      )}
+    </SectionCard>
+  );
+}
+
+function SeatingPlanSection({ t }) {
+  const featuredTable = t.seating.tables.find((table) => table.featured);
+  const guestTables = t.seating.tables.filter((table) => !table.featured);
+
+  return (
+    <SectionCard id="seating">
+      <SectionHeading kicker={t.seating.kicker} title={t.seating.title} note={t.seating.note} />
+      <div className="relative overflow-hidden rounded-[26px] border border-[rgba(53,75,62,0.12)] bg-[linear-gradient(135deg,rgba(255,252,246,0.92),rgba(238,244,235,0.9)_48%,rgba(248,242,233,0.92))] p-4 md:p-6">
+        <div className="absolute left-1/2 top-5 hidden h-px w-[72%] -translate-x-1/2 bg-[linear-gradient(90deg,transparent,rgba(196,160,110,0.58),transparent)] md:block" />
+        <div className="relative mx-auto grid max-w-[940px] gap-4">
+          {featuredTable ? <SeatingTable table={featuredTable} featured /> : null}
+          <div className="grid gap-4 md:grid-cols-2">
+            {guestTables.map((table) => (
+              <SeatingTable key={table.id} table={table} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </SectionCard>
+  );
+}
+
+function SeatingTable({ table, featured = false }) {
+  return (
+    <article
+      className={`relative overflow-hidden rounded-[18px] border bg-[rgba(255,255,255,0.76)] shadow-[0_18px_48px_rgba(72,40,23,0.08)] backdrop-blur ${featured
+        ? "mx-auto w-full max-w-[520px] border-[rgba(196,160,110,0.36)]"
+        : "border-[rgba(53,75,62,0.12)]"
+        }`}
+    >
+      <div className={`flex items-center justify-between gap-4 border-b px-5 py-4 ${featured
+        ? "border-[rgba(196,160,110,0.24)] bg-[rgba(196,160,110,0.10)]"
+        : "border-[rgba(53,75,62,0.09)] bg-[rgba(247,249,246,0.72)]"
+        }`}
+      >
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#4d6858]">
+            <LuTable2 size={13} />
+            {table.label}
+          </div>
+          {table.host ? (
+            <p className="mt-1 font-serif text-[clamp(1.35rem,2.5vw,1.75rem)] leading-none text-[#1e2a22]">{table.host}</p>
+          ) : null}
+        </div>
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[rgba(196,160,110,0.3)] bg-[#fffaf3] text-[#9f7a45]">
+          {featured ? <LuFlower2 size={17} /> : <LuUsersRound size={17} />}
+        </div>
+      </div>
+      <ul className="grid divide-y divide-[rgba(53,75,62,0.08)] px-5 py-2">
+        {table.guests.map((guest) => (
+          <li key={guest} className="flex items-center justify-between gap-3 py-2.5 text-sm leading-5 text-[#26352d]">
+            <span>{guest}</span>
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[rgba(196,160,110,0.55)]" />
+          </li>
+        ))}
+      </ul>
+    </article>
   );
 }
 
